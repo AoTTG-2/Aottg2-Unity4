@@ -1,0 +1,199 @@
+{
+	"Name": "Light",
+	"DefaultPanel": {
+		"MainBody": {
+			"BackgroundColor": [255, 255, 255, 255],
+			"BorderColor": [206, 212, 218, 255],
+			"TitleColor": [83, 101, 125, 255],
+			"VerticalLineColor": [78, 95, 112, 255],
+			"HorizontalLineColor": [78, 95, 112, 255],
+			"TopBarColor": [235, 239, 243, 255],
+			"BottomBarColor": [235, 239, 243, 255],
+			"ScrollbarBackgroundColor": [83, 101, 125, 255],
+			"ScrollbarNormalColor": [225, 225, 225, 255],
+			"ScrollbarHighlightedColor": [193, 199, 199, 255],
+			"ScrollbarPressedColor": [146, 146, 146, 255]
+		},
+		"DefaultButton": {
+			"NormalColor": [100, 127, 161, 255],
+			"HighlightedColor": [85, 108, 137, 255],
+			"PressedColor": [70, 89, 112, 255],
+			"TextColor": [255, 255, 255, 255]
+		},
+		"IconButton": {
+			"NormalColor": [100, 127, 161, 255],
+			"HighlightedColor": [85, 108, 137, 255],
+			"PressedColor": [70, 89, 112, 255],
+			"TextColor": [255, 255, 255, 255]
+		},
+		"CategoryButton": {
+			"NormalColor": [83, 101, 125, 255],
+			"HighlightedColor": [133, 133, 133, 255],
+			"PressedColor": [30, 140, 195, 255]
+		},
+		"TextButton": {
+			"NormalColor": [0, 175, 222, 255],
+			"HighlightedColor": [180, 180, 180, 255],
+			"PressedColor": [120, 120, 120, 255]
+		},
+		"DefaultLabel": {
+			"TextColor": [83, 101, 125, 255]
+		},
+		"DefaultSetting": {
+			"TextColor": [83, 101, 125, 255],
+			"IconNormalColor": [83, 101, 125, 255],
+			"IconHighlightedColor": [100, 127, 161, 255],
+			"IconPressedColor": [83, 101, 125, 255],
+			"TooltipBackgroundColor": [208, 224, 244, 255],
+			"TooltipTextColor": [83, 101, 125, 255],
+			"ToggleNormalColor": [255, 255, 255, 255],
+			"ToggleHighlightedColor": [245, 245, 245, 255],
+			"TogglePressedColor": [200, 200, 200, 255],
+			"ToggleFilledColor": [70, 90, 115, 255],
+			"InputTextColor": [50, 50, 50, 255],
+			"InputNormalColor": [255, 255, 255, 255],
+			"InputHighlightedColor": [240, 240, 240, 255],
+			"InputPressedColor": [240, 240, 240, 255],
+			"InputSelectionColor": [168, 206, 255, 192],
+			"DropdownTextColor": [255, 255, 255, 255],
+			"DropdownNormalColor": [78, 95, 112, 255],
+			"DropdownHighlightedColor": [59, 71, 84, 255],
+			"DropdownPressedColor": [40, 48, 57, 255],
+			"DropdownBorderColor": [0, 0, 0, 255],
+			"DropdownScrollbarBackgroundColor": [36, 45, 56, 255],
+			"DropdownScrollbarNormalColor": [225, 225, 225, 255],
+			"DropdownScrollbarHighlightedColor": [193, 199, 199, 255],
+			"DropdownScrollbarPressedColor": [146, 146, 146, 255],
+			"KeybindTextColor": [50, 50, 50, 255],
+			"KeybindNormalColor": [83, 101, 125, 255],
+			"KeybindHighlightedColor": [118, 151, 193, 255],
+			"KeybindPressedColor": [91, 117, 148, 255],
+			"SliderBackgroundColor": [140, 160, 180, 255],
+			"SliderFillColor": [71, 119, 167, 255],
+			"SliderHandleColor": [156, 87, 0, 255]
+		},
+	},
+	"MultiplayerMapPopup": {
+		"MainBody": {
+			"BackgroundColor": [64, 75, 88, 255],
+			"MapColor": [114, 114, 114, 255]
+		},
+		"DefaultButton": {
+			"NormalColor": [100, 127, 161, 255],
+			"HighlightedColor": [158, 172, 189, 255],
+			"PressedColor": [138, 152, 169, 255],
+			"TextColor": [255, 255, 255, 255]
+		}
+	},
+	"MultiplayerRoomListPopup": {
+		"MainBody": {
+			"BackgroundColor": [64, 75, 88, 255]
+		},
+		"DefaultButton": {
+			"NormalColor": [100, 127, 161, 255],
+			"HighlightedColor": [158, 172, 189, 255],
+			"PressedColor": [138, 152, 169, 255],
+			"TextColor": [255, 255, 255, 255]
+		},
+		"RoomButton": {
+			"NormalColor": [255, 255, 255, 0],
+			"HighlightedColor": [137, 144, 154, 86],
+			"PressedColor": [88, 93, 99, 86],
+			"TextColor": [255, 255, 255, 255]
+		}
+	},
+	"SelectListPopup": {
+		"MainBody": {
+			"BackgroundColor": [44, 54, 66, 255]
+		},
+		"ItemButton": {
+			"NormalColor": [255, 255, 255, 0],
+			"HighlightedColor": [137, 144, 154, 86],
+			"PressedColor": [88, 93, 99, 86],
+			"TextColor": [255, 255, 255, 255]
+		},
+		"DeleteButton": {
+			"NormalColor": [238, 75, 43, 255],
+			"HighlightedColor": [100, 100, 100, 255],
+			"PressedColor": [40, 48, 57, 255]
+		}
+	},
+	"QuestPopup": {
+		"QuestHeader": {
+			"ResetTextColor": [83, 101, 125, 255]
+		},
+		"QuestItem": {
+			"BackgroundColor": [255, 255, 255, 255],
+			"BorderColor": [206, 212, 218, 255],
+			"IconColor": [0, 125, 176, 255],
+			"CheckColor": [0, 125, 176, 255],
+			"TextColor": [83, 101, 125, 255],
+			"ProgressBarBackgroundColor": [140, 160, 180, 255],
+			"ProgressBarFillColor": [0, 125, 176, 255]
+		},
+		"Trophy": {
+			"TextColor": [83, 101, 125, 255],
+			"BronzeColor": [176, 141, 87, 255],
+			"SilverColor": [211, 211, 211, 255],
+			"GoldColor": [255, 215, 0, 255]
+		}
+	},
+	"LeaderboardPopup": {
+		"Rank": {
+			"Trophy1Color": [255, 215, 0, 255],
+			"Trophy2Color": [211, 211, 211, 255],
+			"Trophy3Color": [176, 141, 87, 255],
+			"BadgeColor": [30, 144, 250, 255]
+		}
+	},
+	"LoadingPanel": {
+		"ProgressBar": {
+			"ProgressBarBackgroundColor": [140, 160, 180, 255],
+			"ProgressBarFillColor": [0, 125, 176, 255]
+		}
+	},
+	"CutsceneDialoguePanel": {
+		"MainBody": {
+			"BackgroundColor": [48, 53, 60, 200],
+			"TopBarColor": [48, 53, 60, 200],
+			"BottomBarColor": [48, 53, 60, 200],
+			"HorizontalLineColor": [77, 83, 93, 255],
+			"BorderColor": [70, 76, 86, 255]
+		}
+	},
+	"ChatPanel": {
+		"InputField": {
+			"InputTextColor": [255, 255, 255, 255],
+			"InputNormalColor": [100, 100, 100, 140],
+			"InputHighlightedColor": [100, 100, 100, 140],
+			"InputPressedColor": [100, 100, 100, 140],
+			"InputSelectionColor": [128, 128, 128, 128]
+		},
+		"TextColor": {
+			"Default": [255, 255, 255, 255],
+			"ID": [255, 200, 0, 255],
+			"System": [255, 200, 0, 255],
+			"Error": [200, 0, 0, 255],
+			"TeamRed": [240, 100, 100, 255],
+			"TeamBlue": [98, 183, 240, 255]
+		}
+	},
+	"ScoreboardPopup": {
+		"Icon": {
+			"SpectateColor": [255, 255, 255, 255],
+			"DeadColor": [255, 0, 0, 255],
+			"LoadoutHuman": [255, 255, 255, 255],
+			"LoadoutTitan": [255, 255, 255, 255],
+			"LoadoutShifter": [255, 255, 255, 255]
+		},
+		"IconButton": {
+			"NormalColor": [255, 255, 255, 255],
+			"HighlightedColor": [200, 200, 200, 255],
+			"PressedColor": [180, 180, 180, 255],
+			"TextColor": [255, 255, 255, 255]
+		},
+		"TextColor": {
+			"Default": [255, 255, 255, 255]
+		}
+	}
+}

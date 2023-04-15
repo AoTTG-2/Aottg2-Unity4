@@ -1,0 +1,231 @@
+{
+	"MapCategories":[
+		{
+			"Name": "General",
+			"ExcludedModes": ["Racing"],
+			"Maps": [
+				{
+					"Name": "Forest"
+				},
+				{
+					"Name": "City"
+				},
+				{
+					"Name": "Utgard"
+				},
+				{
+					"Name": "Birth of Levi"
+				},
+				{
+					"Name": "Mew's 1K"
+				},
+				{
+					"Name": "Rocky Mountain"
+				},
+				{
+					"Name": "Shiganshina"
+				},
+				{
+					"Name": "Trost"
+				},
+				{
+					"Name": "Dany's Outside"
+				},
+				{
+					"Name": "Futuristic Forest"
+				}
+			]
+		},
+		{
+			"Name": "PVP",
+			"IncludedModes": ["Thunderspear PVP", "Blade PVP", "Gun PVP", "None"],
+			"Maps": [
+				{
+					"Name": "Forest"
+				},
+				{
+					"Name": "City"
+				},
+				{
+					"Name": "House"
+				},
+				{
+					"Name": "Cave"
+				},
+				{
+					"Name": "Beyblade Arena"
+				},
+				{
+					"Name": "Ice Skate"
+				},
+				{
+					"Name": "Madzik Arena"
+				},
+				{
+					"Name": "Palace Arena"
+				},
+				{
+					"Name": "Cave City"
+				},
+				{
+					"Name": "Stars Arena"
+				},
+				{
+					"Name": "Bamboo Arena"
+				},
+				{
+					"Name": "Box Arena"
+				}
+			]
+		},
+		{
+			"Name": "Racing (basic)",
+			"IncludedModes": ["Racing"],
+			"Maps": [
+				{
+					"Name": "Akina"
+				},
+				{
+					"Name": "The Way of the Racers"
+				},
+				{
+					"Name": "Makina Speed"
+				},
+				{
+					"Name": "Another Brick in the Wall"
+				},
+				{
+					"Name": "Winter Speed"
+				},
+				{
+					"Name": "Makina Source Lvl 1"
+				},
+				{
+					"Name": "Iri Spid 2"
+				},
+				{
+					"Name": "Makina Honor"
+				},
+				{
+					"Name": "Future Trax 10"
+				},
+				{
+					"Name": "Ex'd II"
+				},
+				{
+					"Name": "Makina Red"
+				}
+			]
+		},
+		{
+			"Name": "Racing (hard)",
+			"IncludedModes": ["Racing"],
+			"Maps": [
+				{
+					"Name": "Iri Crystal"
+				},
+				{
+					"Name": "ELOR 3"
+				},
+				{
+					"Name": "Makina ZYX + ZYX"
+				},
+				{
+					"Name": "Future Trax 3"
+				},
+				{
+					"Name": "Celestial Marine II"
+				},
+				{
+					"Name": "ELOR 1"
+				},
+				{
+					"Name": "Future Trax 7"
+				},
+				{
+					"Name": "Blood of the Racers"
+				},
+				{
+					"Name": "Ancient Trax"
+				},
+				{
+					"Name": "Machina II"
+				},
+				{
+					"Name": "Blood of the Racers II"
+				},
+				{
+					"Name": "Inferno I"
+				}
+			]
+		},
+		{
+			"Name": "Boss",
+			"IncludedModes": ["Map Logic"],
+			"Maps": [
+				{
+					"Name": "Annie",
+					"MiscSettings": {
+						"AllowThunderspears": false,
+						"AllowShifterSpecials": false
+					}
+				}
+			]
+		}
+	],
+	"GameModes": [
+		{
+			"Name": "Survive"
+		},
+		{
+			"Name": "Waves",
+			"MiscSettings": {
+				"AllowPlayerTitans": false
+			}
+		},
+		{
+			"Name": "Endless"
+		},
+		{
+			"Name": "Racing",
+			"MiscSettings": {
+				"AllowPlayerTitans": false,
+				"AllowShifterSpecials": false
+			}
+		},
+		{
+			"Name": "Thunderspear PVP",
+			"MiscSettings": {
+				"PVP": 1,
+				"AllowBlades": false,
+				"AllowGuns": false,
+				"AllowPlayerTitans": false,
+				"ThunderspearPVP": true,
+				"AllowShifterSpecials": false
+			}
+		},
+		{
+			"Name": "Blade PVP",
+			"MiscSettings": {
+				"PVP": 1,
+				"AllowThunderspears": false,
+				"AllowGuns": false,
+				"AllowPlayerTitans": false,
+				"AllowShifterSpecials": false
+			}
+		},
+		{
+			"Name": "Gun PVP",
+			"MiscSettings": {
+				"PVP": 1,
+				"AllowThunderspears": false,
+				"AllowBlades": false,
+				"AllowPlayerTitans": false,
+				"AllowShifterSpecials": false
+			}
+		},
+		{
+			"Name": "None"
+		}
+	]
+}

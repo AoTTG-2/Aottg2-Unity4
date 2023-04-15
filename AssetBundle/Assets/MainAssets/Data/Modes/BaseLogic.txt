@@ -1,0 +1,417 @@
+component SupplyStation
+{
+    UnlimitedRefills = true;
+    MaxRefills = 0;
+    _lastHuman = null;
+
+    function Init()
+    {
+        self._refillsLeft = self.MaxRefills;
+        self.MapObject.AddBoxCollider("Region", "Characters", Vector3(0,-2,0), Vector3(14,4,14));
+    }
+
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine && other != self._lastHuman && (self.UnlimitedRefills || self._refillsLeft > 0))
+        {
+            if (other.Refill(true))
+            {
+                self._lastHuman = other;
+                self._refillsLeft = self._refillsLeft - 1;
+            }
+        }
+    }
+
+    function OnCollisionExit(other)
+    {
+        if (other.Type == "Human" && other.IsMine)
+        {
+            self._lastHuman = null;
+        }
+    }
+}
+
+component Daylight
+{
+    Color = Color(255, 255, 255, 255);
+    Intensity = 0.65;
+    WeatherControlled = true;
+
+    function Init()
+    {
+        self.MapObject.AddBuiltinComponent("Daylight", self.Color, self.Intensity, self.WeatherControlled);
+    }
+}
+
+component PointLight
+{
+    Color = Color(255, 255, 255, 255);
+    Intensity = 1.0;
+    Range = 10.0;
+
+    function Init()
+    {
+        self.MapObject.AddBuiltinComponent("PointLight", self.Color, self.Intensity, self.Range);
+    }
+}
+
+component Rigidbody
+{
+    Mass = 1.0;
+    Gravity = Vector3(0.0, -9.81, 0.0);
+
+    function Init()
+    {
+        self.MapObject.AddBuiltinComponent("Rigidbody", self.Mass, self.Gravity);
+    }
+
+    function SetVelocity(velocity)
+    {
+        self.MapObject.UpdateBuiltinComponent("Rigidbody", "SetVelocity", velocity);
+    }
+
+    function AddForce(force)
+    {
+        self.MapObject.UpdateBuiltinComponent("Rigidbody", "AddForce", force);
+    }
+}
+
+component Cannon
+{
+    UnlimitedAmmo = true;
+    MaxAmmo = 0;
+    Cooldown = 3.0;
+    IsGround = true;
+    _rotateSpeed = 0.2;
+    _ballSpeed = 300.0;
+    _barrel = null;
+    _humanMount = null;
+    _barrelEnd = null;
+    _inUse = false;
+    _cooldownLeft = 0.0;
+    _human = null;
+    _collidingHuman = null;
+
+    function Init()
+    {
+        self._barrel = self.MapObject.GetTransform("Barrel");
+        self._barrelEnd = self._barrel.GetTransform("End");
+        self._humanMount = self.MapObject.GetTransform("HumanMount");
+        self.MapObject.AddSphereCollider("Region", "Characters", Vector3.Zero, 15.0);
+    }
+
+    function SendNetworkStream()
+    {
+        self.NetworkView.SendStream(self._barrel.LocalRotation);
+        self.NetworkView.SendStream(self._inUse);
+    }
+
+    function OnNetworkStream()
+    {
+        rotation = self.NetworkView.ReceiveStream();
+        self._barrel.LocalRotation = rotation;
+        self._inUse = self.NetworkView.ReceiveStream();
+    }
+
+    function OnNetworkMessage(sender, message)
+    {
+        if (Network.IsMasterClient && self.NetworkView.Owner == Network.MyPlayer && !self._inUse && message == "request")
+        {
+            self.NetworkView.Transfer(sender);
+        }
+    }
+
+    function OnNetworkTransfer(oldOwner, newOwner) 
+    {
+        if (newOwner == Network.MasterClient && Network.IsMasterClient)
+        {
+            self._inUse = false;
+            self.ResetBarrel();
+        }
+        elif (newOwner == Network.MyPlayer)
+        {
+            self._inUse = true;
+            human = Network.MyPlayer.Character;
+            if (human != null && human.Type == "Human")
+            {
+                human.MountTransform(self._humanMount);
+                self._human = human;
+            }
+        }
+    }
+
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine && !self._inUse)
+        {
+            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to use cannon.", 0.1);
+            self._collidingHuman = other;
+        }
+    }
+
+    function OnTick()
+    {
+        self._collidingHuman = null;
+    }
+
+    function OnFrame()
+    {
+        if (self._inUse && self.NetworkView.Owner == Network.MyPlayer)
+        {
+            self._cooldownLeft = self._cooldownLeft - Time.FrameTime;
+            barrelRotation = self._barrel.LocalRotation;
+            baseRotation = self.MapObject.Rotation;
+            if (Input.GetKeyHold("General/Left"))
+            {
+                baseRotation.Y = baseRotation.Y - self._rotateSpeed * Time.FrameTime;
+            }
+            elif (Input.GetKeyHold("General/Right"))
+            {
+                baseRotation.Y = baseRotation.Y + self._rotateSpeed * Time.FrameTime;
+            }
+            if (self.IsGround)
+            {
+                if (Input.GetKeyHold("General/Forward"))
+                {
+                    barrelRotation.Z = barrelRotation.Z + self._rotateSpeed * Time.FrameTime;
+                }
+                elif (Input.GetKeyHold("General/Back"))
+                {
+                    barrelRotation.Z = barrelRotation.Z - self._rotateSpeed * Time.FrameTime;
+                }
+                barrelRotation.Z = Math.Clamp(barrelRotation.Z, 80.0, 110.0);
+            }
+            else
+            {
+                if (Input.GetKeyHold("General/Forward"))
+                {
+                    barrelRotation.X = barrelRotation.X - self._rotateSpeed * Time.FrameTime;
+                }
+                elif (Input.GetKeyHold("General/Back"))
+                {
+                    barrelRotation.X = barrelRotation.X + self._rotateSpeed * Time.FrameTime;
+                }
+                barrelRotation.X = Math.Clamp(barrelRotation.X, 230.0, 300.0);
+            }
+            self._barrel.LocalRotation = barrelRotation;
+            self.MapObject.Rotation = baseRotation;
+            if (self._cooldownLeft <= 0.0 && Input.GetKeyHold("Human/AttackDefault"))
+            {
+                self.Fire();
+            }
+            if (Input.GetKeyDown("Interaction/Interact"))
+            {
+                self._human.Unmount();
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+                self.ResetBarrel();
+            }
+        }
+        if (self.NetworkView.Owner == Network.MyPlayer && self._inUse)
+        {
+            if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._humanMount)
+            {
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+                self.ResetBarrel();
+                return;
+            }
+        }
+        if (!self._inUse && self._collidingHuman != null)
+        {
+            if (Input.GetKeyDown("Interaction/Interact")) 
+            {
+                if (self.NetworkView.Owner == Network.MyPlayer) 
+                {
+                    self._inUse = true;
+                    self._collidingHuman.MountTransform(self._humanMount);
+                    self._human = self._collidingHuman;
+                }
+                else
+                {
+                    self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
+                }
+            }
+        }
+    }
+
+    function ResetBarrel()
+    {
+        if (self.IsGround)
+        {
+            self._barrel.LocalRotation = Vector3(0, -90, 90);
+        }
+        else
+        {
+            self._barrel.LocalRotation = Vector3(270, 0, 0);
+        }
+    }
+
+    function Fire()
+    {
+        self._cooldownLeft = self.Cooldown;
+        if (self._human != null)
+        {
+            Game.SpawnEffect("Boom2", self._barrelEnd.Position, self._barrelEnd.Rotation, 0.5);
+            Game.SpawnProjectileWithOwner("CannonBall", self._barrelEnd.Position, Vector3.Zero, self._barrel.Up.Normalized * -1.0 * self._ballSpeed, 
+            Vector3(0, -20, 0), 2.0, self._human);
+        }
+    }
+}
+
+component Tag
+{
+    Name = "";
+
+    function Init()
+    {
+        self.MapObject.AddBuiltinComponent("Tag", self.Name);
+    }
+}
+
+component KillRegion
+{
+    Team = "None";
+    KillHumans = true;
+    KillTitans = true;
+    KillShifters = true;
+    KillMessage = "Server";
+
+    function OnCollisionStay(other)
+    {
+        if (other.IsCharacter && other.IsMine)
+        {
+            if (other.Type == "Human" && !self.KillHumans)
+            {
+                return;
+            }
+            if (other.Type == "Titan" && !self.KillTitans)
+            {
+                return;
+            }
+            if (other.Type == "Shifter" && !self.KillShifters)
+            {
+                return;
+            }
+            if (other.Team != self.Team && self.Team != "None")
+            {
+                return;
+            }
+            other.GetKilled(self.KillMessage);
+        }
+    }
+}
+
+component DamageRegion
+{
+    Damage = 1;
+    Team = "None";
+    DamageHumans = true;
+    DamageTitans = true;
+    DamageShifters = true;
+    KillMessage = "Server";
+
+    function OnCollisionStay(other)
+    {
+        if (other.IsCharacter && other.IsMine)
+        {
+            if (other.Type == "Human" && !self.DamageHumans)
+            {
+                return;
+            }
+            if (other.Type == "Titan" && !self.DamageTitans)
+            {
+                return;
+            }
+            if (other.Type == "Shifter" && !self.DamageShifters)
+            {
+                return;
+            }
+            if (other.Team != self.Team && self.Team != "None")
+            {
+                return;
+            }
+            other.GetDamaged(self.KillMessage, self.Damage);
+        }
+    }
+}
+
+component MovePingPong
+{
+    RelativePositions = true;
+    StartPosition = Vector3(0, 0, 0);
+    EndPosition = Vector3(0, 0, 0);
+    Speed = 10.0;
+    PauseTime = 0.0;
+    _currentProgress = 0.0;
+    _backwards = false;
+    _pauseTimeLeft = 0.0;
+
+    function Init()
+    {
+        if (self.RelativePositions)
+        {
+            self.StartPosition = self.MapObject.Position + self.StartPosition;
+            self.EndPosition = self.MapObject.Position + self.EndPosition;
+        }
+    }
+
+    function OnTick()
+    {
+        if (self._pauseTimeLeft > 0)
+        {
+            self._pauseTimeLeft = self._pauseTimeLeft - Time.TickTime;
+            return;
+        }
+        if (self._backwards)
+        {
+            self._currentProgress = self._currentProgress - Time.TickTime;
+            if (self._currentProgress <= 0.0)
+            {
+                self._currentProgress = 0.0;
+                self._backwards = false;
+                self._pauseTimeLeft = self.PauseTime;
+            }
+            self.MapObject.Position = Vector3.Lerp(self.StartPosition, self.EndPosition, self._currentProgress);
+        }
+        else
+        {
+            self._currentProgress = self._currentProgress + Time.TickTime;
+            if (self._currentProgress >= 1.0)
+            {
+                self._currentProgress = 1.0;
+                self._backwards = true;
+                self._pauseTimeLeft = self.PauseTime;
+            }
+            self.MapObject.Position = Vector3.Lerp(self.StartPosition, self.EndPosition, self._currentProgress);
+        }
+    }
+}
+
+component RacingCheckpointRegion
+{
+    Refill = true;
+
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine)
+        {
+            if (self.Refill)
+            {
+                other.RefillImmediate();
+            }
+            Main._racingRespawnPoint = self.MapObject.Position;
+        }
+    }
+}
+
+component RacingFinishRegion
+{
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine)
+        {
+            Main.FinishRace(other);
+        }
+    }
+}

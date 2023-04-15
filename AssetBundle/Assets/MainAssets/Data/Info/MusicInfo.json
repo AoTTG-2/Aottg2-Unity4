@@ -1,0 +1,42 @@
+{
+	"Menu": [
+		{"Name": "m_dakros_main_theme", "Volume": 1},
+		{"Name": "a_david_moses", "Volume": 1},
+		{"Name": "m_meownist_settings", "Volume": 1},
+		{"Name": "n_blood_god_dakros_departure", "Volume": 1}
+		{"Name": "n_ertinos_up_there", "Volume": 1}
+
+	],
+	"Default.Ordered": [
+		{"Playlist": "Peaceful"},
+		{"Playlist": "Battle"},
+		{"Playlist": "Boss"},
+		{"Playlist": "Battle"}
+	],
+	"Peaceful": [
+		{"Name": "n_dakros_green_plains", "Volume": 1},
+		{"Name": "n_dakros_origin", "Volume": 1},
+		{"Name": "n_ertinos_wandering", "Volume": 1},
+		{"Name": "n_meownist_forest", "Volume": 1},
+		{"Name": "n_nadimd_flying", "Volume": 1}
+	],
+	"Battle": [
+		{"Name": "c_big_bobby_battle", "Volume": 1},
+		{"Name": "c_dakros_armored_fist", "Volume": 1},
+		{"Name": "c_dakros_battle_chant", "Volume": 1}
+	],
+	"Boss": [
+		{"Name": "a_dakros_colossal", "Volume": 1},
+		{"Name": "a_dakros_shrill_voices", "Volume": 1},
+		{"Name": "a_dakros_the_ground_is_shaking", "Volume": 1},
+		{"Name": "c_meownist_combat", "Volume": 1},
+		{"Name": "c_meownist_finale", "Volume": 1},
+		{"Name": "c_meownist_genesis", "Volume": 1},
+		{"Name": "c_meownist_hesitation", "Volume": 1},
+		{"Name": "c_meownist_more_battle", "Volume": 1}
+	],
+	"Racing": [
+		{"Name": "meownist_ragakou_drift", "Volume": 1},
+		{"Name": "razentoast_scoutflight", "Volume": 1}
+	]
+}

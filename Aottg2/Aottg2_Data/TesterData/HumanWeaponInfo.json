@@ -1,0 +1,32 @@
+{
+	"Blade": {
+		"DurabilityMultiplier": 1.0,
+		"Blades": 5,
+		"DamageMultiplier": 1.0,
+		"RestrictAngle": 70
+	},
+	"Thunderspear": {
+		"Range": 250,
+		"Radius": 10,
+		"Speed": 500,
+		"CD": 0.8,
+		"Delay": 0.12,
+		"AmmoRound": 6,
+		"AmmoTotal": 36,
+		"DamageMultiplier": 1,
+		"RestrictAngle": 100
+	},
+	"Gun": {
+		"RangeMin": 8.5,
+		"RangeMax": 75,
+		"RangeA": 0.846722,
+		"RangeC": 1.01902,
+		"RangeB": 1.00009,
+		"Radius": 0.1,
+		"CD": 0.5,
+		"AmmoRound": 12,
+		"AmmoTotal": 48,
+		"DamageMultiplier": 1,
+		"RestrictAngle": 60	
+	}
+}
