@@ -1,25 +1,21 @@
-﻿using System;
+﻿using ApplicationManagers;
+using Controllers;
+using CustomSkins;
+using Effects;
+using GameProgress;
+using Map;
+using Settings;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Xft;
-using CustomSkins;
-using Settings;
 using UI;
-using ApplicationManagers;
-using Weather;
-using GameProgress;
-using GameManagers;
-using Controllers;
+using UnityEngine;
 using Utility;
-using Effects;
-using SimpleJSONFixed;
-using System.IO;
-using Map;
+using Weather;
 
 namespace Characters
 {
-    class Human: BaseCharacter
+    class Human : BaseCharacter
     {
         // setup
         public HumanComponentCache HumanCache;
@@ -65,7 +61,7 @@ namespace Characters
         private bool _needLean;
         private bool _almostSingleHook;
         private bool _leanLeft;
-        public override LayerMask GroundMask => PhysicsLayer.GetMask(PhysicsLayer.TitanPushbox, PhysicsLayer.MapObjectEntities, 
+        public override LayerMask GroundMask => PhysicsLayer.GetMask(PhysicsLayer.TitanPushbox, PhysicsLayer.MapObjectEntities,
             PhysicsLayer.MapObjectAll);
 
         // actions
@@ -119,7 +115,7 @@ namespace Characters
 
         public bool CanJump()
         {
-            return (Grounded && (State == HumanState.Idle || State == HumanState.Slide) && 
+            return (Grounded && (State == HumanState.Idle || State == HumanState.Slide) &&
                 !Cache.Animation.IsPlaying(HumanAnimations.Jump) && !Cache.Animation.IsPlaying(HumanAnimations.HorseMount));
         }
 
@@ -193,7 +189,7 @@ namespace Characters
 
         public void Dash(float targetAngle)
         {
-            if (_dashTimeLeft <= 0f && CurrentGas >= MaxGas * 0.04f && MountState == HumanMountState.None && 
+            if (_dashTimeLeft <= 0f && CurrentGas >= MaxGas * 0.04f && MountState == HumanMountState.None &&
                 State != HumanState.Grab && _dashCooldownLeft <= 0f)
             {
                 UseGas(Mathf.Min(MaxGas * 0.04f, 10));
@@ -1511,9 +1507,12 @@ namespace Characters
 
         protected void SetupItems()
         {
-            Items.Add(new FlareItem(this, "Flare1", new Color(0f, 1f, 0f, 0.7f), 10f));
-            Items.Add(new FlareItem(this, "Flare2", new Color(1f, 0f, 0f, 0.7f), 10f));
-            Items.Add(new FlareItem(this, "Flare3", new Color(0f, 0f, 0f, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Green", new Color(0f, 1f, 0f, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Red", new Color(1f, 0f, 0f, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Black", new Color(0f, 0f, 0f, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Purple", new Color(153f / 255, 0f, 204f / 255, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Blue", new Color(0f, 102f / 255, 204f / 255, 0.7f), 10f));
+            Items.Add(new FlareItem(this, "Yellow", new Color(1f, 1f, 0f, 0.7f), 10f));
         }
 
         protected void SetupSpecial()
@@ -1697,7 +1696,7 @@ namespace Characters
         public void OnHookedByHuman(int viewId, PhotonMessageInfo info)
         {
             var human = Util.FindCharacterByViewId(viewId);
-            if (IsMine() && human != null && !Dead && human.Cache.PhotonView.owner == info.sender && 
+            if (IsMine() && human != null && !Dead && human.Cache.PhotonView.owner == info.sender &&
                 State != HumanState.Grab && MountState == HumanMountState.None && human != this)
             {
                 Vector3 direction = human.Cache.Transform.position - Cache.Transform.position;
