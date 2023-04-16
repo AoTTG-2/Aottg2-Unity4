@@ -1,4 +1,5 @@
 # Aottg2-Unity4
+[![Discord](https://img.shields.io/discord/681641241125060652.svg)](https://discord.gg/GhbNbvU)  
 
 ### About
 Aottg2 is the sequel to the original Attack on Titan Tribute Game created by FengLee. This project is currently built in Unity 4, with plans to migrate to modern versions of Unity. For more details, join our discord server: https://discord.gg/GhbNbvU.
@@ -15,7 +16,7 @@ The project is not yet a complete Unity project, with the code and unity assets 
 1. Install git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 2. Install git lfs: https://git-lfs.github.com/
 3. If modifying code, install visual studio: https://visualstudio.microsoft.com/vs/
-4. If modifying unity assets, install Unity 4.7.2: https://unity3d.com/get-unity/download/archive (you will need pro version to build and test asset bundles on your local machine, but this is not necessary to contribute to the project)
+4. If modifying unity assets, install Unity 4.7.2: https://download.unity3d.com/download_unity/UnitySetup-4.7.2.exe (you will need pro version to build and test asset bundles on your local machine, but this is not necessary to contribute to the project)
 
 ### Downloading the project
 1. Open command prompt and [navigate](https://www.howtogeek.com/659411/how-to-change-directories-in-command-prompt-on-windows-10/) to your preferred installation folder
