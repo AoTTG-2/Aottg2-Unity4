@@ -20,6 +20,7 @@ namespace Controllers
 
         protected override void UpdateActionInput(bool inMenu)
         {
+            base.UpdateActionInput(inMenu);
             if (inMenu)
                 return;
             if (_shifter.CanAction())

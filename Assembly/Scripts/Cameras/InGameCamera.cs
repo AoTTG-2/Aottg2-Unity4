@@ -13,6 +13,8 @@ using Characters;
 using System.Linq;
 using System.Collections.Generic;
 using CustomLogic;
+using Projectiles;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Cameras
 {
@@ -136,6 +138,7 @@ namespace Cameras
                 else if (CurrentCameraMode == CameraInputMode.Original)
                     CurrentCameraMode = CameraInputMode.TPS;
             }
+
             float offset = _cameraDistance * (200f - Camera.fieldOfView) / 150f;
             Cache.Transform.position = _follow.GetCameraAnchor().position;
             Cache.Transform.position += Vector3.up * _heightDistance;

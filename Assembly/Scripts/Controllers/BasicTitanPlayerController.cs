@@ -25,6 +25,7 @@ namespace Controllers
 
         protected override void UpdateActionInput(bool inMenu)
         {
+            base.UpdateActionInput(inMenu);
             if (inMenu)
                 return;
             _titan.IsWalk = _titanInput.Walk.GetKey();

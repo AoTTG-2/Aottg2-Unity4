@@ -42,6 +42,22 @@ namespace Controllers
 
         protected virtual void UpdateActionInput(bool inMenu)
         {
+            //Flare Fast Instantiating
+            if (_character.Dead == false)
+            {
+                if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect1.ToString()))
+                {
+                    _character.UseItem(0);
+                }
+                else if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect2.ToString()))
+                {
+                    _character.UseItem(1);
+                }
+                else if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect3.ToString()))
+                {
+                    _character.UseItem(2);
+                }
+            }
         }
 
         protected virtual void UpdateMovementInput(bool inMenu)
