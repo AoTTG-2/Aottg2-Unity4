@@ -140,19 +140,21 @@ namespace Cameras
             }
 
             //Flare Fast Instantiating
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if(_follow.Dead != true) 
             {
-                _follow.UseItem(0);
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    _follow.UseItem(0);
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    _follow.UseItem(1);
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    _follow.UseItem(2);
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                _follow.UseItem(1);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                _follow.UseItem(2);
-            }
-
             float offset = _cameraDistance * (200f - Camera.fieldOfView) / 150f;
             Cache.Transform.position = _follow.GetCameraAnchor().position;
             Cache.Transform.position += Vector3.up * _heightDistance;
