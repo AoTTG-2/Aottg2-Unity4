@@ -767,7 +767,7 @@ namespace CustomLogic
                 else if (right is CustomLogicVector3Builtin)
                     return new CustomLogicVector3Builtin(((CustomLogicVector3Builtin)right).Value * left.UnboxToFloat());
                 else
-                    return left.UnboxToFloat() - right.UnboxToFloat();
+                    return left.UnboxToFloat() * right.UnboxToFloat();
             }
             else if (symbol == CustomLogicSymbol.Divide)
             {
