@@ -139,22 +139,6 @@ namespace Cameras
                     CurrentCameraMode = CameraInputMode.TPS;
             }
 
-            //Flare Fast Instantiating
-            if(_follow.Dead != true) 
-            {
-                if (Input.GetKeyDown(KeyCode.Alpha1))
-                {
-                    _follow.UseItem(0);
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    _follow.UseItem(1);
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha3))
-                {
-                    _follow.UseItem(2);
-                }
-            }
             float offset = _cameraDistance * (200f - Camera.fieldOfView) / 150f;
             Cache.Transform.position = _follow.GetCameraAnchor().position;
             Cache.Transform.position += Vector3.up * _heightDistance;

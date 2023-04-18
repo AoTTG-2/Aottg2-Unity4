@@ -140,6 +140,7 @@ namespace Controllers
 
         protected override void UpdateActionInput(bool inMenu)
         {
+            base.UpdateActionInput(inMenu);
             UpdateHookInput(inMenu);
             UpdateReelInput(inMenu);
             UpdateDashInput(inMenu);
