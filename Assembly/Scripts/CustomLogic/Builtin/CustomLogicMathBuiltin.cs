@@ -64,33 +64,33 @@ namespace CustomLogic
             }
             else if (name == "Sin")
             {
-                float a = parameters[0].UnboxToFloat();
-                return Mathf.Sin(a) * Mathf.Rad2Deg;
+                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
+                return Mathf.Sin(a);
             }
             else if (name == "Cos")
             {
-                float a = parameters[0].UnboxToFloat();
-                return Mathf.Cos(a) * Mathf.Rad2Deg;
+                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
+                return Mathf.Cos(a);
             }
             else if (name == "Tan")
             {
-                float a = parameters[0].UnboxToFloat();
-                return Mathf.Tan(a) * Mathf.Rad2Deg;
+                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
+                return Mathf.Tan(a);
             }
             else if (name == "Asin")
             {
-                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
-                return Mathf.Asin(a);
+                float a = parameters[0].UnboxToFloat();
+                return Mathf.Asin(a) * Mathf.Rad2Deg;
             }
             else if (name == "Acos")
             {
-                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
-                return Mathf.Acos(a);
+                float a = parameters[0].UnboxToFloat();
+                return Mathf.Acos(a) * Mathf.Rad2Deg;
             }
             else if (name == "Atan")
             {
-                float a = parameters[0].UnboxToFloat() * Mathf.Deg2Rad;
-                return Mathf.Atan(a);
+                float a = parameters[0].UnboxToFloat();
+                return Mathf.Atan(a) * Mathf.Rad2Deg;
             }
             else if (name == "Ceil")
             {
