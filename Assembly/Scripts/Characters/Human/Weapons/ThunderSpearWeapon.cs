@@ -64,11 +64,16 @@ namespace Characters
             _delayTimeLeft = Delay;
         }
 
+        public bool HasActiveProjectile()
+        {
+            return Current != null && !Current.Disabled;
+        }
+
         public override void SetInput(bool key)
         {
             if (key)
             {
-                if (Current != null && !Current.Disabled && _delayTimeLeft <= 0f)
+                if (HasActiveProjectile() && _delayTimeLeft <= 0f)
                 {
                     Current.Explode();
                     Current = null;

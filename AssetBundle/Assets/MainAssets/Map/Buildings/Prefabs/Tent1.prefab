@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 485700}
   - 64: {fileID: 6485700}
-  - 33: {fileID: 3385700}
   m_Layer: 23
   m_Name: Tent_Col
   m_TagString: Untagged
@@ -114,13 +113,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185698}
   m_Mesh: {fileID: 4300000, guid: a1c2203e181e10b45ac827ea5c76c366, type: 3}
---- !u!33 &3385700
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 185700}
-  m_Mesh: {fileID: 4300002, guid: a1c2203e181e10b45ac827ea5c76c366, type: 3}
 --- !u!64 &6485700
 MeshCollider:
   m_ObjectHideFlags: 1

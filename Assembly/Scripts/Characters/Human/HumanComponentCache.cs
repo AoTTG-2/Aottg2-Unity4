@@ -18,6 +18,7 @@ namespace Characters
         public ParticleSystem Sparks;
         public ParticleSystem Smoke;
         public ParticleSystem Wind;
+        public Transform WindTransform;
         public Transform HookLeftAnchorDefault;
         public Transform HookRightAnchorDefault;
         public Transform HookLeftAnchorGun;
@@ -41,6 +42,7 @@ namespace Characters
             Smoke.enableEmission = false;
             Sparks.enableEmission = false;
             Wind = Transform.Find("speedFX").GetComponentInChildren<ParticleSystem>();
+            WindTransform = Transform.Find("speedFX");
             Wind.enableEmission = false;
             HERO hero = owner.GetComponent<HERO>();
             HookLeftAnchorDefault = hero.hookRefL1.transform;
@@ -64,7 +66,7 @@ namespace Characters
                 capsule.height = gunInfo["RangeMin"].AsFloat;
                 capsule.center = new Vector3(0f, 0f, capsule.height * 0.5f + 0.5f);
                 GunHit = BaseHitbox.Create(human, obj);
-                LoadAudio("HumanSounds");
+                LoadAudio("HumanSounds", Transform);
             }
         }
     }

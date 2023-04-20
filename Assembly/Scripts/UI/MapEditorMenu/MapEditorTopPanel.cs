@@ -47,7 +47,7 @@ namespace UI
             foreach (string option in new string[] { "New", "Open", "Rename", "Save", "Import", "Export", "LoadPreset", "Quit" })
                 options.Add(UIManager.GetLocaleCommon(option));
             var fileDropdown = ElementFactory.CreateDropdownSelect(group, style, _dropdownSelection, UIManager.GetLocale(cat, "Top", "File"),
-               options.ToArray(), elementWidth: dropdownWidth, optionsWidth: 140f, maxScrollHeight: 500f, onDropdownOptionSelect: () => OnFileClick());
+               options.ToArray(), elementWidth: dropdownWidth, optionsWidth: 180f, maxScrollHeight: 500f, onDropdownOptionSelect: () => OnFileClick());
             _dropdowns.Add(fileDropdown.GetComponent<DropdownSelectElement>());
 
             // edit dropdown
@@ -60,7 +60,7 @@ namespace UI
                     options.Add(UIManager.GetLocale("MapEditorSettings", "Keybinds", option));
             }
             var editDropdown = ElementFactory.CreateDropdownSelect(group, style, _dropdownSelection, UIManager.GetLocaleCommon("Edit"),
-               options.ToArray(), elementWidth: dropdownWidth, optionsWidth: 140f, maxScrollHeight: 500f, onDropdownOptionSelect: () => OnEditClick());
+               options.ToArray(), elementWidth: dropdownWidth, optionsWidth: 180f, maxScrollHeight: 500f, onDropdownOptionSelect: () => OnEditClick());
             _dropdowns.Add(editDropdown.GetComponent<DropdownSelectElement>());
 
             // options dropdown

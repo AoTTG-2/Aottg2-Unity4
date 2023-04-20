@@ -30,8 +30,12 @@ namespace Projectiles
                         character.GetHit("CannonBall", 100, "CannonBall", collision.collider.name);
                     else
                     {
-                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                        character.GetHit(_owner, 100, "CannonBall", collision.collider.name);
+                        var human = (Human)_owner;
+                        int damage = 100;
+                        if (human.CustomDamageEnabled)
+                            damage = human.CustomDamage;
+                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        character.GetHit(_owner, damage, "CannonBall", collision.collider.name);
                     }
                 }
                 EffectSpawner.Spawn(EffectPrefabs.Boom4, transform.position, Quaternion.LookRotation(_velocity), 0.5f);

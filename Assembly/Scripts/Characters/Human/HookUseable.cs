@@ -8,10 +8,13 @@ namespace Characters
     class HookUseable : HoldUseable
     {
         public List<Hook> Hooks = new List<Hook>();
+        public bool HookBoth;
         private Hook _activeHook = null;
+        private bool _left;
 
         public HookUseable(BaseCharacter owner, bool left, bool gun) : base(owner)
         {
+            _left = left;
             for (int i = 0; i < 3; i++)
                 Hooks.Add(Hook.CreateHook((Human)owner, left, i, gun));
         }
@@ -81,6 +84,14 @@ namespace Characters
             {
                 _activeHook = FindAvailableHook();
                 Vector3 target = ((Human)_owner).GetAimPoint();
+                if (HookBoth)
+                {
+                    float distance = Vector3.Distance(SceneLoader.CurrentCamera.Cache.Transform.position, target);
+                    float offset = distance <= 50f ? distance * 0.05f : distance * 0.3f;
+                    if (_left)
+                        offset *= -1f;
+                    target += offset * _owner.Cache.Transform.right;
+                }
                 Vector3 baseVel = (target - _activeHook.Anchor.position).normalized * 3f;
                 Vector3 playerVel = _owner.Cache.Rigidbody.velocity;
                 Vector3 relativeVel = Vector3.zero;

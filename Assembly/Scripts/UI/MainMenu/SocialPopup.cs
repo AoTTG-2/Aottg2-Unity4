@@ -27,9 +27,9 @@ namespace UI
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
             ElementStyle mainStyle = new ElementStyle(themePanel: ThemePanel);
-            if (PastebinLoader.Status == PastebinStatus.Loaded)
+            if (MiscInfo.Social != null)
             {
-                foreach (JSONNode node in PastebinLoader.Social)
+                foreach (JSONNode node in MiscInfo.Social)
                     CreateLink(mainStyle, node["Title"].Value, node["Link"].Value, node["About"].Value);
             }
             else

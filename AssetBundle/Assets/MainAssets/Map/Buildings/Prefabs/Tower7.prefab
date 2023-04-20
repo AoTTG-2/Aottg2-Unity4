@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 495092}
   - 64: {fileID: 6495092}
-  - 33: {fileID: 3395092}
   m_Layer: 23
   m_Name: BellTower_Col
   m_TagString: Untagged
@@ -114,13 +113,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195090}
   m_Mesh: {fileID: 4300002, guid: 8dc6ee838f6d30f41ac62359b45fe94f, type: 3}
---- !u!33 &3395092
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195092}
-  m_Mesh: {fileID: 4300000, guid: 8dc6ee838f6d30f41ac62359b45fe94f, type: 3}
 --- !u!64 &6495092
 MeshCollider:
   m_ObjectHideFlags: 1

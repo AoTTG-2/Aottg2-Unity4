@@ -10,12 +10,14 @@ namespace GameProgress
         public IntSetting Exp = new IntSetting(0);
         public FloatSetting PlayTime = new FloatSetting(0f);
         public FloatSetting HighestSpeed = new FloatSetting(0f, minValue: 0f, maxValue: 10000f);
-        public IntSetting DamageHighestOverall = new IntSetting(0, minValue: 0, maxValue: 10000);
+        public IntSetting DamageHighestOverall = new IntSetting(0, minValue: 0, maxValue: 100000);
         public IntSetting DamageHighestBlade = new IntSetting(0, minValue: 0, maxValue: 10000);
-        public IntSetting DamageHighestGun = new IntSetting(0, minValue: 0, maxValue: 10000);
+        public IntSetting DamageHighestGun = new IntSetting(0, minValue: 0, maxValue: 100000);
+        public IntSetting DamageHighestThunderspear = new IntSetting(0, minValue: 0, maxValue: 100000);
         public IntSetting DamageTotalOverall = new IntSetting(0, minValue: 0);
         public IntSetting DamageTotalBlade = new IntSetting(0, minValue: 0);
         public IntSetting DamageTotalGun = new IntSetting(0, minValue: 0);
+        public IntSetting DamageTotalThunderspear = new IntSetting(0, minValue: 0);
         public IntSetting TitansKilledTotal = new IntSetting(0);
         public IntSetting TitansKilledBlade = new IntSetting(0);
         public IntSetting TitansKilledGun = new IntSetting(0);

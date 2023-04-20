@@ -18,6 +18,7 @@ namespace Settings
         public IntSetting RenderDistance = new IntSetting(1500, minValue: 10, maxValue: 1000000);
         public IntSetting TextureQuality = new IntSetting((int)TextureQualityLevel.High);
         public IntSetting ShadowQuality = new IntSetting((int)ShadowQualityLevel.High);
+        public IntSetting ShadowDistance = new IntSetting(1000, minValue: 0, maxValue: 3000);
         public IntSetting AntiAliasing = new IntSetting((int)AntiAliasingLevel.High);
         public IntSetting AnisotropicFiltering = new IntSetting((int)AnisotropicLevel.Low);
         public IntSetting WeatherEffects = new IntSetting((int)WeatherEffectLevel.High);
@@ -46,6 +47,7 @@ namespace Settings
             QualitySettings.masterTextureLimit = 3 - TextureQuality.Value;
             QualitySettings.antiAliasing = AntiAliasing.Value == 0 ? 0 : (int)Mathf.Pow(2, AntiAliasing.Value);
             QualitySettings.anisotropicFiltering = (AnisotropicFiltering)AnisotropicFiltering.Value;
+            QualitySettings.shadowDistance = ShadowDistance.Value;
             if (SceneLoader.CurrentCamera is InGameCamera)
                 ((InGameCamera)SceneLoader.CurrentCamera).ApplyGraphicsSettings();
             Resolution.Value = FullscreenHandler.SanitizeResolutionSetting(Resolution.Value);
@@ -61,6 +63,7 @@ namespace Settings
                 AntiAliasing.Value = (int)AntiAliasingLevel.Off;
                 AnisotropicFiltering.Value = (int)AnisotropicLevel.Off;
                 WeatherEffects.Value = (int)WeatherEffectLevel.Off;
+                ShadowDistance.Value = 500;
             }
             else if (PresetQuality.Value == (int)PresetQualityLevel.Low)
             {
@@ -69,6 +72,7 @@ namespace Settings
                 AntiAliasing.Value = (int)AntiAliasingLevel.Off;
                 AnisotropicFiltering.Value = (int)AnisotropicLevel.Off;
                 WeatherEffects.Value = (int)WeatherEffectLevel.Low;
+                ShadowDistance.Value = 500;
             }
             else if (PresetQuality.Value == (int)PresetQualityLevel.Medium)
             {
@@ -77,6 +81,7 @@ namespace Settings
                 AntiAliasing.Value = (int)AntiAliasingLevel.Low;
                 AnisotropicFiltering.Value = (int)AnisotropicLevel.Low;
                 WeatherEffects.Value = (int)WeatherEffectLevel.Medium;
+                ShadowDistance.Value = 500;
             }
             else if (PresetQuality.Value == (int)PresetQualityLevel.High)
             {
@@ -85,6 +90,7 @@ namespace Settings
                 AntiAliasing.Value = (int)AntiAliasingLevel.Medium;
                 AnisotropicFiltering.Value = (int)AnisotropicLevel.Low;
                 WeatherEffects.Value = (int)WeatherEffectLevel.High;
+                ShadowDistance.Value = 1000;
             }
             else if (PresetQuality.Value == (int)PresetQualityLevel.VeryHigh)
             {
@@ -93,6 +99,7 @@ namespace Settings
                 AntiAliasing.Value = (int)AntiAliasingLevel.High;
                 AnisotropicFiltering.Value = (int)AnisotropicLevel.Low;
                 WeatherEffects.Value = (int)WeatherEffectLevel.High;
+                ShadowDistance.Value = 1000;
             }
         }
     }

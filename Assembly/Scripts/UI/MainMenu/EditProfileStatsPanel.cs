@@ -34,9 +34,11 @@ namespace UI
             CreateStatLabel(DoublePanelLeft, style, "Highest overall", stat.DamageHighestOverall.Value.ToString());
             CreateStatLabel(DoublePanelLeft, style, "Highest blade", stat.DamageHighestBlade.Value.ToString());
             CreateStatLabel(DoublePanelLeft, style, "Highest gun", stat.DamageHighestGun.Value.ToString());
+            CreateStatLabel(DoublePanelLeft, style, "Highest thunderspear", stat.DamageHighestThunderspear.Value.ToString());
             CreateStatLabel(DoublePanelLeft, style, "Total overall", stat.DamageTotalOverall.Value.ToString());
             CreateStatLabel(DoublePanelLeft, style, "Total blade", stat.DamageTotalBlade.Value.ToString());
             CreateStatLabel(DoublePanelLeft, style, "Total gun", stat.DamageTotalGun.Value.ToString());
+            CreateStatLabel(DoublePanelLeft, style, "Total thunderspear", stat.DamageTotalThunderspear.Value.ToString());
             CreateTitleLabel(DoublePanelRight, style, "Titans Killed");
             CreateStatLabel(DoublePanelRight, style, "Total", stat.TitansKilledTotal.Value.ToString());
             CreateStatLabel(DoublePanelRight, style, "Blade", stat.TitansKilledBlade.Value.ToString());

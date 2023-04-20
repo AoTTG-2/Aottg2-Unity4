@@ -22,12 +22,12 @@
 		"AttackSlapFace": {"Ranges": [{"X": [-4, 4], "Y": [10, 18], "Z": [0, 4]}], "HumanOnly": true},
 		"AttackSlapBack": {"Ranges": [{"X": [-4, 4], "Y": [9, 15], "Z": [-4, 0]}], "HumanOnly": true},
 		"AttackJump": {"Ranges": [{"X": [-6, 6], "Y": [16, 100], "Z": [-2, 100]}], "HumanOnly": true},
-		"AttackCrawlerJump": {"Ranges": [{"X": [-6, 6], "Y": [5, 100], "Z": [0, 100]}], "HumanOnly": true}
+		"AttackCrawlerJump": {"Ranges": [{"X": [-6, 6], "Y": [12, 100], "Z": [0, 100]}], "HumanOnly": true}
 	},
 	"Default": {
 		"Name": "Titan",
 		"IsCrawler": false,
-		"DetectRange": 500,
+		"DetectRange": 200,
 		"FocusRange": 1000,
 		"ReactionTime": 3,
 		"FocusTime": 3,

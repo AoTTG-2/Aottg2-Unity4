@@ -6,7 +6,6 @@ namespace Characters
     class PotatoSpecial : BaseEmoteSpecial
     {
         protected override float ActiveTime => 10f;
-        private const float BuffedSpeed = 30f;
         private float _oldSpeed;
 
         public PotatoSpecial(BaseCharacter owner): base(owner)
@@ -17,7 +16,7 @@ namespace Characters
         protected override void Activate()
         {
             _oldSpeed = _human.RunSpeed;
-            _human.RunSpeed = BuffedSpeed;
+            _human.RunSpeed = _oldSpeed * 4f;
             _human.RunAnimation = HumanAnimations.RunBuffed;
             _human.EmoteAnimation(HumanAnimations.SpecialSasha);
         }

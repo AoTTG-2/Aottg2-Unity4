@@ -26,10 +26,10 @@ namespace Utility
                 Colliders.Add(collider);
         }
 
-        public void LoadAudio(string prefab)
+        public void LoadAudio(string prefab, Transform parent)
         {
             GameObject soundPrefab = AssetBundleManager.InstantiateAsset<GameObject>(prefab);
-            soundPrefab.transform.SetParent(Transform);
+            soundPrefab.transform.SetParent(parent);
             soundPrefab.transform.localPosition = Vector3.zero;
             foreach (var audio in soundPrefab.GetComponentsInChildren<AudioSource>())
                 AudioSources.Add(audio.gameObject.name, audio);

@@ -13,8 +13,6 @@ using Characters;
 using System.Linq;
 using System.Collections.Generic;
 using CustomLogic;
-using Projectiles;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Cameras
 {
@@ -29,7 +27,8 @@ namespace Cameras
         private float _heightDistance;
         private float _anchorDistance;
         private const float DistanceMultiplier = 10f;
-
+        private bool _napeLock;
+        private BaseTitan _napeLockTitan;
 
         public void ApplyGraphicsSettings()
         {
@@ -39,6 +38,8 @@ namespace Cameras
         public void ApplyGeneralSettings()
         {
             _cameraDistance = SettingsManager.GeneralSettings.CameraDistance.Value + 0.3f;
+            if (SettingsManager.GeneralSettings.CameraDistance.Value == 0f)
+                _cameraDistance = 0f;
             CurrentCameraMode = (CameraInputMode)SettingsManager.GeneralSettings.CameraMode.Value;
         }
 
@@ -105,49 +106,96 @@ namespace Cameras
                 Camera.fieldOfView = 50f;
                 Cache.Transform.position = CustomLogicManager.CutsceneCameraPosition;
                 Cache.Transform.rotation = Quaternion.Euler(CustomLogicManager.CutsceneCameraRotation);
-                return;
             }
-            if (_follow != _inGameManager.CurrentCharacter && _inGameManager.CurrentCharacter != null)
-                SetFollow(_inGameManager.CurrentCharacter);
-            if (_follow == null)
-                FindNextSpectate();
-            if (_follow != null)
+            else
             {
-                if (_follow == _inGameManager.CurrentCharacter)
+                if (_follow != _inGameManager.CurrentCharacter && _inGameManager.CurrentCharacter != null)
+                    SetFollow(_inGameManager.CurrentCharacter);
+                if (_follow == null)
+                    FindNextSpectate();
+                if (_follow != null)
                 {
-                    UpdateMain();
+                    if (_follow == _inGameManager.CurrentCharacter)
+                    {
+                        UpdateMain();
+                        if (_follow.Dead)
+                            _menu.SetBottomHUD();
+                    }
+                    else
+                        UpdateSpectate();
+                    UpdateObstacles();
                     if (_follow.Dead)
                         _menu.SetBottomHUD();
                 }
-                else
-                    UpdateSpectate();
-                UpdateObstacles();
-                if (_follow.Dead)
-                    _menu.SetBottomHUD();
             }
             UpdateFOV();
+            UpdateNapeLockImage();
+        }
+
+        private void UpdateNapeLockImage()
+        {
+            if (_follow != null && _follow == _inGameManager.CurrentCharacter && _napeLock && _napeLockTitan != null)
+            {
+                _menu.NapeLock.SetActive(true);
+                Vector3 position = _napeLockTitan.BaseTitanCache.Neck.position - _napeLockTitan.BaseTitanCache.Neck.forward * _napeLockTitan.Size;
+                Vector3 screenPosition = SceneLoader.CurrentCamera.Camera.WorldToScreenPoint(position);
+                _menu.NapeLock.transform.position = screenPosition;
+            }
+            else
+            {
+                _menu.NapeLock.SetActive(false);
+            }
         }
 
         private void UpdateMain()
         {
 
-            if (_input.ChangeCamera.GetKeyDown() && !ChatManager.IsChatActive() && !InGameMenu.InMenu())
+            if (!ChatManager.IsChatActive() && !InGameMenu.InMenu())
             {
-                if (CurrentCameraMode == CameraInputMode.TPS)
-                    CurrentCameraMode = CameraInputMode.Original;
-                else if (CurrentCameraMode == CameraInputMode.Original)
-                    CurrentCameraMode = CameraInputMode.TPS;
+                if (_input.ChangeCamera.GetKeyDown())
+                {
+                    if (CurrentCameraMode == CameraInputMode.TPS)
+                        CurrentCameraMode = CameraInputMode.Original;
+                    else if (CurrentCameraMode == CameraInputMode.Original)
+                        CurrentCameraMode = CameraInputMode.TPS;
+                }
+                if (SettingsManager.InputSettings.Human.NapeLock.GetKeyDown())
+                {
+                    _napeLock = !_napeLock;
+                    if (_napeLock)
+                    {
+                        var titan = GetNearestTitan();
+                        float distance = Vector3.Distance(_follow.Cache.Transform.position, titan.Cache.Transform.position);
+                        if (distance >= 150f)
+                            _napeLock = false;
+                        else
+                            _napeLockTitan = titan;
+                    }
+                }
             }
 
             float offset = _cameraDistance * (200f - Camera.fieldOfView) / 150f;
             Cache.Transform.position = _follow.GetCameraAnchor().position;
             Cache.Transform.position += Vector3.up * _heightDistance;
-            Cache.Transform.position -= Vector3.up * (0.6f - _cameraDistance) * 2f;
+            float height = _cameraDistance == 0f ? 0.8f : _cameraDistance;
+            Cache.Transform.position -= Vector3.up * (0.6f - height) * 2f;
             float sensitivity = SettingsManager.GeneralSettings.MouseSpeed.Value;
             int invertY = SettingsManager.GeneralSettings.InvertMouse.Value ? -1 : 1;
             if (InGameMenu.InMenu())
                 sensitivity = 0f;
-            if (CurrentCameraMode == CameraInputMode.Original)
+            if (_napeLock && (_napeLockTitan != null))
+            {
+                float z = Cache.Transform.eulerAngles.z;
+                Transform neck = _napeLockTitan.BaseTitanCache.Neck;
+                Cache.Transform.LookAt(_follow.GetCameraAnchor().position * 0.8f + neck.position * 0.2f);
+                Cache.Transform.localEulerAngles = new Vector3(Cache.Transform.eulerAngles.x, Cache.Transform.eulerAngles.y, z);
+                Cache.Transform.position -= Cache.Transform.forward * DistanceMultiplier * _anchorDistance * offset;
+                if (_napeLockTitan.Dead)
+                {
+                    _napeLockTitan = null;
+                }
+            }
+            else if (CurrentCameraMode == CameraInputMode.Original)
             {
                 if (Input.mousePosition.x < (Screen.width * 0.4f))
                 {
@@ -159,7 +207,7 @@ namespace Cameras
                     float angle = ((Input.mousePosition.x - (Screen.width * 0.6f)) / Screen.width) * 0.4f * 150f * GetSensitivityDeltaTime(sensitivity);
                     Cache.Transform.RotateAround(Cache.Transform.position, Vector3.up, angle);
                 }
-                float rotationX = 0.5f * (140f * (Screen.height * 0.6f - Input.mousePosition.y)) / Screen.height;
+                float rotationX = 0.5f * (280f * (Screen.height * 0.6f - Input.mousePosition.y)) / Screen.height;
                 Cache.Transform.rotation = Quaternion.Euler(rotationX, Cache.Transform.rotation.eulerAngles.y, Cache.Transform.rotation.eulerAngles.z);
                 Cache.Transform.position -= Cache.Transform.forward * DistanceMultiplier * _anchorDistance * offset;
             }
@@ -223,21 +271,20 @@ namespace Cameras
 
         private void UpdateFOV()
         {
-            if (_follow != null && _follow is Human)
+            if (_follow != null && _follow is Human && _cameraDistance > 0f)
             {
                 float speed = _follow.Cache.Rigidbody.velocity.magnitude;
                 if (speed > 10f)
                 {
-                    Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, Mathf.Min(100f, speed + 40f), 0.1f);
+                    Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, Mathf.Min(100f, speed + 40f), 5f * Time.deltaTime);
                     return;
                 }
                 else
-                    Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, 50f, 0.1f);
+                    Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, 50f, 5f * Time.deltaTime);
             }
             else
-                Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, 50f, 0.1f);
+                Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, 50f, 5f * Time.deltaTime);
         }
-
 
         private void FindNextSpectate()
         {
@@ -264,6 +311,25 @@ namespace Cameras
         private float GetSensitivityDeltaTime(float sensitivity)
         {
             return (sensitivity * Time.deltaTime) * 62f;
+        }
+
+        private BaseTitan GetNearestTitan()
+        {
+            BaseTitan nearestTitan = null;
+            float nearestDistance = Mathf.Infinity;
+            foreach (var character in _inGameManager.GetAllCharacters())
+            {
+                if (character is BaseTitan && !TeamInfo.SameTeam(character, _follow))
+                {
+                    float distance = Vector3.Distance(_follow.Cache.Transform.position, character.Cache.Transform.position);
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearestTitan = (BaseTitan)character;
+                    }
+                }
+            }
+            return nearestTitan;
         }
 
         private List<BaseCharacter> GetSortedCharacters()

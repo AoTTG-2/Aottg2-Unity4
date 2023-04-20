@@ -35,14 +35,19 @@ namespace UI
             RefreshDict();
             var camera = SceneLoader.CurrentCamera;
             bool inMenu = InGameMenu.InMenu() || ((InGameManager)SceneLoader.CurrentGameManager).State == GameState.Loading;
-            bool hideNames = SettingsManager.UISettings.HideNames.Value;
-            bool hideHealth = SettingsManager.UISettings.HideHealthbars.Value;
+            ShowMode showNameMode = (ShowMode)SettingsManager.UISettings.ShowNames.Value;
+            ShowMode showHealthMode = (ShowMode)SettingsManager.UISettings.ShowHealthbars.Value;
+            bool highlyVisible = SettingsManager.UISettings.HighVisibilityNames.Value;
             foreach (KeyValuePair<BaseCharacter, CharacterInfoPopup> kv in _characterInfoPopups)
             {
                 var character = kv.Key;
                 var popup = kv.Value;
-                bool toggleName = !hideNames && !character.AI && !(character is BasicTitan);
-                bool toggleHealth = !hideHealth && character.MaxHealth > 1;
+                bool showName = (showNameMode == ShowMode.All || (showNameMode == ShowMode.Mine && character.IsMainCharacter()) ||
+                    (showNameMode == ShowMode.Others && !character.IsMainCharacter()));
+                bool showHealth = (showHealthMode == ShowMode.All || (showHealthMode == ShowMode.Mine && character.IsMainCharacter()) ||
+                    (showHealthMode == ShowMode.Others && !character.IsMainCharacter()));
+                bool toggleName = showName && !character.AI && !(character is BasicTitan);
+                bool toggleHealth = showHealth && character.MaxHealth > 1;
                 if ((!toggleName && !toggleHealth) || inMenu)
                 {
                     popup.HideImmediate();
@@ -51,7 +56,7 @@ namespace UI
                 Vector3 worldPosition = character.Cache.Transform.position + popup.Offset;
                 float range = popup.Range;
                 float distance = Vector3.Distance(camera.Cache.Transform.position, worldPosition);
-                if (distance > range)
+                if (distance > range && !highlyVisible)
                 {
                     popup.Hide();
                     if (popup.gameObject.activeSelf)
@@ -80,13 +85,21 @@ namespace UI
                 if (toggleName)
                 {
                     popup.ToggleName(true);
-                    popup.SetName(character.Name);
+                    string name = character.Name;
+                    if (character.Guild != "")
+                        name = character.Guild + "\n" + name;
+                    if (highlyVisible)
+                        name = name.ForceWhiteColorTag();
+                    popup.SetName(name);
                 }
                 else
                     popup.ToggleName(false);
                 Vector3 screenPosition = camera.Camera.WorldToScreenPoint(worldPosition);
                 popup.transform.position = screenPosition;
-                popup.Show();
+                if (highlyVisible)
+                    popup.ShowImmediate();
+                else
+                    popup.Show();
             }
         }
 

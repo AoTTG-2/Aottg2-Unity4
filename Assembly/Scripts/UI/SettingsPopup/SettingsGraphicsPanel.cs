@@ -25,7 +25,7 @@ namespace UI
             ElementFactory.CreateDropdownSetting(DoublePanelLeft, style, settings.FullScreenMode, UIManager.GetLocale(cat, sub, "Fullscreen"),
                 UIManager.GetLocaleArray(cat, sub, "FullscreenOptions"), tooltip: UIManager.GetLocale(cat, sub, "FullscreenTooltip"), elementWidth: 160f);
             ElementFactory.CreateDropdownSetting(DoublePanelLeft, style, settings.Resolution, UIManager.GetLocale(cat, sub, "Resolution"),
-                FullscreenHandler.GetResolutionOptions(), elementWidth: 200f);
+                FullscreenHandler.GetResolutionOptions(), elementWidth: 240f);
             ElementFactory.CreateInputSetting(DoublePanelLeft, style, settings.RenderDistance, UIManager.GetLocale(cat, sub, "RenderDistance"), elementWidth: 100f, tooltip: UIManager.GetLocale(cat, sub, "RenderDistanceTooltip"));
             ElementFactory.CreateInputSetting(DoublePanelLeft, style, settings.FPSCap, UIManager.GetLocale(cat, sub, "FPSCap"), elementWidth: 100f);
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.VSync, UIManager.GetLocale(cat, sub, "VSync"));
@@ -36,6 +36,8 @@ namespace UI
                 UIManager.GetLocaleArray(cat, sub, "TextureQualityOptions"), elementWidth: 200f);
             ElementFactory.CreateDropdownSetting(DoublePanelRight, style, settings.ShadowQuality, UIManager.GetLocale(cat, sub, "ShadowQuality"),
                 UIManager.GetLocaleArray(cat, sub, "ShadowQualityOptions"), elementWidth: 200f);
+            ElementFactory.CreateSliderSetting(DoublePanelRight, style, settings.ShadowDistance, UIManager.GetLocale(cat, sub, "ShadowDistance"),
+               elementWidth: 130f);
             ElementFactory.CreateDropdownSetting(DoublePanelRight, style, settings.AntiAliasing, UIManager.GetLocale(cat, sub, "AntiAliasing"),
                UIManager.GetLocaleArray(cat, sub, "AntiAliasingOptions"), elementWidth: 200f);
             ElementFactory.CreateDropdownSetting(DoublePanelRight, style, settings.AnisotropicFiltering, UIManager.GetLocale(cat, sub, "Anisotropic"),

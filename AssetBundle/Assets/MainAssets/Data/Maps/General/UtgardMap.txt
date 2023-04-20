@@ -1,15 +1,12 @@
 /// Options
-EditorVersion:1.0|Author:|Description:Castle Utgard.
+EditorVersion:1.0|Description:Castle Utgard.
 /// Objects
 Scene,Geometry/Cuboid,0,0,1,1,1,0,Unnamed,6.330092E-06,-25,0,0,0,0,200,5,200,Physical,Entities,Default,Basic|255/255/255/255|Nature/Grass6|50/50|0/0,;
 Scene,None,1,0,1,1,1,0,Daylight,0,0,0,53.13011,126.8699,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,Daylight|;
-Scene,Arenas/Utgard1,2,0,1,1,1,0,Utgard1,156.9819,-22,-23.43757,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,;
-Scene,Interact/Supply1,3,0,1,1,1,0,Supply1,51.93851,-0.01415277,-1.008425,0,2,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
-Scene,Interact/Supply1,5,0,1,1,1,0,Supply1,-53.19624,-0.03237347,62.79402,0,272,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
-Scene,Interact/Supply1,6,0,1,1,1,0,Supply1,88.89677,217.5303,-70.68231,0,8.000001,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
-Scene,Geometry/Tube,9,0,1,1,1,0,Tube,78.61359,1.95307,-123.6203,0,0,0,3,1,3,Physical,Entities,Default,Basic|255/255/255/255|Stone/Stone4|1/5|0/0,;
-Scene,Decor/Scaffold7,10,0,1,1,1,0,Scaffold7,104.1027,-1.905926,-109.8341,0,180,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,;
-Scene,Decor/Scaffold2,11,0,1,1,1,0,Scaffold2,88.46176,-0.7101765,-150.75,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,;
+Scene,Arenas/Utgard1,2,0,1,1,1,0,Utgard1,6.822503,0,41.90918,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,;
+Scene,Interact/Supply1,3,0,1,1,1,0,Supply1,51.93851,-0.01415277,-4.668113,0,2,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
+Scene,Interact/Supply1,5,0,1,1,1,0,Supply1,-53.19624,-0.03237347,53.40306,0,272,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
+Scene,Interact/Supply1,6,0,1,1,1,0,Supply1,90.07314,155.7857,-82.20604,0,8.000001,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,SupplyStation|UnlimitedRefills:true|MaxRefills:0;
 Scene,None,35,0,1,1,1,0,Human SpawnPoint,-2.371063,2,29.53702,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,Tag|Name:HumanSpawnPoint;
 Scene,None,36,0,1,1,1,0,Human SpawnPoint,28.48244,2,29.53702,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,Tag|Name:HumanSpawnPoint;
 Scene,None,37,0,1,1,1,0,Human SpawnPoint,-2.371066,2,77.06539,0,0,0,1,1,1,Physical,Entities,Default,Default|255/255/255/255,Tag|Name:HumanSpawnPoint;

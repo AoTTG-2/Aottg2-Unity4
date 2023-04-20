@@ -5,7 +5,7 @@ namespace Characters
 {
     class HumanSpecials
     {
-        public static string[] AnySpecials = new string[] {"Potato", "Escape", "Dance", "Distract", "Stock"};
+        public static string[] AnySpecials = new string[] {"Potato", "Escape", "Dance", "Distract"};
         public static string[] BladeSpecials = new string[] { "DownStrike", "Spin1", "Spin2", "BladeThrow" };
         public static string[] ShifterSpecials = new string[] { "ErenTransform", "AnnieTransform" };
 
@@ -21,7 +21,6 @@ namespace Characters
             }
             if (loadout == HumanLoadout.Thunderspears)
             {
-                names.Remove("Stock");
                 names.Insert(0, "Stock");
             }
             if (includeShifters)

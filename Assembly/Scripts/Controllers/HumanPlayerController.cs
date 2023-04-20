@@ -14,6 +14,7 @@ namespace Controllers
 {
     class HumanPlayerController : BasePlayerController
     {
+        public bool HideCursor;
         protected Human _human;
         protected float _reelOutScrollTimeLeft;
         protected HumanInputSettings _humanInput;
@@ -57,7 +58,7 @@ namespace Controllers
 
         protected override void UpdateMovementInput(bool inMenu)
         {
-            if (inMenu || _human.Dead)
+            if (inMenu || _human.Dead || _human.State == HumanState.Stun)
             {
                 _human.HasDirection = false;
                 return;
@@ -90,7 +91,10 @@ namespace Controllers
                 _human.TargetMagnitude = magnitude;
             }
             else
+            {
                 _character.HasDirection = false;
+                _human.TargetMagnitude = 0f;
+            }
         }
 
         protected override void UpdateUI(bool inMenu)
@@ -122,20 +126,47 @@ namespace Controllers
             }
             CursorManager.SetCrosshairText(str);
             if (magnitude > 120f)
-            {
                 CursorManager.SetCrosshairColor(false);
-            }
             else
-            {
                 CursorManager.SetCrosshairColor(true);
+            if (SettingsManager.UISettings.ShowCrosshairArrows.Value)
+            {
+                Vector3 target = _human.GetAimPoint();
+                float dist = Vector3.Distance(SceneLoader.CurrentCamera.Cache.Transform.position, target);
+                float offset = dist <= 50f ? dist * 0.05f : dist * 0.3f;
+                Vector3 leftTarget = target - offset * _human.Cache.Transform.right;
+                Vector3 rightTarget = target + offset * _human.Cache.Transform.right;
+                var leftPosition = SceneLoader.CurrentCamera.Camera.WorldToScreenPoint(leftTarget);
+                leftPosition.z = 0f;
+                var leftRotation = GetHookArrowRotation(true, leftPosition);
+                CursorManager.SetHookArrow(true, leftPosition, leftRotation, Vector3.Distance(_human.Cache.Transform.position, leftTarget) <= 120f);
+                var rightPosition = SceneLoader.CurrentCamera.Camera.WorldToScreenPoint(rightTarget);
+                rightPosition.z = 0f;
+                var rightRotation = GetHookArrowRotation(false, rightPosition);
+                CursorManager.SetHookArrow(false, rightPosition, rightRotation, Vector3.Distance(_human.Cache.Transform.position, rightTarget) <= 120f);
             }
+        }
+
+        Quaternion GetHookArrowRotation(bool left, Vector3 position)
+        {
+            float x = position.x - Input.mousePosition.x;
+            float y = position.y - Input.mousePosition.y;
+            float z = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
+            return Quaternion.Euler(0, 0, z);
         }
 
         void UpdateHookInput(bool inMenu)
         {
-            bool canHook = _human.State != HumanState.Grab  && _human.State != HumanState.SpecialAttack && _human.CurrentGas > 0f && !inMenu && _human.MountState != HumanMountState.MapObject && !_human.Dead;
-            _human.HookLeft.SetInput(canHook && _humanInput.HookLeft.GetKey());
-            _human.HookRight.SetInput(canHook && _humanInput.HookRight.GetKey());
+            if (inMenu)
+                return;
+            bool canHook = _human.State != HumanState.Grab && _human.State != HumanState.Stun && _human.CurrentGas > 0f 
+                && _human.MountState != HumanMountState.MapObject && !_human.Dead;
+            bool hookBoth = _humanInput.HookBoth.GetKey();
+            bool hasHook = _human.HookLeft.HasHook() || _human.HookRight.HasHook();
+            _human.HookLeft.HookBoth = hookBoth && !_humanInput.HookLeft.GetKey();
+            _human.HookRight.HookBoth = hookBoth && !_humanInput.HookRight.GetKey();
+            _human.HookLeft.SetInput(canHook && _humanInput.HookLeft.GetKey() || (hookBoth && (_human.HookLeft.IsHooked() || !hasHook)));
+            _human.HookRight.SetInput(canHook && _humanInput.HookRight.GetKey() || (hookBoth && (_human.HookRight.IsHooked() || !hasHook)));
         }
 
         protected override void UpdateActionInput(bool inMenu)
@@ -144,18 +175,31 @@ namespace Controllers
             UpdateHookInput(inMenu);
             UpdateReelInput(inMenu);
             UpdateDashInput(inMenu);
+            if (!inMenu)
+            {
+                if (SettingsManager.InputSettings.General.HideCursor.GetKeyDown())
+                    HideCursor = !HideCursor;
+            }
             var states = new HashSet<HumanState>() { HumanState.Grab, HumanState.SpecialAction, HumanState.EmoteAction, HumanState.Reload,
-            HumanState.SpecialAttack};
+            HumanState.SpecialAttack, HumanState.Stun};
             bool canWeapon = _human.MountState == HumanMountState.None && !states.Contains(_human.State) && !inMenu && !_human.Dead;
+            var attackInput = _humanInput.AttackDefault;
+            var specialInput = _humanInput.AttackSpecial;
+            if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value && SettingsManager.AbilitySettings.SwapAttackSpecial.Value)
+            {
+                attackInput = _humanInput.AttackSpecial;
+                specialInput = _humanInput.AttackDefault;
+            }
             if (canWeapon)
             {
-                if (_human.Weapon is AmmoWeapon && ((AmmoWeapon)_human.Weapon).RoundLeft == 0)
+                if (_human.Weapon is AmmoWeapon && ((AmmoWeapon)_human.Weapon).RoundLeft == 0 && 
+                    !(_human.Weapon is ThunderspearWeapon && ((ThunderspearWeapon)_human.Weapon).HasActiveProjectile()))
                 {
-                    if (_humanInput.AttackDefault.GetKeyDown() && _human.State == HumanState.Idle)
+                    if (attackInput.GetKeyDown() && _human.State == HumanState.Idle)
                         _human.Reload();
                 }
                 else
-                    _human.Weapon.ReadInput(_humanInput.AttackDefault);
+                    _human.Weapon.ReadInput(attackInput);
             }
             else
                 _human.Weapon.SetInput(false);
@@ -165,11 +209,11 @@ namespace Controllers
                     (_human.Special is EscapeSpecial || _human.Special is ShifterTransformSpecial || _human.State != HumanState.Grab)
                     && _human.State != HumanState.EmoteAction && _human.State != HumanState.SpecialAttack && !inMenu && !_human.Dead;
                 if (canSpecial)
-                    _human.Special.ReadInput(_humanInput.AttackSpecial);
+                    _human.Special.ReadInput(specialInput);
                 else
                     _human.Special.SetInput(false);
             }
-            if (inMenu || _human.Dead)
+            if (inMenu || _human.Dead || _human.State == HumanState.Stun)
                 return;
             if (_human.MountState == HumanMountState.None)
             {
@@ -221,8 +265,8 @@ namespace Controllers
 
         void UpdateDashInput(bool inMenu)
         {
-            if (!_human.Grounded && (_human.State != HumanState.AirDodge) && _human.MountState == HumanMountState.None && _human.State != HumanState.Grab
-                && _human.State != HumanState.EmoteAction && _human.State != HumanState.SpecialAttack && _human.State != HumanState.SpecialAction
+            if (!_human.Grounded && _human.State != HumanState.AirDodge && _human.MountState == HumanMountState.None && _human.State != HumanState.Grab
+                && _human.State != HumanState.Stun && _human.State != HumanState.EmoteAction && _human.State != HumanState.SpecialAttack && _human.State != HumanState.SpecialAction
                 && !inMenu && !_human.Dead)
             {
                 HumanDashDirection currentDirection = HumanDashDirection.None;

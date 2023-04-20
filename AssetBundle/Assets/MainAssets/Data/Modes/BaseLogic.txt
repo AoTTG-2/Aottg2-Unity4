@@ -277,7 +277,7 @@ component KillRegion
     KillShifters = true;
     KillMessage = "Server";
 
-    function OnCollisionStay(other)
+    function OnCollisionEnter(other)
     {
         if (other.IsCharacter && other.IsMine)
         {
@@ -311,7 +311,7 @@ component DamageRegion
     DamageShifters = true;
     KillMessage = "Server";
 
-    function OnCollisionStay(other)
+    function OnCollisionEnter(other)
     {
         if (other.IsCharacter && other.IsMine)
         {
@@ -391,8 +391,9 @@ component MovePingPong
 component RacingCheckpointRegion
 {
     Refill = true;
+    PlaySound = true;
 
-    function OnCollisionStay(other)
+    function OnCollisionEnter(other)
     {
         if (other.Type == "Human" && other.IsMine)
         {
@@ -400,18 +401,63 @@ component RacingCheckpointRegion
             {
                 other.RefillImmediate();
             }
-            Main._racingRespawnPoint = self.MapObject.Position;
+            if (self.PlaySound)
+            {
+                other.PlaySound("Checkpoint");
+            }
+            other.Player.SpawnPoint = self.MapObject.Position;
         }
     }
 }
 
 component RacingFinishRegion
 {
-    function OnCollisionStay(other)
+    function OnCollisionEnter(other)
     {
         if (other.Type == "Human" && other.IsMine)
         {
             Main.FinishRace(other);
+        }
+    }
+}
+
+component TeleportRegion
+{
+    RelativePosition = false;
+    Position = Vector3(0, 0, 0);
+    TeleportHumans = true;
+    TeleportTitans = true;
+    TeleportShifters = true;
+
+    function Init()
+    {
+        if (self.RelativePosition)
+        {
+            self.Position = self.MapObject.Position + self.Position;
+        }
+    }
+
+    function OnCollisionEnter(other)
+    {
+        if (other.IsCharacter && other.IsMine)
+        {
+            if (other.Type == "Human" && !self.TeleportHumans)
+            {
+                return;
+            }
+            if (other.Type == "Titan" && !self.TeleportTitans)
+            {
+                return;
+            }
+            if (other.Type == "Shifter" && !self.TeleportShifters)
+            {
+                return;
+            }
+            if (other.Team != self.Team && self.Team != "None")
+            {
+                return;
+            }
+            other.Position = self.Position;
         }
     }
 }

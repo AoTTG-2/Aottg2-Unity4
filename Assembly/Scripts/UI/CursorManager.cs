@@ -14,6 +14,7 @@ using GameManagers;
 using Cameras;
 using Characters;
 using CustomLogic;
+using Controllers;
 
 namespace UI
 {
@@ -29,6 +30,12 @@ namespace UI
         private string _crosshairText = string.Empty;
         private bool _forceNextCrosshairUpdate = false;
         private CrosshairStyle _lastCrosshairStyle = CrosshairStyle.Default;
+        private Vector3 _arrowLeftPosition;
+        private Vector3 _arrowRightPosition;
+        private Quaternion _arrowLeftRotation;
+        private Quaternion _arrowRightRotation;
+        private bool _arrowLeftWhite;
+        private bool _arrowRightWhite;
 
         public static void Init()
         {
@@ -60,7 +67,13 @@ namespace UI
                 if (InGameMenu.InMenu() || !manager.IsFinishedLoading())
                     SetPointer();
                 else if (manager.CurrentCharacter != null && manager.CurrentCharacter is Human && !manager.CurrentCharacter.Dead && !CustomLogicManager.Cutscene)
-                    SetCrosshair();
+                {
+                    var controller = manager.CurrentCharacter.GetComponent<HumanPlayerController>();
+                    if (controller != null && !controller.HideCursor)
+                        SetCrosshair();
+                    else
+                        SetHidden();
+                }
                 else
                     SetHidden();
             }
@@ -130,12 +143,63 @@ namespace UI
             _instance._crosshairText = text;
         }
 
+        public static void SetHookArrow(bool left, Vector3 position, Quaternion rotation, bool white)
+        {
+            if (left)
+            {
+                _instance._arrowLeftPosition = position;
+                _instance._arrowLeftWhite = white;
+                _instance._arrowLeftRotation = rotation;
+            }
+            else
+            {
+                _instance._arrowRightPosition = position;
+                _instance._arrowRightWhite = white;
+                _instance._arrowRightRotation = rotation;
+            }
+        }
+
+        public static void UpdateHookArrows(Image hookArrowLeft, Image hookArrowRight)
+        {
+            if (_instance._ready)
+            {
+                if (State != CursorState.Crosshair)
+                {
+                    if (hookArrowLeft.gameObject.activeSelf)
+                        hookArrowLeft.gameObject.SetActive(false);
+                    if (hookArrowRight.gameObject.activeSelf)
+                        hookArrowRight.gameObject.SetActive(false);
+                    return;
+                }
+                if (SettingsManager.UISettings.ShowCrosshairArrows.Value)
+                {
+                    if (!hookArrowLeft.gameObject.activeSelf)
+                        hookArrowLeft.gameObject.SetActive(true);
+                    if (!hookArrowRight.gameObject.activeSelf)
+                        hookArrowRight.gameObject.SetActive(true);
+                    hookArrowLeft.transform.position = _instance._arrowLeftPosition;
+                    hookArrowRight.transform.position = _instance._arrowRightPosition;
+                    hookArrowLeft.transform.rotation = _instance._arrowLeftRotation;
+                    hookArrowRight.transform.rotation = _instance._arrowRightRotation;
+                    hookArrowLeft.color = _instance._arrowLeftWhite ? Color.white : Color.red;
+                    hookArrowRight.color = _instance._arrowRightWhite ? Color.white : Color.red;
+                }
+                else
+                {
+                    if (hookArrowLeft.gameObject.activeSelf)
+                        hookArrowLeft.gameObject.SetActive(false);
+                    if (hookArrowRight.gameObject.activeSelf)
+                        hookArrowRight.gameObject.SetActive(false);
+                }
+            }
+        }
+
         public static void UpdateCrosshair(RawImage crosshairImageWhite, RawImage crosshairImageRed, Text crosshairLabelWhite,
             Text crosshairLabelRed, bool force = false)
         {
             if (_instance._ready)
             {
-                if (State != CursorState.Crosshair) //InGameMenu.HideCrosshair)
+                if (State != CursorState.Crosshair)
                 {
                     if (crosshairImageRed.gameObject.activeSelf)
                         crosshairImageRed.gameObject.SetActive(false);

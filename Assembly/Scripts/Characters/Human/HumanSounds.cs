@@ -26,5 +26,6 @@
         public static string Death3 = "Death3";
         public static string Death4 = "Death4";
         public static string Death5 = "Death5";
+        public static string Checkpoint = "Checkpoint";
     }
 }

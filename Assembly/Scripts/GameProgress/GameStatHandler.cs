@@ -103,7 +103,7 @@ namespace GameProgress
 
         public override void RegisterDamage(GameObject character, GameObject victim, KillWeapon weapon, int damage)
         {
-            if (weapon == KillWeapon.Blade || weapon == KillWeapon.Gun)
+            if (weapon == KillWeapon.Blade || weapon == KillWeapon.Gun || weapon == KillWeapon.Thunderspear)
             {
                 _gameStat.DamageHighestOverall.Value = Math.Max(_gameStat.DamageHighestOverall.Value, damage);
                 _gameStat.DamageTotalOverall.Value += damage;
@@ -116,6 +116,11 @@ namespace GameProgress
                 {
                     _gameStat.DamageHighestGun.Value = Math.Max(_gameStat.DamageHighestGun.Value, damage);
                     _gameStat.DamageTotalGun.Value += damage;
+                }
+                else if (weapon == KillWeapon.Thunderspear)
+                {
+                    _gameStat.DamageHighestThunderspear.Value = Math.Max(_gameStat.DamageHighestThunderspear.Value, damage);
+                    _gameStat.DamageTotalThunderspear.Value += damage;
                 }
             }
         }

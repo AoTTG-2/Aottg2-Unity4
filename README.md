@@ -4,18 +4,19 @@
 ### About
 Aottg2 is the sequel to the original Attack on Titan Tribute Game created by FengLee. This project is currently built in Unity 4, with plans to migrate to modern versions of Unity. For more details, join our discord server: https://discord.gg/GhbNbvU.
 
-Running the game: the current build can be found in the Aottg2 folder. Open the Aottg2.exe file to start the game. Note that this is a
-development build and not a release build.
+The game is not currently available to the public, however you can create a build by cloning the project using git lfs, and following
+the build process below.
 
 Contributing: join our discord server for more details on how to contribute. We accept applicants for a variety of work including programming, 3D modeling, texture and 2D art, sound effects, music, translation, and more.
 
 ### Build process
-The project is not yet a complete Unity project, with the code and unity assets being compiled separately. The Assembly folder contains all scripts, AssetBundle contains all unity assets, and Aottg2 contains the current build. In order to create a build, we first compile the scripts from the Assembly folder into a dll file (Aottg2/Aottg2_Data/Managed/Assembly-CSharp.dll). Next, we compile the unity assets into an assetbundle (Aottg2/Aottg2_Data/MainAssets.Unity3d). Once these two files are replaced, the build is complete.
+The project is not yet a complete Unity project, with the code and unity assets being compiled separately. The Assembly folder contains all scripts, AssetBundle contains all unity assets, and Aottg2 contains the build. In order to create a build, we first compile the scripts from the Assembly folder into a dll file (Aottg2/Aottg2_Data/Managed/Assembly-CSharp.dll). Next, we compile the unity assets into an assetbundle (Aottg2/Aottg2_Data/MainAssets.Unity3d). Once these two files are replaced, the build is complete.
+Typically, only the Assembly-CSharp.dll file needs to be compiled in order to create a build, as MainAssets is already included in the repository.
 
 ### Required installs
 1. Install git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 2. Install git lfs: https://git-lfs.github.com/
-3. If modifying code, install visual studio: https://visualstudio.microsoft.com/vs/
+3. If modifying code, install .NET 3.5: https://www.microsoft.com/en-us/Download/details.aspx?id=25150, and visual studio: https://visualstudio.microsoft.com/vs/
 4. If modifying unity assets, install Unity 4.7.2: https://download.unity3d.com/download_unity/UnitySetup-4.7.2.exe (you will need pro version to build and test asset bundles on your local machine, but this is not necessary to contribute to the project)
 
 ### Downloading the project
@@ -51,8 +52,3 @@ The project is not yet a complete Unity project, with the code and unity assets 
 3. In Unity, right click on the "MainAssets" folder and click "Build asset bundle from selection - Track dependencies"
 4. Save as MainAssets.unity3d to the Aottg2/Aottg2_Data folder, and overwrite the file when prompted.
 5. The Aottg2/Aottg2_Data/MainAssets.unity3d file should now be updated and ready to play
-  
-### Privacy
-1. By default, github exposes your username and github email address when you make commits and push changes.
-2. To block any commits that exposes public email, follow this guide: https://docs.github.com/en/github/setting-up-and-managing-your-github-user-account/managing-email-preferences/blocking-command-line-pushes-that-expose-your-personal-email-address
-3. After this, you need to update your git config email to use a private no-reply one. Follow this guide to do this: https://docs.github.com/en/github/setting-up-and-managing-your-github-user-account/managing-email-preferences/setting-your-commit-email-address

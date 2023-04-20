@@ -27,11 +27,26 @@ namespace CustomLogic
                     bool ignoreEnemies = (bool)parameters[2];
                     Titan.GetComponent<BaseTitanAIController>().MoveTo(position, range, ignoreEnemies);
                 }
+                else if (methodName == "Target")
+                {
+                    if (!Titan.AI)
+                        return null;
+                    var enemy = (CustomLogicCharacterBuiltin)parameters[0];
+                    var focus = parameters[1].UnboxToFloat();
+                    Titan.GetComponent<BaseTitanAIController>().SetEnemy(enemy.Character, focus);
+                }
+                else if (methodName == "Idle")
+                {
+                    if (!Titan.AI)
+                        return null;
+                    var time = parameters[0].UnboxToFloat();
+                    Titan.GetComponent<BaseTitanAIController>().ForceIdle(time);
+                }
                 else if (methodName == "Wander")
                 {
                     if (!Titan.AI)
                         return null;
-                    Titan.GetComponent<BaseTitanAIController>().CancelMoveTo();
+                    Titan.GetComponent<BaseTitanAIController>().CancelOrder();
                 }
                 else if (methodName == "Blind")
                     Titan.Blind();
@@ -56,6 +71,10 @@ namespace CustomLogic
             {
                 if (Titan.IsMine() && Titan.AI)
                     return Titan.GetComponent<BaseTitanAIController>().FocusRange;
+            }
+            if (name == "NapePosition")
+            {
+                return new CustomLogicVector3Builtin(Titan.BasicCache.NapeHurtbox.transform.position);
             }
             return base.GetField(name);
         }

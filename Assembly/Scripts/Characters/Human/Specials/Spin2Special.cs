@@ -31,7 +31,6 @@ namespace Characters
             if (_stage == 0 && time > AnimationLoopStartTime)
             {
                 _human.ActivateBlades();
-                _human.Cache.Rigidbody.AddForce(Vector3.up * 30f, ForceMode.VelocityChange);
                 _human.PlaySound(HumanSounds.BladeSwing);
                 _stage += 1;
             }

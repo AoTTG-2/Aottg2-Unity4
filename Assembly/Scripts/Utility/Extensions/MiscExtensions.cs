@@ -12,7 +12,9 @@ using Utility;
 static class MiscExtensions
 {
     static readonly string HexPattern = @"(\[)[\w]{6}(\])";
+    static readonly string ColorTagPattern = @"(<color=#)[\w]{6}(\>)";
     static readonly Regex HexRegex = new Regex(HexPattern);
+    static readonly Regex ColorTagRegex = new Regex(ColorTagPattern);
 
     public static bool GetActive(this GameObject target)
     {
@@ -55,6 +57,11 @@ static class MiscExtensions
     public static string StripHex(this string text)
     {
         return HexRegex.Replace(text, "");
+    }
+
+    public static string ForceWhiteColorTag(this string text)
+    {
+        return ColorTagRegex.Replace(text, "<color=#FFFFFF>");
     }
 
     public static string HexColor(this string text)

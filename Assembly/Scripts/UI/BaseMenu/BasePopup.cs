@@ -37,6 +37,21 @@ namespace UI
                 StartCoroutine(FadeIn());
         }
 
+        public void ShowImmediate()
+        {
+            if (IsActive)
+                return;
+            IsActive = true;
+            base.Show();
+            if (ShowOnTop)
+                transform.SetAsLastSibling();
+            StopAllCoroutines();
+            if (PopupAnimationType == PopupAnimation.Tween)
+                SetTransformScale(MaxTweenScale);
+            else if (PopupAnimationType == PopupAnimation.Fade)
+                SetTransformAlpha(MaxFadeAlpha);
+        }
+
         protected override void HideAllPopups()
         {
             foreach (BasePopup popup in _popups)

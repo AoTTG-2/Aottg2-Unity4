@@ -18,6 +18,7 @@ namespace ApplicationManagers
     {
         static DebugTesting _instance;
         public static bool DebugColliders = false;
+        public static bool DebugPhase = false;
 
         public static void Init()
         {
@@ -72,6 +73,10 @@ namespace ApplicationManagers
                 case "colliders":
                     DebugColliders = !DebugColliders;
                     Debug.Log("Debug colliders enabled: " + DebugColliders.ToString());
+                    break;
+                case "phase":
+                    DebugPhase = !DebugPhase;
+                    Debug.Log("Debug phase enabled: " + DebugPhase.ToString());
                     break;
                 default:
                     Debug.Log("Invalid debug command.");

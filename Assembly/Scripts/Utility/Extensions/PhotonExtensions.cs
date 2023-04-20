@@ -1,5 +1,7 @@
-﻿using System;
+﻿using GameManagers;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 static class PhotonExtensions
 {
@@ -71,5 +73,18 @@ static class PhotonExtensions
                 return (string)obj;
         }
         return defaultValue;
+    }
+
+    public static bool HasSpawnPoint(this PhotonPlayer player)
+    {
+        var property = player.GetStringProperty(PlayerProperty.SpawnPoint, "null");
+        return property != "null" && property.Contains(",");
+    }
+
+    public static Vector3 GetSpawnPoint(this PhotonPlayer player)
+    {
+        var property = player.GetStringProperty(PlayerProperty.SpawnPoint, "0,0,0");
+        var strArr = property.Split(',');
+        return new Vector3(float.Parse(strArr[0]), float.Parse(strArr[1]), float.Parse(strArr[2]));
     }
 }

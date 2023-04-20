@@ -78,6 +78,7 @@ namespace ApplicationManagers
             HumanSetup.Init();
             BasicTitanSetup.Init();
             CharacterData.Init();
+            MiscInfo.Init();
             SceneLoader.LoadScene(SceneName.MainMenu);
             if (ApplicationConfig.DevelopmentMode)
                 DebugTesting.RunLateTests();
@@ -108,9 +109,9 @@ namespace ApplicationManagers
                 LegacyPopupTemplate popup = new LegacyPopupTemplate(_textureBackgroundDarkBlue, _textureBackgroundBlue, new Color(1f, 1f, 1f, 1f),
                         Screen.width / 2f, Screen.height / 2f, 230f, 140f, 2f);
                 DrawBackgroundIfLoading(_textureBackgroundBlack);
-                if (AssetBundleManager.Status == AssetBundleStatus.Loading)
+                if (AssetBundleManager.Status == AssetBundleStatus.Loading || PastebinLoader.Status == PastebinStatus.Loading)
                 {
-                    popup.DrawPopup("Downloading asset bundle", 190f, 22f);
+                    popup.DrawPopup("Downloading asset bundle", 160f, 22f);
                 }
                 else if (AssetBundleManager.Status == AssetBundleStatus.Failed && !AssetBundleManager.CloseFailureBox)
                 {

@@ -58,6 +58,10 @@ namespace CustomLogic
                 return Human.CurrentGas;
             else if (name == "MaxGas")
                 return Human.MaxGas;
+            else if (name == "Acceleration")
+                return Human.AccelerationStat;
+            else if (name == "RunSpeed")
+                return Human.RunSpeedStat;
             else if (name == "CurrentBladeDurability")
             {
                 if (bladeWeapon != null)
@@ -137,6 +141,10 @@ namespace CustomLogic
                 Human.CurrentGas = Mathf.Min(Human.MaxGas, value.UnboxToFloat());
             else if (name == "MaxGas")
                 Human.MaxGas = value.UnboxToFloat();
+            else if (name == "Acceleration")
+                Human.SetAcceleration(value.UnboxToInt());
+            else if (name == "RunSpeed")
+                Human.SetRunSpeed(value.UnboxToInt());
             else if (name == "CurrentBladeDurability")
             {
                 if (bladeWeapon != null)

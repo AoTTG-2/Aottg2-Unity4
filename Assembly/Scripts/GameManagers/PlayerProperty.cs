@@ -19,6 +19,7 @@ namespace GameManagers
         public static string Deaths = "Deaths";
         public static string HighestDamage = "HighestDamage";
         public static string TotalDamage = "TotalDamage";
+        public static string SpawnPoint = "SpawnPoint";
     }
 
     class PlayerStatus

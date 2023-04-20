@@ -72,9 +72,19 @@ namespace Controllers
             _moveToIgnoreEnemies = ignore;
         }
 
-        public void CancelMoveTo()
+        public void CancelOrder()
         {
             _moveToActive = false;
+            if (AIState == TitanAIState.ForcedIdle)
+                Idle();
+            _enemy = null;
+        }
+
+        public void ForceIdle(float time)
+        {
+            Idle();
+            AIState = TitanAIState.ForcedIdle;
+            _stateTimeLeft = time;
         }
 
         public virtual void Init(JSONNode data)
@@ -146,6 +156,13 @@ namespace Controllers
                 return;
             if (_titan.State != TitanState.Attack && _titan.State != TitanState.Eat)
                 _attackCooldownLeft -= Time.deltaTime;
+            if (AIState == TitanAIState.ForcedIdle)
+            {
+                if (_stateTimeLeft <= 0f)
+                    Idle();
+                else
+                    return;
+            }
             if (_enemy != null)
             {
                 if (_enemy.Dead)
@@ -523,6 +540,7 @@ namespace Controllers
         MoveToPositionDodge,
         Action,
         WaitAttack,
-        DelayAttack
+        DelayAttack,
+        ForcedIdle
     }
 }

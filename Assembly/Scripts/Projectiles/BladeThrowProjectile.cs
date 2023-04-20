@@ -18,6 +18,7 @@ namespace Projectiles
         protected override float DestroyDelay => 1.5f;
         protected XWeaponTrail _trail1;
         protected Transform _blade;
+        public Vector3 InitialPlayerVelocity;
 
         protected override void Awake()
         {
@@ -85,6 +86,7 @@ namespace Projectiles
                 var character = collider.transform.root.gameObject.GetComponent<BaseCharacter>();
                 if (character == null || character == _owner || TeamInfo.SameTeam(character, _team) || character.Dead)
                     continue;
+                var damage = CalculateDamage();
                 if (character is BaseTitan)
                 {
                     var titan = (BaseTitan)character;
@@ -92,10 +94,10 @@ namespace Projectiles
                     position -= _velocity * Time.fixedDeltaTime * 2f;
                     if (collider == titan.BaseTitanCache.NapeHurtbox)
                     {
-                        if (!CheckTitanNapeAngle(position, titan.BaseTitanCache.NapeHurtbox.transform))
+                        if (!CheckTitanNapeAngle(position, titan.BaseTitanCache.Head))
                             continue;
                         if (_owner != null && _owner is Human)
-                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
+                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
                         transform.Find("BladeHitNape").GetComponent<AudioSource>().Play();
                     }
                     if (titan.BaseTitanCache.Hurtboxes.Contains(collider))
@@ -106,16 +108,36 @@ namespace Projectiles
                             if (_owner == null || !(_owner is Human))
                                 titan.GetHit("Blade", 100, "BladeThrow", collider.name);
                             else
-                                titan.GetHit(_owner, 100, "BladeThrow", collider.name);
+                            {
+                                titan.GetHit(_owner, damage, "BladeThrow", collider.name);
+                            }
                         }
                     }
                 }
                 else
                 {
-                    ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                    character.GetHit(_owner, 100, "BladeThrow", collider.name);
+                    if (_owner != null && _owner is Human)
+                    {
+                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        character.GetHit(_owner, damage, "BladeThrow", collider.name);
+                    }
+                    else
+                        character.GetHit("Blade", 100, "BladeThrow", collider.name);
                 }
             }
+        }
+
+        int CalculateDamage()
+        {
+            int damage = Mathf.Max((int)(InitialPlayerVelocity.magnitude * 10f *
+                CharacterData.HumanWeaponInfo["Blade"]["DamageMultiplier"].AsFloat), 10);
+            if (_owner != null && _owner is Human)
+            {
+                var human = (Human)_owner;
+                if (human.CustomDamageEnabled)
+                    return human.CustomDamage;
+            }
+            return damage;
         }
 
         bool CheckTitanNapeAngle(Vector3 position, Transform nape)

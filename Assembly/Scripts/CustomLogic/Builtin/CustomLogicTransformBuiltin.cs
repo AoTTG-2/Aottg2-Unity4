@@ -28,6 +28,23 @@ namespace CustomLogic
                     return new CustomLogicTransformBuiltin(transform);
                 }
             }
+            else if (methodName == "PlayAnimation")
+            {
+                string anim = (string)parameters[0];
+                var animation = Value.GetComponent<Animation>();
+                if (!animation.IsPlaying(anim))
+                    animation.CrossFade(anim, 0.1f);
+            }
+            else if (methodName == "PlaySound")
+            {
+                var sound = Value.GetComponent<AudioSource>();
+                sound.Play();
+            }
+            else if (methodName == "ToggleParticle")
+            {
+                var particle = Value.GetComponent<ParticleSystem>();
+                particle.enableEmission = (bool)parameters[0];
+            }
             return base.CallMethod(methodName, parameters);
         }
 

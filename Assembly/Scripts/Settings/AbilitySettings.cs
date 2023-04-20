@@ -14,6 +14,7 @@ namespace Settings
         public IntSetting BombCooldown = new IntSetting(1, minValue: 0, maxValue: 6);
         public BoolSetting ShowBombColors = new BoolSetting(false);
         public BoolSetting UseOldEffect = new BoolSetting(false);
+        public BoolSetting SwapAttackSpecial = new BoolSetting(false);
 
         protected override bool Validate()
         {

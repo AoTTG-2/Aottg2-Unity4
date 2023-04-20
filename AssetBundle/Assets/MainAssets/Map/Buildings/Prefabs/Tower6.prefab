@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 483662}
   - 64: {fileID: 6483662}
-  - 33: {fileID: 3383662}
   m_Layer: 23
   m_Name: Tower_Col
   m_TagString: Untagged
@@ -114,13 +113,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 183660}
   m_Mesh: {fileID: 4300002, guid: cafcd49caa62ec74bbc1985d440e712d, type: 3}
---- !u!33 &3383662
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 183662}
-  m_Mesh: {fileID: 4300000, guid: cafcd49caa62ec74bbc1985d440e712d, type: 3}
 --- !u!64 &6483662
 MeshCollider:
   m_ObjectHideFlags: 1

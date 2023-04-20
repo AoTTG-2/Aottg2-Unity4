@@ -42,20 +42,16 @@ namespace Controllers
 
         protected virtual void UpdateActionInput(bool inMenu)
         {
-            //Flare Fast Instantiating
-            if (_character.Dead == false)
+            if (!inMenu && !_character.Dead)
             {
-                if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect1.ToString()))
+                for (int i = 0; i < 8; i++)
                 {
-                    _character.UseItem(0);
-                }
-                else if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect2.ToString()))
-                {
-                    _character.UseItem(1);
-                }
-                else if (Input.GetKeyDown(SettingsManager.InputSettings.Interaction.QuickSelect3.ToString()))
-                {
-                    _character.UseItem(2);
+                    string name = "QuickSelect" + (i + 1).ToString();
+                    if (((KeybindSetting)SettingsManager.InputSettings.Interaction.Settings[name]).GetKeyDown())
+                    {
+                        if (i < _character.Items.Count)
+                            _character.UseItem(i);
+                    }
                 }
             }
         }
@@ -109,17 +105,6 @@ namespace Controllers
         protected float GetTargetAngle(int forward, int right)
         {
             return SceneLoader.CurrentCamera.Cache.Transform.rotation.eulerAngles.y + 90f - Mathf.Atan2(forward, right) * Mathf.Rad2Deg;
-        }
-
-        protected Quaternion GetTargetRotation(float angle)
-        {
-            return Quaternion.Euler(0f, angle, 0f);
-        }
-
-        protected Vector3 GetTargetDirection(float angle)
-        {
-            float angleRadians = (90f - angle) * Mathf.Deg2Rad;
-            return new Vector3(Mathf.Cos(angleRadians), 0f, Mathf.Sin(angleRadians)).normalized;
         }
     }
 }

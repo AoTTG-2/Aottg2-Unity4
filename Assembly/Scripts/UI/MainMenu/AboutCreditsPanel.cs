@@ -17,9 +17,9 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 100f, themePanel: ThemePanel, fontSize: 20);
-            if (PastebinLoader.Status == PastebinStatus.Loaded)
+            if (MiscInfo.Credits != null)
             {
-                foreach (JSONNode node in PastebinLoader.Credits)
+                foreach (JSONNode node in MiscInfo.Credits)
                 {
                     ElementFactory.CreateDefaultLabel(SinglePanel, style, node["Category"].Value + ":", FontStyle.Bold, TextAnchor.MiddleLeft);
                     foreach (JSONNode change in node["Names"])

@@ -15,6 +15,11 @@ namespace Settings
             SetDefault();
         }
 
+        public bool ContainsEnter()
+        {
+            return Contains(KeyCode.KeypadEnter) || Contains(KeyCode.Return);
+        }
+
         public override void SetDefault()
         {
             LoadFromStringArray(_defaultKeyStrings);

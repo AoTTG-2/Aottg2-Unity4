@@ -76,7 +76,6 @@ namespace Characters
             {
                 Hitboxes.Add(hitbox);
             }
-            LoadAudio("TitanSounds");
         }
     }
 }

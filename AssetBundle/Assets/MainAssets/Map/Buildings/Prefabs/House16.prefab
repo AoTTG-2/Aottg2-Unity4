@@ -9,7 +9,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 404218}
   - 64: {fileID: 6404218}
-  - 33: {fileID: 3304218}
   m_Layer: 23
   m_Name: House_2_Col
   m_TagString: Untagged
@@ -107,13 +106,6 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &3304218
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 104218}
-  m_Mesh: {fileID: 4300000, guid: 3f885db3a23bb6246863ded4480728ca, type: 3}
 --- !u!33 &3304220
 MeshFilter:
   m_ObjectHideFlags: 1

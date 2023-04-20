@@ -19,7 +19,9 @@ namespace UI
         public EmoteHandler EmoteHandler;
         public ItemHandler ItemHandler;
         public CharacterInfoHandler CharacterInfoHandler;
+        public GameObject NapeLock;
         public ChatPanel ChatPanel;
+        public FeedPanel FeedPanel;
         public BasePopup _settingsPopup;
         public BasePopup _createGamePopup;
         public BasePopup _pausePopup;
@@ -29,7 +31,8 @@ namespace UI
         private TipPanel _tipPanel;
         private LoadingProgressPanel _loadingProgressPanel;
         private InGameBackgroundMenu _backgroundMenu;
-        private KillFeedPopup _killFeedPopup;
+        private KillFeedBigPopup _killFeedBigPopup;
+        private List<KillFeedSmallPopup> _killFeedSmallPopups = new List<KillFeedSmallPopup>();
         private KillScorePopup _killScorePopup;
         private Text _topCenterLabel;
         private Text _topLeftLabel;
@@ -53,7 +56,6 @@ namespace UI
         private List<BasePopup> _allPausePopups = new List<BasePopup>();
         private Dictionary<string, float> _labelTimeLeft = new Dictionary<string, float>();
         private Dictionary<string, bool> _labelHasTimeLeft = new Dictionary<string, bool>();
-        private float _killFeedTimeLeft;
         private float _killScoreTimeLeft;
         private string _middleCenterText;
         private string _bottomRightText;
@@ -72,6 +74,8 @@ namespace UI
             ItemHandler = gameObject.AddComponent<ItemHandler>();
             CharacterInfoHandler = gameObject.AddComponent<CharacterInfoHandler>();
             gameObject.AddComponent<CrosshairHandler>();
+            NapeLock = ElementFactory.InstantiateAndBind(transform, "NapeLockImage");
+            NapeLock.SetActive(false);
             SetupChat();
             SetupMinimap();
             HideAllMenus();
@@ -104,6 +108,12 @@ namespace UI
 
         private void SetupChat()
         {
+            if (SettingsManager.UISettings.FeedConsole.Value && SettingsManager.UISettings.GameFeed.Value)
+            {
+                float height = SettingsManager.UISettings.ChatHeight.Value;
+                FeedPanel = ElementFactory.InstantiateAndSetupPanel<FeedPanel>(transform, "FeedPanel", true).GetComponent<FeedPanel>();
+                ElementFactory.SetAnchor(FeedPanel.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, new Vector2(10f, height + 10f));
+            }
             ChatPanel = ElementFactory.InstantiateAndSetupPanel<ChatPanel>(transform, "ChatPanel", true).GetComponent<ChatPanel>();
             ElementFactory.SetAnchor(ChatPanel.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, new Vector2(10f, 10f));
         }
@@ -125,10 +135,17 @@ namespace UI
             ElementFactory.SetAnchor(_bottomLeftLabel.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, new Vector2(10f, 10f));
             _bottomRightLabel = ElementFactory.CreateHUDLabel(transform, style, "", FontStyle.Normal, TextAnchor.MiddleRight).GetComponent<Text>();
             ElementFactory.SetAnchor(_bottomRightLabel.gameObject, TextAnchor.LowerRight, TextAnchor.LowerRight, new Vector2(-10f, 10f));
-            _killFeedPopup = ElementFactory.CreateDefaultPopup<KillFeedPopup>(transform);
-            ElementFactory.SetAnchor(_killFeedPopup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, -120f));
             _killScorePopup = ElementFactory.CreateDefaultPopup<KillScorePopup>(transform);
             ElementFactory.SetAnchor(_killScorePopup.gameObject, TextAnchor.MiddleCenter, TextAnchor.MiddleCenter, new Vector2(0f, 100f));
+            _killFeedBigPopup = ElementFactory.CreateDefaultPopup<KillFeedBigPopup>(transform);
+            ElementFactory.SetAnchor(_killFeedBigPopup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, -120f));
+            for (int i = 0; i < 4; i++)
+            {
+                float y = -162f - i * 55f;
+                var popup = ElementFactory.CreateDefaultPopup<KillFeedSmallPopup>(transform);
+                ElementFactory.SetAnchor(popup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, y));
+                _killFeedSmallPopups.Add(popup);
+            }
         }
 
         private void SetupLoading()
@@ -242,8 +259,22 @@ namespace UI
 
         public void ShowKillFeed(string killer, string victim, int score)
         {
-            _killFeedPopup.Show(killer, victim, score);
-            _killFeedTimeLeft = 5f;
+            if (_killFeedBigPopup.TimeLeft > 0f)
+            {
+                ShowKillFeedPushSmall(_killFeedBigPopup.Killer, _killFeedBigPopup.Victim, _killFeedBigPopup.Score, 
+                    _killFeedBigPopup.TimeLeft, 0);
+            }
+            _killFeedBigPopup.Show(killer, victim, score);
+        }
+
+        private void ShowKillFeedPushSmall(string killer, string victim, int score, float timeLeft, int index)
+        {
+            if (index >= _killFeedSmallPopups.Count)
+                return;
+            var popup = _killFeedSmallPopups[index];
+            if (popup.TimeLeft > 0f)
+                ShowKillFeedPushSmall(popup.Killer, popup.Victim, popup.Score, popup.TimeLeft, index + 1);
+            popup.ShowImmediate(killer, victim, score, timeLeft);
         }
 
         public void ShowKillScore(int score)
@@ -365,13 +396,27 @@ namespace UI
                 telemetrics = "FPS:" + UIManager.GetFPS().ToString() + "\n";
             if (!PhotonNetwork.offlineMode && SettingsManager.UISettings.ShowPing.Value)
                 telemetrics += "Ping:" + PhotonNetwork.GetPing().ToString() + "\n";
+            if (SettingsManager.UISettings.ShowKDR.Value)
+            {
+                string kills = PhotonNetwork.player.GetIntProperty(PlayerProperty.Kills).ToString();
+                string deaths = PhotonNetwork.player.GetIntProperty(PlayerProperty.Deaths).ToString();
+                string max = PhotonNetwork.player.GetIntProperty(PlayerProperty.HighestDamage).ToString();
+                string total = PhotonNetwork.player.GetIntProperty(PlayerProperty.TotalDamage).ToString();
+                telemetrics += "KDR: " + string.Join(" / ", new string[] { kills, deaths, max, total }) + "\n";
+            }
             _topLeftLabel.text = telemetrics + _topLeftText;
-            _killFeedTimeLeft -= Time.deltaTime;
-            if (_killFeedPopup.IsActive && _killFeedTimeLeft <= 0f)
-                _killFeedPopup.Hide();
+            _killFeedBigPopup.TimeLeft -= Time.deltaTime;
+            if (_killFeedBigPopup.IsActive && _killFeedBigPopup.TimeLeft <= 0f)
+                _killFeedBigPopup.Hide();
             _killScoreTimeLeft -= Time.deltaTime;
-            if (_killScorePopup.IsActive && _killScoreTimeLeft <= 0f)
+            if (_killScoreTimeLeft <= 0f)
                 _killScorePopup.Hide();
+            foreach (var popup in _killFeedSmallPopups)
+            {
+                popup.TimeLeft -= Time.deltaTime;
+                if (popup.IsActive && popup.TimeLeft <= 0f)
+                    popup.Hide();
+            }
         }
 
         private void UpdateHumanSpecial()

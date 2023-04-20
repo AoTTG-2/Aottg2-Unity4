@@ -19,7 +19,10 @@ namespace Characters
         protected virtual Vector3 Gravity => Vector3.down * 20f;
         public virtual List<string> EmoteActions => new List<string>();
         public string Name = "";
+        public string Guild = "";
         public bool Dead;
+        public bool CustomDamageEnabled;
+        public int CustomDamage;
 
         // setup
         public BaseComponentCache Cache;
@@ -54,12 +57,18 @@ namespace Characters
         public virtual void Init(bool ai, string team)
         {
             AI = ai;
-            Team = team;
             if (!ai)
             {
                 Name = PhotonNetwork.player.GetStringProperty(PlayerProperty.Name);
+                Guild = PhotonNetwork.player.GetStringProperty(PlayerProperty.Guild);
             }
-            Cache.PhotonView.RPC("InitRPC", PhotonTargets.AllBuffered, new object[] { AI, Team, Name });
+            Cache.PhotonView.RPC("InitRPC", PhotonTargets.AllBuffered, new object[] { AI, Name, Guild });
+            SetTeam(team);
+        }
+
+        public void SetTeam(string team)
+        {
+            Cache.PhotonView.RPC("SetTeamRPC", PhotonTargets.All, new object[] { team });
         }
 
         public virtual Transform GetCameraAnchor()
@@ -79,11 +88,11 @@ namespace Characters
         }
 
         [RPC]
-        public void InitRPC(bool ai, string team, string name)
+        public void InitRPC(bool ai, string name, string guild)
         {
             AI = ai;
-            Team = team;
             Name = name;
+            Guild = guild;
             if (HasMovement)
                 _movementSync = CreateMovementSync();
         }
@@ -95,6 +104,15 @@ namespace Characters
             {
                 CurrentHealth = currentHealth;
                 MaxHealth = maxHealth;
+            }
+        }
+
+        [RPC]
+        public void SetTeamRPC(string team, PhotonMessageInfo info)
+        {
+            if (info.sender == photonView.owner)
+            {
+                Team = team;
             }
         }
 
@@ -148,6 +166,7 @@ namespace Characters
             if (Cache.PhotonView.isMine)
             {
                 Cache.PhotonView.RPC("SetHealthRPC", player, new object[] { CurrentHealth, MaxHealth });
+                Cache.PhotonView.RPC("SetTeamRPC", player, new object[] { Team });
                 string currentAnimation = GetCurrentAnimation();
                 if (currentAnimation != "")
                     Cache.PhotonView.RPC("PlayAnimationRPC", player, new object[] { currentAnimation, Cache.Animation[currentAnimation].normalizedTime });
@@ -348,7 +367,7 @@ namespace Characters
                     keyword = " damaged ";
                 string feed = ChatManager.GetColorString("(" + Util.FormatFloat(CustomLogicManager.Evaluator.CurrentTime, 2) + ") ", ChatTextColor.System) + name +
                     keyword + Name + " (" + damage.ToString() + ")";
-                ChatManager.AddLine(feed);
+                ChatManager.AddFeed(feed);
             }
         }
 

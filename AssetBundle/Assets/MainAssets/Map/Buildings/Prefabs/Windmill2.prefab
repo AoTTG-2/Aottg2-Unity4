@@ -9,7 +9,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 444696}
   - 64: {fileID: 6444696}
-  - 33: {fileID: 3344696}
   m_Layer: 23
   m_Name: WindMill_Col
   m_TagString: Untagged
@@ -107,13 +106,6 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &3344696
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 144696}
-  m_Mesh: {fileID: 4300002, guid: d51a4fa741c952a458e08063c4661ea7, type: 3}
 --- !u!33 &3344698
 MeshFilter:
   m_ObjectHideFlags: 1

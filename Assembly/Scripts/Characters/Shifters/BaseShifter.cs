@@ -119,6 +119,9 @@ namespace Characters
 
         public override void OnHit(BaseHitbox hitbox, BaseCharacter victim, Collider collider, string type, bool firstHit)
         {
+            int damage = 100;
+            if (CustomDamageEnabled)
+                damage = CustomDamage;
             if (victim is BaseTitan)
             {
                 if (firstHit)
@@ -127,8 +130,8 @@ namespace Characters
                     if (!victim.Dead)
                     {
                         if (IsMainCharacter())
-                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                        victim.GetHit(this, 100, "Stun", collider.name);
+                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        victim.GetHit(this, damage, "Stun", collider.name);
                     }
                 }
             }
@@ -137,8 +140,8 @@ namespace Characters
                 if (!victim.Dead)
                 {
                     if (IsMainCharacter())
-                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                    victim.GetHit(this, 100, type, collider.name);
+                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                    victim.GetHit(this, damage, type, collider.name);
                 }
             }
         }

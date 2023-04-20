@@ -211,6 +211,7 @@ namespace GameManagers
             ChatManager.AddLine("Master client has switched to " + newMasterClient.GetCustomProperty(PlayerProperty.Name) + ".", ChatTextColor.System);
             if (PhotonNetwork.isMasterClient)
             {
+                PhotonNetwork.Instantiate("RCAsset/RPCManagerPrefab", Vector3.zero, Quaternion.identity, 0);
                 RestartGame();
             }
         }
@@ -240,7 +241,9 @@ namespace GameManagers
             var settings = SettingsManager.InGameCharacterSettings;
             var character = settings.CharacterType.Value;
             Vector3 position = Vector3.zero;
-            if (character == PlayerCharacter.Human)
+            if (PhotonNetwork.player.HasSpawnPoint())
+                position = PhotonNetwork.player.GetSpawnPoint();
+            else if (character == PlayerCharacter.Human)
                 position = GetHumanSpawnPoint();
             else
                 position = GetTitanSpawnPoint();
@@ -489,7 +492,7 @@ namespace GameManagers
                 {
                     float timestamp = CustomLogicManager.Evaluator.CurrentTime;
                     string feed = ChatManager.GetColorString("(" + Util.FormatFloat(timestamp, 2) + ")", ChatTextColor.System) + " Round ended.";
-                    ChatManager.AddLine(feed);
+                    ChatManager.AddFeed(feed);
                 }
             }
         }
@@ -517,7 +520,8 @@ namespace GameManagers
                 { PlayerProperty.Kills, 0 },
                 { PlayerProperty.Deaths, 0 },
                 { PlayerProperty.HighestDamage, 0 },
-                { PlayerProperty.TotalDamage, 0 }
+                { PlayerProperty.TotalDamage, 0 },
+                { PlayerProperty.SpawnPoint, "null" }
             };
             PhotonNetwork.player.SetCustomProperties(properties);
         }
@@ -526,17 +530,22 @@ namespace GameManagers
         {
             if (SettingsManager.InGameCurrent.Misc.ClearKDROnRestart.Value)
             {
-                var properties = new Dictionary<string, object>
+                var kdrProperties = new Dictionary<string, object>
                 {
                     { PlayerProperty.Kills, 0 },
                     { PlayerProperty.Deaths, 0 },
                     { PlayerProperty.HighestDamage, 0 },
                     { PlayerProperty.TotalDamage, 0 }
                 };
-                PhotonNetwork.player.SetCustomProperties(properties);
+                PhotonNetwork.player.SetCustomProperties(kdrProperties);
             }
-            PhotonNetwork.player.SetCustomProperty(PlayerProperty.Status, PlayerStatus.Spectating);
-            PhotonNetwork.player.SetCustomProperty(PlayerProperty.CharacterViewId, -1);
+            var properties = new Dictionary<string, object>
+            {
+                { PlayerProperty.Status, PlayerStatus.Spectating },
+                { PlayerProperty.CharacterViewId, -1 },
+                { PlayerProperty.SpawnPoint, "null" }
+            };
+            PhotonNetwork.player.SetCustomProperties(properties);
         }
 
         public static void UpdatePlayerName()
@@ -655,7 +664,7 @@ namespace GameManagers
             {
                 float time = CustomLogicManager.Evaluator.CurrentTime;
                 string feed = ChatManager.GetColorString("(" + Util.FormatFloat(time, 2) + ")", ChatTextColor.System) + " Round started.";
-                ChatManager.AddLine(feed);
+                ChatManager.AddFeed(feed);
             }
         }
 

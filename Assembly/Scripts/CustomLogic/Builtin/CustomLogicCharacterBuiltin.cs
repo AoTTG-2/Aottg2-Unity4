@@ -33,6 +33,18 @@ namespace CustomLogic
                 if (Character.IsMine() && !Character.Dead)
                     Character.Emote(emote);
             }
+            else if (name == "PlayAnimation")
+            {
+                string anim = (string)parameters[0];
+                if (Character.IsMine() && !Character.Dead)
+                    Character.CrossFadeIfNotPlaying(anim, 0.1f);
+            }
+            else if (name == "PlaySound")
+            {
+                string sound = (string)parameters[0];
+                if (Character.IsMine() && !Character.Dead)
+                    Character.PlaySound(sound);
+            }
             return base.CallMethod(name, parameters);
         }
 
@@ -60,6 +72,10 @@ namespace CustomLogic
                 return Character.CurrentHealth;
             else if (name == "MaxHealth")
                 return Character.MaxHealth;
+            else if (name == "CustomDamageEnabled")
+                return Character.CustomDamageEnabled;
+            else if (name == "CustomDamage")
+                return Character.CustomDamage;
             return base.GetField(name);
         }
 
@@ -77,6 +93,12 @@ namespace CustomLogic
                 Character.SetCurrentHealth(value.UnboxToInt());
             else if (name == "MaxHealth")
                 Character.SetMaxHealth(value.UnboxToInt());
+            else if (name == "Team")
+                Character.SetTeam((string)value);
+            else if (name == "CustomDamageEnabled")
+                Character.CustomDamageEnabled = (bool)value;
+            else if (name == "CustomDamage")
+                Character.CustomDamage = value.UnboxToInt();
             else
                 base.SetField(name, value);
         }

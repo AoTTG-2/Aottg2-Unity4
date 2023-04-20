@@ -6,7 +6,8 @@ namespace Characters
     {
         public ShifterComponentCache(GameObject owner): base(owner)
         {
-            LoadAudio("ShifterSounds");
+            LoadAudio("ShifterSounds", Neck);
+            LoadAudio("TitanSounds", Neck);
         }
     }
 }

@@ -26,7 +26,6 @@ GameObject:
   - 4: {fileID: 437658}
   - 33: {fileID: 3337656}
   - 23: {fileID: 2337656}
-  - 64: {fileID: 6437658}
   m_Layer: 23
   m_Name: Brickpile
   m_TagString: Untagged
@@ -127,19 +126,6 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 0
   m_Mesh: {fileID: 4300002, guid: ce2967f429d2b64458ecaff33be716be, type: 3}
---- !u!64 &6437658
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 137658}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 0
-  m_Mesh: {fileID: 4300000, guid: ce2967f429d2b64458ecaff33be716be, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

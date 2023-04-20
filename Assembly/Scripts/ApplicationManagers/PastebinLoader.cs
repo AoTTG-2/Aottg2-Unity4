@@ -14,19 +14,13 @@ namespace ApplicationManagers
     public class PastebinLoader : MonoBehaviour
     {
         public static JSONNode Leaderboard;
-        public static JSONNode Social;
-        public static JSONNode Help;
         public static JSONNode Changelog;
-        public static JSONNode Credits;
         public static PastebinStatus Status = PastebinStatus.Loading;
         static PastebinLoader _instance;
 
         // consts
         static readonly string LeaderboardURL = "https://pastebin.com/raw/zptDi9T6";
-        static readonly string SocialURL = "https://pastebin.com/raw/KJjgGSQs";
-        static readonly string HelpURL = "https://pastebin.com/raw/TH7EepLD";
         static readonly string ChangelogURL = "https://pastebin.com/raw/i8SL3cY1";
-        static readonly string CreditsURL = "https://pastebin.com/raw/xXYc4Gth";
         private static JSONNode[] _nodes;
 
         public static void Init()
@@ -42,7 +36,7 @@ namespace ApplicationManagers
         IEnumerator LoadPastebinCoroutine()
         {
             Status = PastebinStatus.Loading;
-            string[] urls = new string[] { LeaderboardURL, SocialURL, HelpURL, ChangelogURL, CreditsURL };
+            string[] urls = new string[] { LeaderboardURL, ChangelogURL };
             _nodes = new JSONNode[urls.Length];
             for (int i = 0; i < urls.Length; i++)
                 _nodes[i] = null;
@@ -70,11 +64,8 @@ namespace ApplicationManagers
                 }
             }
             Leaderboard = _nodes[0];
-            Social = _nodes[1];
-            Help = _nodes[2];
-            Changelog = _nodes[3];
-            Credits = _nodes[4];
-            if (Leaderboard != null && Social != null && Help != null && Changelog != null && Credits != null)
+            Changelog = _nodes[1];
+            if (Leaderboard != null && Changelog != null)
                 Status = PastebinStatus.Loaded;
             else
                 Status = PastebinStatus.Failed;

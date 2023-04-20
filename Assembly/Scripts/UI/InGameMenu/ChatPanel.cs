@@ -52,11 +52,11 @@ namespace UI
 
         public void OnEndEdit(string text)
         {
-            if (!SettingsManager.InputSettings.General.Chat.GetKeyDown())
+            if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetKeyDown(KeyCode.KeypadEnter))
                 return;
             string input = _inputField.text;
             _inputField.text = "";
-            IgnoreNextActivation = true;
+            IgnoreNextActivation = SettingsManager.InputSettings.General.Chat.ContainsEnter();
             ChatManager.HandleInput(input);
         }
 

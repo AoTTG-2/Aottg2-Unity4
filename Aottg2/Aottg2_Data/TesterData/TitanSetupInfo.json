@@ -1,23 +1,17 @@
 {
 	"HairPrefabs": [
-		"HairAnnie",
 		"HairArmin",
 		"HairBoy1",
 		"HairBoy2",
 		"HairBoy3",
 		"HairEren",
-		"HairGirl1",
 		"HairGirl2",
-		"HairGirl3",
-		"HairGirl4",
-		"HairHanji",
 		"HairJean",
 		"HairLevi",
 		"HairMarco",
 		"HairMikasa",
 		"HairMike",
-		"HairPetra",
-		"HairRico"
+		"HairPetra"
 	],
 	"HairColors": [
 		[35, 18, 11, 255],

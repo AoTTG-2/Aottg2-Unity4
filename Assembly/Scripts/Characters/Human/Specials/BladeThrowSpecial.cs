@@ -52,8 +52,9 @@ namespace Characters
                 position += _human.Cache.Transform.right * 0.5f;
             Vector3 direction = (target - position).normalized;
             float speed = Mathf.Max(Vector3.Dot(velocity, direction), 0f) + Speed;
-            ProjectileSpawner.Spawn(ProjectilePrefabs.BladeThrow, position, Quaternion.LookRotation(direction),
-                                    direction * speed, Vector3.zero, LiveTime, _human.photonView.viewID, "");
+            var projectile = (BladeThrowProjectile)ProjectileSpawner.Spawn(ProjectilePrefabs.BladeThrow, position, 
+                Quaternion.LookRotation(direction), direction * speed, Vector3.zero, LiveTime, _human.photonView.viewID, "");
+            projectile.InitialPlayerVelocity = _owner.Cache.Rigidbody.velocity;
         } 
     }
 }

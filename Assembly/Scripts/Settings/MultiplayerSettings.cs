@@ -39,11 +39,9 @@ namespace Settings
             string address;
             if (AppIdMode.Value == (int)AppIdModeType.Public)
             {
-                /*
-                address = PublicAddresses[region];
-                CurrentMultiplayerServerType = MultiplayerServerType.Public;
-                PhotonNetwork.ConnectToMaster(address, DefaultPort, string.Empty, GetCurrentLobby());
-                */
+                //address = PublicAddresses[region];
+                //CurrentMultiplayerServerType = MultiplayerServerType.Public;
+                //PhotonNetwork.ConnectToMaster(address, DefaultPort, string.Empty, GetCurrentLobby());
                 address = CloudAddresses[region];
                 CurrentMultiplayerServerType = MultiplayerServerType.Cloud;
                 PhotonNetwork.ConnectToMaster(address, DefaultPort, PublicAppId, GetCurrentLobby());

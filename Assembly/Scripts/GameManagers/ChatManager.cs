@@ -15,6 +15,7 @@ namespace GameManagers
     {
         private static ChatManager _instance;
         public static List<string> Lines = new List<string>();
+        public static List<string> FeedLines = new List<string>();
         private static readonly int MaxLines = 30;
         public static Dictionary<ChatTextColor, string> ColorTags = new Dictionary<ChatTextColor, string>();
 
@@ -26,13 +27,18 @@ namespace GameManagers
         public static void Reset()
         {
             Lines.Clear();
+            FeedLines.Clear();
             LoadTheme();
         }
 
         public static void Clear()
         {
             Lines.Clear();
+            FeedLines.Clear();
             GetChatPanel().Sync();
+            var feedPanel = GetFeedPanel();
+            if (feedPanel != null)
+                feedPanel.Sync();
         }
 
         public static bool IsChatActive()
@@ -82,7 +88,26 @@ namespace GameManagers
             if (Lines.Count > MaxLines)
                 Lines.RemoveAt(0);
             if (IsChatAvailable())
+            {
                 GetChatPanel().AddLine(line);
+            }
+        }
+
+        public static void AddFeed(string line)
+        {
+            if (!IsChatAvailable())
+                return;
+            var feed = GetFeedPanel();
+            if (feed == null)
+            {
+                AddLine(line);
+                return;
+            }
+            line = line.FilterSizeTag();
+            FeedLines.Add(line);
+            if (FeedLines.Count > MaxLines)
+                FeedLines.RemoveAt(0);
+            feed.AddLine(line);
         }
 
         protected static void LoadTheme()
@@ -276,6 +301,11 @@ namespace GameManagers
             return ((InGameMenu)UIManager.CurrentMenu).ChatPanel;
         }
 
+        private static FeedPanel GetFeedPanel()
+        {
+            return ((InGameMenu)UIManager.CurrentMenu).FeedPanel;
+        }
+
         public static string GetIDString(int id, bool includeMC = false)
         {
             string str = "[" + id.ToString() + "] ";
@@ -297,7 +327,7 @@ namespace GameManagers
             {
                 var chatPanel = GetChatPanel();
                 var key = SettingsManager.InputSettings.General.Chat;
-                if (key.GetKeyUp())
+                if (key.GetKeyDown())
                 {
                     if (chatPanel.IgnoreNextActivation)
                         chatPanel.IgnoreNextActivation = false;

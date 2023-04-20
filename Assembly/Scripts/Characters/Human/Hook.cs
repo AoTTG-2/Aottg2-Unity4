@@ -245,7 +245,10 @@ namespace Characters
                         GameObject obj = finalHit.collider.gameObject;
                         if (obj.layer == PhysicsLayer.Human || obj.layer == PhysicsLayer.TitanPushbox)
                         {
-                            SetHooked(finalHit.point, obj.transform, obj.transform.root.gameObject.GetPhotonView().viewID);
+                            Vector3 point = finalHit.point;
+                            if (obj.layer == PhysicsLayer.Human)
+                                point = obj.transform.position + Vector3.up * 0.8f;
+                            SetHooked(point, obj.transform, obj.transform.root.gameObject.GetPhotonView().viewID);
                             return;
                         }
                         else if (obj.layer == PhysicsLayer.EntityDetection)

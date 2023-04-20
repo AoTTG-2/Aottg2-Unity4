@@ -1013,7 +1013,10 @@ namespace Characters
             {
                 if (HoldHuman != null)
                 {
-                    HoldHuman.GetHit(this, 100, "Eat", "");
+                    int damage = 100;
+                    if (CustomDamageEnabled)
+                        damage = CustomDamage;
+                    HoldHuman.GetHit(this, damage, "Eat", "");
                     HoldHuman = null;
                 }
             }
@@ -1021,6 +1024,9 @@ namespace Characters
 
         public override void OnHit(BaseHitbox hitbox, BaseCharacter victim, Collider collider, string type, bool firstHit)
         {
+            int damage = 100;
+            if (CustomDamageEnabled)
+                damage = CustomDamage;
             if (State == TitanState.Attack && _currentAttack == BasicTitanAttacks.AttackGrab && victim is Human)
             {
                 if (HoldHuman == null && firstHit && !victim.Dead)
@@ -1040,8 +1046,8 @@ namespace Characters
                     if (!victim.Dead)
                     {
                         if (IsMainCharacter())
-                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                        victim.GetHit(this, 100, "Stun", collider.name);
+                            ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        victim.GetHit(this, damage, "Stun", collider.name);
                     }
                 }
             }
@@ -1050,8 +1056,8 @@ namespace Characters
                 if (!victim.Dead)
                 {
                     if (IsMainCharacter())
-                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(100);
-                    victim.GetHit(this, 100, "", collider.name);
+                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                    victim.GetHit(this, damage, "", collider.name);
                 }
             }
         }

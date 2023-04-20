@@ -78,6 +78,12 @@ namespace CustomLogic
                 return Player.GetIntProperty(PlayerProperty.HighestDamage);
             else if (name == "TotalDamage")
                 return Player.GetIntProperty(PlayerProperty.TotalDamage);
+            else if (name == "SpawnPoint")
+            {
+                if (Player.HasSpawnPoint())
+                    return new CustomLogicVector3Builtin(Player.GetSpawnPoint());
+                return null;
+            }
             return base.GetField(name);
         }
 
@@ -93,6 +99,17 @@ namespace CustomLogic
                 Player.SetCustomProperty(PlayerProperty.HighestDamage, (int)value);
             else if (name == "TotalDamage")
                 Player.SetCustomProperty(PlayerProperty.TotalDamage, (int)value);
+            else if (name == "SpawnPoint")
+            {
+                if (value == null)
+                    Player.SetCustomProperty(PlayerProperty.SpawnPoint, "null");
+                else
+                {
+                    Vector3 vector = ((CustomLogicVector3Builtin)value).Value;
+                    string str = string.Join(",", new string[] { vector.x.ToString(), vector.y.ToString(), vector.z.ToString() });
+                    Player.SetCustomProperty(PlayerProperty.SpawnPoint, str);
+                }
+            }
             base.SetField(name, value);
         }
 

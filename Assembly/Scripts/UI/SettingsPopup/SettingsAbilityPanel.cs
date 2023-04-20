@@ -15,14 +15,16 @@ namespace UI
             string sub = "Ability";
             AbilitySettings settings = SettingsManager.AbilitySettings;
             ElementStyle style = new ElementStyle(titleWidth: 200f, themePanel: ThemePanel);
-            ElementFactory.CreateColorSetting(DoublePanelRight, style, settings.BombColor, "Bomb color", UIManager.CurrentMenu.ColorPickPopup);
-            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.ShowBombColors, "Show bomb colors");
-            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.UseOldEffect, "Use old effect");
-            _pointsLeftLabel = ElementFactory.CreateDefaultLabel(DoublePanelLeft, style, "Points Left").GetComponent<Text>();
-            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRadius, "Bomb radius (0-10)", onValueChanged: () => OnStatChanged(settings.BombRadius));
-            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRange, "Bomb range (0-3)", onValueChanged: () => OnStatChanged(settings.BombRange));
-            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombSpeed, "Bomb speed (0-10)", onValueChanged: () => OnStatChanged(settings.BombSpeed));
-            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombCooldown, "Bomb cooldown (0-6)", onValueChanged: () => OnStatChanged(settings.BombCooldown));
+            ElementFactory.CreateColorSetting(DoublePanelRight, style, settings.BombColor, UIManager.GetLocale(cat, sub, "BombColor"), UIManager.CurrentMenu.ColorPickPopup);
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.ShowBombColors, UIManager.GetLocale(cat, sub, "ShowBombColors"));
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.UseOldEffect, UIManager.GetLocale(cat, sub, "UseOldEffect"));
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.SwapAttackSpecial, UIManager.GetLocale(cat, sub, "SwapAttackSpecial"), tooltip:
+                UIManager.GetLocale(cat, sub, "SwapAttackSpecialTooltip"));
+            _pointsLeftLabel = ElementFactory.CreateDefaultLabel(DoublePanelLeft, style, UIManager.GetLocale(cat, sub, "PointsLeft")).GetComponent<Text>();
+            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRadius, UIManager.GetLocale(cat, sub, "BombRadius") + " (0-10)", onValueChanged: () => OnStatChanged(settings.BombRadius));
+            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRange, UIManager.GetLocale(cat, sub, "BombRange") + " (0-3)", onValueChanged: () => OnStatChanged(settings.BombRange));
+            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombSpeed, UIManager.GetLocale(cat, sub, "BombSpeed") + " (0-10)", onValueChanged: () => OnStatChanged(settings.BombSpeed));
+            ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombCooldown, UIManager.GetLocale(cat, sub, "BombCooldown") + " (0-6)", onValueChanged: () => OnStatChanged(settings.BombCooldown));
             OnStatChanged(settings.BombRadius);
         }
 
@@ -45,7 +47,7 @@ namespace UI
                 SyncSettingElements();
             }
             currentTotal = settings.BombRadius.Value + settings.BombRange.Value + settings.BombSpeed.Value + settings.BombCooldown.Value;
-            _pointsLeftLabel.text = "Points left: " + Math.Max(0, maxPoints - currentTotal).ToString();
+            _pointsLeftLabel.text = UIManager.GetLocale("SettingsPopup", "Ability", "PointsLeft") + ": " + Math.Max(0, maxPoints - currentTotal).ToString();
         }
     }
 }

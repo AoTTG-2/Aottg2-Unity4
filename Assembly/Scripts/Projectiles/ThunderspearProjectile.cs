@@ -17,11 +17,15 @@ namespace Projectiles
         Color _color;
         float _radius;
         public Vector3 InitialPlayerVelocity;
+        Vector3 _lastPosition;
+        LayerMask _collideMask = PhysicsLayer.GetMask(PhysicsLayer.MapObjectAll, PhysicsLayer.MapObjectEntities, PhysicsLayer.MapObjectProjectiles,
+            PhysicsLayer.TitanPushbox);
 
         protected override void SetupSettings(object[] settings)
         {
             _radius = (float)settings[0];
             _color = (Color)settings[1];
+            _lastPosition = transform.position;
         }
 
         protected override void RegisterObjects()
@@ -42,29 +46,28 @@ namespace Projectiles
         {
             if (photonView.isMine && !Disabled)
             {
-                transform.position = collision.contacts[0].point;
-                Explode(true);
+                rigidbody.velocity = rigidbody.velocity.normalized * _velocity.magnitude * 0.2f;
             }
         }
 
         protected override void OnExceedLiveTime()
         {
-            Explode(false);
+            Explode();
         }
 
-        public void Explode(bool impact = false)
+        public void Explode()
         {
             if (!Disabled)
             {
                 EffectSpawner.Spawn(EffectPrefabs.ThunderspearExplode, transform.position, transform.rotation, _radius * 2f, true,
                     new object[] { _color });
                 KillPlayersInRadius(_radius);
-                KillTitansInRadius(_radius, impact);
+                KillTitansInRadius(_radius);
                 DestroySelf();
             }
         }
 
-        void KillTitansInRadius(float radius, bool impact)
+        void KillTitansInRadius(float radius)
         {
             var position = transform.position;
             var colliders = Physics.OverlapSphere(position, radius, PhysicsLayer.GetMask(PhysicsLayer.Hurtbox));
@@ -73,9 +76,7 @@ namespace Projectiles
                 var titan = collider.transform.root.gameObject.GetComponent<BaseTitan>();
                 if (titan != null && titan != _owner && !TeamInfo.SameTeam(titan, _team) && !titan.Dead)
                 {
-                    if (impact)
-                        position -= _velocity * Time.fixedDeltaTime * 2f;
-                    if (collider == titan.BaseTitanCache.NapeHurtbox && CheckTitanNapeAngle(position, titan.BaseTitanCache.NapeHurtbox.transform))
+                    if (collider == titan.BaseTitanCache.NapeHurtbox && CheckTitanNapeAngle(position, titan.BaseTitanCache.Head))
                     {
                         if (_owner == null || !(_owner is Human))
                             titan.GetHit("Thunderspear", 100, "Thunderspear", collider.name);
@@ -112,6 +113,12 @@ namespace Projectiles
         {
             int damage = Mathf.Max((int)(InitialPlayerVelocity.magnitude * 10f * 
                 CharacterData.HumanWeaponInfo["Thunderspear"]["DamageMultiplier"].AsFloat), 10);
+            if (_owner != null && _owner is Human)
+            {
+                var human = (Human)_owner;
+                if (human.CustomDamageEnabled)
+                    return human.CustomDamage;
+            }
             return damage;
         }
 
@@ -119,6 +126,30 @@ namespace Projectiles
         {
             Vector3 direction = (position - nape.position).normalized;
             return Vector3.Angle(-nape.forward, direction) < CharacterData.HumanWeaponInfo["Thunderspear"]["RestrictAngle"].AsFloat;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (_photonView.isMine)
+            {
+                if (rigidbody.velocity.magnitude > 0f)
+                    transform.rotation = Quaternion.LookRotation(rigidbody.velocity);
+            }
+        }
+
+        protected void FixedUpdate()
+        {
+            if (_photonView.isMine)
+            {
+                RaycastHit hit;
+                Vector3 direction = (transform.position - _lastPosition);
+                if (Physics.SphereCast(_lastPosition, 0.5f, direction.normalized, out hit, direction.magnitude, _collideMask))
+                {
+                    transform.position = hit.point;
+                }
+                _lastPosition = transform.position;
+            }
         }
     }
 }

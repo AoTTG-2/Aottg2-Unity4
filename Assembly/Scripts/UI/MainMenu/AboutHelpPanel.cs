@@ -16,9 +16,9 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 100f, themePanel: ThemePanel);
-            if (PastebinLoader.Status == PastebinStatus.Loaded)
+            if (MiscInfo.Help != null)
             {
-                foreach (JSONNode node in PastebinLoader.Help)
+                foreach (JSONNode node in MiscInfo.Help)
                 {
                     CreateLink(style, node["Title"].Value, node["Link"].Value);
                 }

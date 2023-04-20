@@ -39,6 +39,7 @@ namespace Characters
                 }
             }
             SetupParticles();
+            LoadAudio("TitanSounds", Neck);
         }
 
         private void SetupParticles()

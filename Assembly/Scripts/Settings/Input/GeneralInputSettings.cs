@@ -15,7 +15,7 @@ namespace Settings
         public KeybindSetting ToggleScoreboard = new KeybindSetting(new string[] { "Tab", "None" });
         public KeybindSetting Chat = new KeybindSetting(new string[] { "Return", "None" });
         public KeybindSetting ChangeCamera = new KeybindSetting(new string[] { "C", "None" });
-        //public KeybindSetting HideUI = new KeybindSetting(new string[] { "X", "None" });
+        public KeybindSetting HideCursor = new KeybindSetting(new string[] { "X", "None" });
         //public KeybindSetting MinimapMaximize = new KeybindSetting(new string[] { "M", "None" });
         public KeybindSetting SpectatePreviousPlayer = new KeybindSetting(new string[] { "1", "None" });
         public KeybindSetting SpectateNextPlayer = new KeybindSetting(new string[] { "2", "None" });
