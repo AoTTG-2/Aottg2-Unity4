@@ -21,7 +21,7 @@ namespace ApplicationManagers
         public const string GameVersion = "4/07/2023";
 
         // must be manually updated every compatibility-breaking update
-        public const string LobbyVersion = "03252023";
+        public const string LobbyVersion = "04202023";
 
         public static void Init()
         {
