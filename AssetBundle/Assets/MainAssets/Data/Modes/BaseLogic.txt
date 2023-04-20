@@ -453,10 +453,6 @@ component TeleportRegion
             {
                 return;
             }
-            if (other.Team != self.Team && self.Team != "None")
-            {
-                return;
-            }
             other.Position = self.Position;
         }
     }
