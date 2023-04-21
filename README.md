@@ -11,7 +11,8 @@ Contributing: join our discord server for more details on how to contribute. We 
 
 ### Build process
 The project is not yet a complete Unity project, with the code and unity assets being compiled separately. The Assembly folder contains all scripts, AssetBundle contains all unity assets, and Aottg2 contains the build. In order to create a build, we first compile the scripts from the Assembly folder into a dll file (Aottg2/Aottg2_Data/Managed/Assembly-CSharp.dll). Next, we compile the unity assets into an assetbundle (Aottg2/Aottg2_Data/MainAssets.Unity3d). Once these two files are replaced, the build is complete.
-Typically, only the Assembly-CSharp.dll file needs to be compiled in order to create a build, as MainAssets is already included in the repository.
+If you do not have access to Unity pro in order to build the MainAssets file, you can instead copy an existing one from a released build
+to your Aottg2/Aottg2_Data folder.
 
 ### Required installs
 1. Install git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
