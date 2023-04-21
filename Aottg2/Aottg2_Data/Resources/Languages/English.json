@@ -356,7 +356,7 @@
 		"Ability.BombSpeed": "Bomb speed",
 		"Ability.BombCooldown": "Bomb cooldown",
 		"Ability.SwapAttackSpecial": "Swap attack/special",
-		"Ability.SwapAttackSpecialTooltip": "Swap attack and special keys during thunderspear PVP.",
+		"Ability.SwapAttackSpecialTooltip": "Swap attack and special keys during thunderspear PVP."
 	},
 	"ScoreboardPopup": {
 		"Top.ScoreboardButton": "Scoreboard",
