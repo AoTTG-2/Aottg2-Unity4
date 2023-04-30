@@ -274,31 +274,34 @@ namespace Characters
         public void TransformShifter(string shifter, float liveTime)
         {
             _inGameManager.SpawnPlayerShifterAt(shifter, liveTime, Cache.Transform.position);
-            ((BaseShifter)_inGameManager.CurrentCharacter).previousHuman = this;
+            ((BaseShifter)_inGameManager.CurrentCharacter).PreviousHumanGas = CurrentGas;
+            ((BaseShifter)_inGameManager.CurrentCharacter).PreviousHumanWeapon = Weapon;
             PhotonNetwork.Destroy(gameObject);
         }
 
-        public IEnumerator WaitAndTransformFromShifter(Human previousHuman)
+        public IEnumerator WaitAndTransformFromShifter(float previousHumanGas, BaseUseable previousHumanWeapon)
         {
             while (!FinishSetup)
             {
                 yield return null;
             }
-            this.CurrentGas = previousHuman.CurrentGas;
-            if (this.Weapon is BladeWeapon)
+            CurrentGas = previousHumanGas;
+            if (previousHumanWeapon is BladeWeapon)
             {
-                ((BladeWeapon)this.Weapon).BladesLeft = ((BladeWeapon)previousHuman.Weapon).BladesLeft;
-                ((BladeWeapon)this.Weapon).CurrentDurability = ((BladeWeapon)previousHuman.Weapon).CurrentDurability;
+                ((BladeWeapon)Weapon).BladesLeft = ((BladeWeapon)previousHumanWeapon).BladesLeft;
+                ((BladeWeapon)Weapon).CurrentDurability = ((BladeWeapon)previousHumanWeapon).CurrentDurability;
+                if (((BladeWeapon)Weapon).CurrentDurability == 0)
+                {
+                    Setup._part_blade_l.SetActive(false);
+                    Setup._part_blade_r.SetActive(false);
+                }
             }
-            else if (this.Weapon is GunWeapon)
+            else if (previousHumanWeapon is AmmoWeapon)
             {
-                ((GunWeapon)this.Weapon).RoundLeft = ((GunWeapon)previousHuman.Weapon).RoundLeft;
-                ((GunWeapon)this.Weapon).AmmoLeft = ((GunWeapon)previousHuman.Weapon).AmmoLeft;
-            }
-            else if (this.Weapon is ThunderspearWeapon)
-            {
-                ((ThunderspearWeapon)this.Weapon).RoundLeft = ((ThunderspearWeapon)previousHuman.Weapon).RoundLeft;
-                ((ThunderspearWeapon)this.Weapon).AmmoLeft = ((ThunderspearWeapon)previousHuman.Weapon).AmmoLeft;
+                ((AmmoWeapon)Weapon).RoundLeft = ((AmmoWeapon)previousHumanWeapon).RoundLeft;
+                ((AmmoWeapon)Weapon).AmmoLeft = ((AmmoWeapon)previousHumanWeapon).AmmoLeft;
+                if (((AmmoWeapon)Weapon).RoundLeft == 0 && Weapon is ThunderspearWeapon)
+                    SetThunderspears(false, false);
             }
         }
 

@@ -24,7 +24,8 @@ namespace Characters
         public override float CrippleTime => 3.5f;
         protected bool _needRoar = true;
         public bool TransformingToHuman;
-        public Human previousHuman;
+        public float PreviousHumanGas;
+        public BaseUseable PreviousHumanWeapon;
 
         protected override void Start()
         {
@@ -75,7 +76,7 @@ namespace Characters
             StartCoroutine(WaitAndDie());
             yield return new WaitForSeconds(2f);
             _inGameManager.SpawnPlayerAt(false, BaseTitanCache.Neck.position);
-            StartCoroutine((_inGameManager.CurrentCharacter as Human).WaitAndTransformFromShifter(previousHuman));
+            StartCoroutine(((Human)_inGameManager.CurrentCharacter).WaitAndTransformFromShifter(PreviousHumanGas, PreviousHumanWeapon));
         }
 
         protected override void Awake()
