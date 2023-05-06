@@ -4,6 +4,7 @@ using Weather;
 using UI;
 using Utility;
 using CustomSkins;
+using CustomLogic;
 using ApplicationManagers;
 using System.Diagnostics;
 using Settings;
@@ -124,6 +125,7 @@ namespace GameManagers
         {
             if (input == string.Empty)
                 return;
+            CustomLogicManager.Evaluator.OnChatInput(input);
             if (input.StartsWith("/"))
             {
                 if (input.Length == 1)
