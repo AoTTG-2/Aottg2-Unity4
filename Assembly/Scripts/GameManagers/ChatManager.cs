@@ -125,7 +125,6 @@ namespace GameManagers
         {
             if (input == string.Empty)
                 return;
-            CustomLogicManager.Evaluator.OnChatInput(input);
             if (input.StartsWith("/"))
             {
                 if (input.Length == 1)
@@ -139,6 +138,7 @@ namespace GameManagers
                 string name = PhotonNetwork.player.GetStringProperty(PlayerProperty.Name);
                 SendChatAll(name + ": " + input);
             }
+            CustomLogicManager.Evaluator.OnChatInput(input);
         }
 
         private static void HandleCommand(string[] args)
