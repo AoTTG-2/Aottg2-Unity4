@@ -76,7 +76,8 @@ namespace Characters
             StartCoroutine(WaitAndDie());
             yield return new WaitForSeconds(2f);
             _inGameManager.SpawnPlayerAt(false, BaseTitanCache.Neck.position);
-            StartCoroutine(((Human)_inGameManager.CurrentCharacter).WaitAndTransformFromShifter(PreviousHumanGas, PreviousHumanWeapon));
+            Human currentCharacter = ((Human)(_inGameManager.CurrentCharacter));
+            currentCharacter.StartCoroutine(currentCharacter.WaitAndTransformFromShifter(PreviousHumanGas, PreviousHumanWeapon));
         }
 
         protected override void Awake()

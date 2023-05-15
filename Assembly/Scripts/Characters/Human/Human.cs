@@ -288,9 +288,11 @@ namespace Characters
             CurrentGas = previousHumanGas;
             if (previousHumanWeapon is BladeWeapon)
             {
-                ((BladeWeapon)Weapon).BladesLeft = ((BladeWeapon)previousHumanWeapon).BladesLeft;
-                ((BladeWeapon)Weapon).CurrentDurability = ((BladeWeapon)previousHumanWeapon).CurrentDurability;
-                if (((BladeWeapon)Weapon).CurrentDurability == 0)
+                BladeWeapon previousBlade = (BladeWeapon)previousHumanWeapon;
+                BladeWeapon weapon = (BladeWeapon)Weapon;
+                weapon.BladesLeft = previousBlade.BladesLeft;
+                weapon.CurrentDurability = previousBlade.CurrentDurability;
+                if (weapon.CurrentDurability == 0)
                 {
                     Setup._part_blade_l.SetActive(false);
                     Setup._part_blade_r.SetActive(false);
@@ -298,9 +300,11 @@ namespace Characters
             }
             else if (previousHumanWeapon is AmmoWeapon)
             {
-                ((AmmoWeapon)Weapon).RoundLeft = ((AmmoWeapon)previousHumanWeapon).RoundLeft;
-                ((AmmoWeapon)Weapon).AmmoLeft = ((AmmoWeapon)previousHumanWeapon).AmmoLeft;
-                if (((AmmoWeapon)Weapon).RoundLeft == 0 && Weapon is ThunderspearWeapon)
+                AmmoWeapon previousAmmoWeapon = (AmmoWeapon)previousHumanWeapon;
+                AmmoWeapon weapon = (AmmoWeapon)Weapon;
+                weapon.RoundLeft = previousAmmoWeapon.RoundLeft;
+                weapon.AmmoLeft = previousAmmoWeapon.AmmoLeft;
+                if (weapon.RoundLeft == 0 && Weapon is ThunderspearWeapon)
                     SetThunderspears(false, false);
             }
         }
