@@ -274,7 +274,39 @@ namespace Characters
         public void TransformShifter(string shifter, float liveTime)
         {
             _inGameManager.SpawnPlayerShifterAt(shifter, liveTime, Cache.Transform.position);
+            ((BaseShifter)_inGameManager.CurrentCharacter).PreviousHumanGas = CurrentGas;
+            ((BaseShifter)_inGameManager.CurrentCharacter).PreviousHumanWeapon = Weapon;
             PhotonNetwork.Destroy(gameObject);
+        }
+
+        public IEnumerator WaitAndTransformFromShifter(float previousHumanGas, BaseUseable previousHumanWeapon)
+        {
+            while (!FinishSetup)
+            {
+                yield return null;
+            }
+            CurrentGas = previousHumanGas;
+            if (previousHumanWeapon is BladeWeapon)
+            {
+                BladeWeapon previousBlade = (BladeWeapon)previousHumanWeapon;
+                BladeWeapon weapon = (BladeWeapon)Weapon;
+                weapon.BladesLeft = previousBlade.BladesLeft;
+                weapon.CurrentDurability = previousBlade.CurrentDurability;
+                if (weapon.CurrentDurability == 0)
+                {
+                    Setup._part_blade_l.SetActive(false);
+                    Setup._part_blade_r.SetActive(false);
+                }
+            }
+            else if (previousHumanWeapon is AmmoWeapon)
+            {
+                AmmoWeapon previousAmmoWeapon = (AmmoWeapon)previousHumanWeapon;
+                AmmoWeapon weapon = (AmmoWeapon)Weapon;
+                weapon.RoundLeft = previousAmmoWeapon.RoundLeft;
+                weapon.AmmoLeft = previousAmmoWeapon.AmmoLeft;
+                if (weapon.RoundLeft == 0 && Weapon is ThunderspearWeapon)
+                    SetThunderspears(false, false);
+            }
         }
 
         public void Reload()
