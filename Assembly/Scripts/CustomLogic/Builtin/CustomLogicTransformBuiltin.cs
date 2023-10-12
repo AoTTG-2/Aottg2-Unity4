@@ -43,6 +43,8 @@ namespace CustomLogic
             else if (methodName == "ToggleParticle")
             {
                 var particle = Value.GetComponent<ParticleSystem>();
+                if (!particle.isPlaying)
+                    particle.Play();
                 particle.enableEmission = (bool)parameters[0];
             }
             return base.CallMethod(methodName, parameters);

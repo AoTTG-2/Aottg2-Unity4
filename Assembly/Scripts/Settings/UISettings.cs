@@ -13,6 +13,7 @@ namespace Settings
         public BoolSetting FeedConsole = new BoolSetting(false);
         public FloatSetting UIMasterScale = new FloatSetting(1f, minValue: 0.75f, maxValue: 1.5f);
         public FloatSetting CrosshairScale = new FloatSetting(1f, minValue: 0f, maxValue: 3f);
+        public FloatSetting HUDScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
         public BoolSetting ShowCrosshairDistance = new BoolSetting(true);
         public IntSetting CrosshairStyle = new IntSetting(0);
         public IntSetting Speedometer = new IntSetting((int)SpeedometerType.Off);

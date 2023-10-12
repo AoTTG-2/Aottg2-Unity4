@@ -22,5 +22,6 @@
         public static string TitanBite = "FX/bite";
         public static string ShifterThunder = "FX/Thunder";
         public static string BladeThrowHit = "RCAsset/BladeThrowHitEffect";
+        public static string APGTrail = "RCAsset/APGTrailEffect";
     }
 }

@@ -29,6 +29,7 @@ namespace UI
         private MapEditorGameManager _gameManager;
         private StringSetting _currentMap;
         private List<DropdownSelectElement> _dropdowns = new List<DropdownSelectElement>();
+        private GameObject _gizmoButton;
         protected override string ThemePanel => "MapEditor";
 
         public override void Setup(BasePanel parent = null)
@@ -76,7 +77,7 @@ namespace UI
 
             // gizmos
             ElementFactory.CreateDefaultButton(group, style, UIManager.GetLocale("MapEditorSettings", "Keybinds", "AddObject"), onClick: () => OnButtonClick("AddObject"));
-            // ElementFactory.CreateDefaultButton(group, style, "Gizmo: Position", onClick: () => OnButtonClick("Gizmo"));
+            _gizmoButton = ElementFactory.CreateDefaultButton(group, style, "Gizmo: Position", onClick: () => OnButtonClick("Gizmo"));
             // ElementFactory.CreateDefaultButton(group, style, "Snap: Off", onClick: () => OnButtonClick("Snap"));
             ElementFactory.CreateDefaultButton(group, style, "Camera", onClick: () => OnButtonClick("Camera"));
         }
@@ -191,6 +192,28 @@ namespace UI
                 _menu.AddObjectPopup.Show();
             else if (name == "Camera")
                 _menu.CameraPopup.Show();
+            else if (name == "Gizmo")
+                NextGizmo();
+        }
+
+        public void NextGizmo()
+        {
+            var text = _gizmoButton.transform.Find("Text").GetComponent<Text>();
+            if (_gameManager.CurrentGizmo == _gameManager._positionGizmo)
+            {
+                _gameManager.SetGizmo("Rotation");
+                text.text = "Gizmo: Rotation";
+            }
+            else if (_gameManager.CurrentGizmo == _gameManager._rotationGizmo)
+            {
+                _gameManager.SetGizmo("Scale");
+                text.text = "Gizmo: Scale";
+            }
+            else
+            {
+                _gameManager.SetGizmo("Position");
+                text.text = "Gizmo: Position";
+            }
         }
 
         protected void OnDeleteMap()

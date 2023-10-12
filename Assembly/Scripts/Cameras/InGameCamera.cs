@@ -63,7 +63,7 @@ namespace Cameras
             _follow = character;
             if (_follow == null)
             {
-                _menu.SetBottomHUD();
+                _menu.HUDBottomHandler.SetBottomHUD();
                 return;
             }
             if (character is Human)
@@ -80,9 +80,9 @@ namespace Cameras
             if (resetRotation)
                 Cache.Transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             if (character is Human && character.IsMine())
-                _menu.SetBottomHUD((Human)character);
+                _menu.HUDBottomHandler.SetBottomHUD((Human)character);
             else
-                _menu.SetBottomHUD();
+                _menu.HUDBottomHandler.SetBottomHUD();
         }
 
         protected override void Awake()
@@ -98,14 +98,19 @@ namespace Cameras
             _input = SettingsManager.InputSettings.General;
             _menu = (InGameMenu)UIManager.CurrentMenu;
         }
+
+        public void SyncCustomPosition()
+        {
+            Camera.fieldOfView = 50f;
+            Cache.Transform.position = CustomLogicManager.CameraPosition;
+            Cache.Transform.rotation = Quaternion.Euler(CustomLogicManager.CameraRotation);
+        }
         
         protected void LateUpdate()
         {
-            if (CustomLogicManager.Cutscene)
+            if (CustomLogicManager.Cutscene || CustomLogicManager.ManualCamera)
             {
-                Camera.fieldOfView = 50f;
-                Cache.Transform.position = CustomLogicManager.CutsceneCameraPosition;
-                Cache.Transform.rotation = Quaternion.Euler(CustomLogicManager.CutsceneCameraRotation);
+                SyncCustomPosition();
             }
             else
             {
@@ -119,13 +124,13 @@ namespace Cameras
                     {
                         UpdateMain();
                         if (_follow.Dead)
-                            _menu.SetBottomHUD();
+                            _menu.HUDBottomHandler.SetBottomHUD();
                     }
                     else
                         UpdateSpectate();
                     UpdateObstacles();
                     if (_follow.Dead)
-                        _menu.SetBottomHUD();
+                        _menu.HUDBottomHandler.SetBottomHUD();
                 }
             }
             UpdateFOV();

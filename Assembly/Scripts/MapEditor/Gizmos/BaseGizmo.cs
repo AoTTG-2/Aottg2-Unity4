@@ -15,6 +15,11 @@ namespace MapEditor
         protected Transform _transform;
         protected MapEditorMenu _menu;
 
+        public virtual bool IsActive()
+        {
+            return false;
+        }
+
         protected virtual void Awake()
         {
             _gameManager = ((MapEditorGameManager)SceneLoader.CurrentGameManager);

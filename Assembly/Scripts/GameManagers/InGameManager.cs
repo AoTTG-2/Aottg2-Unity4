@@ -127,12 +127,14 @@ namespace GameManagers
             if (CurrentCharacter is Human)
             {
                 var human = (Human)CurrentCharacter;
-                if (human.Setup.Weapon == HumanWeapon.Gun)
-                    killWeapon = KillWeapon.Gun;
+                if (human.Setup.Weapon == HumanWeapon.AHSS)
+                    killWeapon = KillWeapon.AHSS;
                 else if (human.Setup.Weapon == HumanWeapon.Blade)
                     killWeapon = KillWeapon.Blade;
                 else if (human.Setup.Weapon == HumanWeapon.Thunderspear)
                     killWeapon = KillWeapon.Thunderspear;
+                else if (human.Setup.Weapon == HumanWeapon.APG)
+                    killWeapon = KillWeapon.APG;
             }
             else if (CurrentCharacter is BasicTitan)
                 killWeapon = KillWeapon.Titan;
@@ -157,12 +159,14 @@ namespace GameManagers
             if (CurrentCharacter is Human)
             {
                 var human = (Human)CurrentCharacter;
-                if (human.Setup.Weapon == HumanWeapon.Gun)
-                    killWeapon = KillWeapon.Gun;
+                if (human.Setup.Weapon == HumanWeapon.AHSS)
+                    killWeapon = KillWeapon.AHSS;
                 else if (human.Setup.Weapon == HumanWeapon.Blade)
                     killWeapon = KillWeapon.Blade;
                 else if (human.Setup.Weapon == HumanWeapon.Thunderspear)
                     killWeapon = KillWeapon.Thunderspear;
+                else if (human.Setup.Weapon == HumanWeapon.APG)
+                    killWeapon = KillWeapon.APG;
             }
             else if (CurrentCharacter is BasicTitan)
                 killWeapon = KillWeapon.Titan;
@@ -279,7 +283,7 @@ namespace GameManagers
                 CurrentCharacter.GetKilled("");
             UpdatePlayerName();
             List<string> characters = new List<string>();
-            if (miscSettings.AllowGuns.Value || miscSettings.AllowBlades.Value || miscSettings.AllowThunderspears.Value)
+            if (miscSettings.AllowAHSS.Value || miscSettings.AllowBlades.Value || miscSettings.AllowThunderspears.Value || miscSettings.AllowAPG.Value)
                 characters.Add(PlayerCharacter.Human);
             if (miscSettings.AllowPlayerTitans.Value)
                 characters.Add(PlayerCharacter.Titan);
@@ -294,8 +298,10 @@ namespace GameManagers
                 List<string> loadouts = new List<string>();
                 if (miscSettings.AllowBlades.Value)
                     loadouts.Add(HumanLoadout.Blades);
-                if (miscSettings.AllowGuns.Value)
-                    loadouts.Add(HumanLoadout.Guns);
+                if (miscSettings.AllowAHSS.Value)
+                    loadouts.Add(HumanLoadout.AHSS);
+                if (miscSettings.AllowAPG.Value)
+                    loadouts.Add(HumanLoadout.APG);
                 if (miscSettings.AllowThunderspears.Value)
                     loadouts.Add(HumanLoadout.Thunderspears);
                 if (loadouts.Count == 0)
@@ -384,9 +390,6 @@ namespace GameManagers
 
         public BasicTitan SpawnAITitanAt(string type, Vector3 position)
         {
-            int[] combo = BasicTitanSetup.GetRandomBodyHeadCombo();
-            string prefab = CharacterPrefabs.BasicTitanPrefix + combo[0].ToString();
-            var titan = (BasicTitan)CharacterSpawner.Spawn(prefab, position, Quaternion.identity);
             if (type == "Default")
             {
                 var settings = SettingsManager.InGameCurrent.Titan;
@@ -411,6 +414,9 @@ namespace GameManagers
                 }
             }
             var data = CharacterData.GetTitanAI((GameDifficulty)SettingsManager.InGameCurrent.General.Difficulty.Value, type);
+            int[] combo = BasicTitanSetup.GetRandomBodyHeadCombo(data);
+            string prefab = CharacterPrefabs.BasicTitanPrefix + combo[0].ToString();
+            var titan = (BasicTitan)CharacterSpawner.Spawn(prefab, position, Quaternion.identity);
             titan.Init(true, TeamInfo.Titan, data, combo[1]);
             SetupTitan(titan);
             return titan;

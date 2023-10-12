@@ -41,7 +41,7 @@ namespace Characters
         {
             State = HumanState.Idle;
             string animation = HumanAnimations.StandFemale;
-            if (Setup.Weapon == HumanWeapon.Gun)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
                 animation = HumanAnimations.StandGun;
             else if (Setup.CustomSet.Sex.Value == (int)HumanSex.Male)
                 animation = HumanAnimations.StandMale;

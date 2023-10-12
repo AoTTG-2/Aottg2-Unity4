@@ -23,6 +23,10 @@ Material:
     m_Floats:
       data:
         first:
+          name: _Outline
+        second: .0026785708
+      data:
+        first:
           name: _Stencil
         second: 0
       data:
@@ -45,10 +49,6 @@ Material:
         first:
           name: _ColorMask
         second: 15
-      data:
-        first:
-          name: _Outline
-        second: .00374999945
       data:
         first:
           name: _Alpha

@@ -75,7 +75,8 @@ namespace UI
             misc.ThunderspearPVP.Value = false;
             misc.PVP.Value = 0;
             misc.AllowBlades.Value = true;
-            misc.AllowGuns.Value = true;
+            misc.AllowAHSS.Value = true;
+            misc.AllowAPG.Value = true;
             misc.AllowThunderspears.Value = true;
             misc.AllowPlayerTitans.Value = true;
             misc.AllowShifterSpecials.Value = true;

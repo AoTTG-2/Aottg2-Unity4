@@ -20,21 +20,6 @@ namespace CustomLogic
                 bool full = (bool)parameters[1];
                 CustomLogicManager._instance.StartCoroutine(StartCutscene(name, full));
             }
-            else if (methodName == "SetCameraPosition")
-            {
-                var vectorBuiltin = (CustomLogicVector3Builtin)parameters[0];
-                CustomLogicManager.CutsceneCameraPosition = vectorBuiltin.Value;
-            }
-            else if (methodName == "SetCameraRotation")
-            {
-                var vectorBuiltin = (CustomLogicVector3Builtin)parameters[0];
-                CustomLogicManager.CutsceneCameraRotation = vectorBuiltin.Value;
-            }
-            else if (methodName == "SetCameraVelocity")
-            {
-                var vectorBuiltin = (CustomLogicVector3Builtin)parameters[0];
-                CustomLogicManager.CutsceneCameraVelocity = vectorBuiltin.Value;
-            }
             else if (methodName == "ShowDialogue")
             {
                 string icon = (string)parameters[0];

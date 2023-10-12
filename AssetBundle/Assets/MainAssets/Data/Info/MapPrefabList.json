@@ -181,9 +181,11 @@
 	"Interact": {
 		"Info": {"Type": "Scene"},
 		"Prefabs": [
-			{"Name": "Supply1", "Asset": "Interact/Supply1", "" "Components": ["SupplyStation|"]},
+			{"Name": "Supply1", "Asset": "Interact/Supply1", "Components": ["SupplyStation|"]},
 			{"Name": "Cannon2", "Asset": "Interact/Cannon2", "Static": false, "Networked": true, "Components": ["Cannon|IsGround:true"]},
 			{"Name": "Cannon3", "Asset": "Interact/Cannon3", "Static": false, "Networked": true, "Components": ["Cannon|IsGround:false"]},
+			{"Name": "Wagon2", "Asset": "Interact/Wagon2", "CollideWith": "All", "Static": false, "Networked": true, "Components": ["Wagon|,Rigidbody|Mass:10.0|FreezeRotation:true"]},
+			{"Name": "Dummy2", "Asset": "Interact/Dummy2", "Static": false, "Networked": true, "Components": ["Dummy|"]},
 			{"Name": "Racing Start Barrier", "Asset": "Geometry/Cuboid", "Static": false, "Material": "Transparent|0/97/255/122|Misc/None|1/1|0/0|", 
 			"Components": ["Tag|Name:RacingStartBarrier"]},
 			{"Name": "Racing Finish Region", "Asset": "Geometry/Cuboid", "Material": "Transparent|209/255/0/128|Misc/None|1/1|0/0|", 

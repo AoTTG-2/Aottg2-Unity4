@@ -20,6 +20,7 @@ namespace UI
             ElementFactory.CreateDropdownSetting(DoublePanelLeft, style, SettingsManager.UISettings.UITheme, UIManager.GetLocale(cat, sub, "Theme"),
                 UIManager.GetUIThemes(), elementWidth: 160f, tooltip: UIManager.GetLocaleCommon("RequireRestart"));
             ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.UIMasterScale, UIManager.GetLocale(cat, sub, "UIScale"), elementWidth: 135f);
+            ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.HUDScale, UIManager.GetLocale(cat, sub, "HUDScale"), elementWidth: 135f);
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.GameFeed, UIManager.GetLocale(cat, sub, "GameFeed"), tooltip: UIManager.GetLocale(cat, sub, "GameFeedTooltip"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.FeedConsole, UIManager.GetLocale(cat, sub, "FeedConsole"), tooltip: UIManager.GetLocale(cat, sub, "FeedConsoleTooltip"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.ShowKDR, UIManager.GetLocale(cat, sub, "ShowKDR"), tooltip: UIManager.GetLocale(cat, sub, "ShowKDRTooltip"));

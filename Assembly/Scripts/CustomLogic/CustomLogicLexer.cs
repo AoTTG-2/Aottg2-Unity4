@@ -85,6 +85,11 @@ namespace CustomLogic
                         AddToken(CustomLogicTokenType.Primitive, strLiteral, line);
                         i += strLiteral.Length + 1;
                     }
+                    else if (c == '#')
+                    {
+                        string comment = ScanComment(i, chars);
+                        i += comment.Length + 1;
+                    }
                     else if (CustomLogicSymbols.SpecialSymbolNames.Contains(twoCharToken))
                     {
                         AddToken(CustomLogicTokenType.Symbol, CustomLogicSymbols.Symbols[twoCharToken], line);
@@ -177,6 +182,18 @@ namespace CustomLogic
                 currentLexeme += chars[i];
             }
             throw new Exception("Unclosed string literal");
+        }
+
+        private string ScanComment(int startIndex, List<char> chars)
+        {
+            string currentLexeme = "";
+            for (int i = startIndex + 1; i < chars.Count; i++)
+            {
+                if (chars[i] == '#')
+                    return currentLexeme;
+                currentLexeme += chars[i];
+            }
+            throw new Exception("Unclosed comment");
         }
     }
 }

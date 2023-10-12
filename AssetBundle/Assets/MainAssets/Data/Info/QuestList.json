@@ -17,7 +17,15 @@
 	},
 	{
 		"Category": "KillTitan",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 15,
+		"RewardType": "Exp",
+		"RewardValue": "300",
+		"Icon": "Sword2"
+	},
+	{
+		"Category": "KillTitan",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 15,
 		"RewardType": "Exp",
 		"RewardValue": "300",
@@ -48,7 +56,15 @@
 	},
 	{
 		"Category": "KillHuman",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 15,
+		"RewardType": "Exp",
+		"RewardValue": "250",
+		"Icon": "Sword2"
+	},
+	{
+		"Category": "KillHuman",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 15,
 		"RewardType": "Exp",
 		"RewardValue": "250",
@@ -88,7 +104,15 @@
 	},
 	{
 		"Category": "HitDamage",
-		"Conditions": ["Damage:1000", "Weapon:Gun"],
+		"Conditions": ["Damage:1000", "Weapon:AHSS"],
+		"Amount": 10,
+		"RewardType": "Exp",
+		"RewardValue": "350",
+		"Icon": "Sword1"
+	},
+	{
+		"Category": "HitDamage",
+		"Conditions": ["Damage:1000", "Weapon:APG"],
 		"Amount": 10,
 		"RewardType": "Exp",
 		"RewardValue": "350",
@@ -111,7 +135,15 @@
 	},
 	{
 		"Category": "DealDamage",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 12000,
+		"RewardType": "Exp",
+		"RewardValue": "350",
+		"Icon": "Sword1"
+	},
+	{
+		"Category": "DealDamage",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 12000,
 		"RewardType": "Exp",
 		"RewardValue": "350",
@@ -144,7 +176,15 @@
 	},
 	{
 		"Category": "KillTitan",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 100,
+		"RewardType": "Exp",
+		"RewardValue": "1500",
+		"Icon": "Sword2"
+	},
+	{
+		"Category": "KillTitan",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 100,
 		"RewardType": "Exp",
 		"RewardValue": "1500",
@@ -175,7 +215,15 @@
 	},
 	{
 		"Category": "KillHuman",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 120,
+		"RewardType": "Exp",
+		"RewardValue": "2000",
+		"Icon": "Sword2"
+	},
+	{
+		"Category": "KillHuman",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 120,
 		"RewardType": "Exp",
 		"RewardValue": "2000",
@@ -215,7 +263,15 @@
 	},
 	{
 		"Category": "HitDamage",
-		"Conditions": ["Damage:1000", "Weapon:Gun"],
+		"Conditions": ["Damage:1000", "Weapon:AHSS"],
+		"Amount": 50,
+		"RewardType": "Exp",
+		"RewardValue": "1500",
+		"Icon": "Sword1"
+	},
+	{
+		"Category": "HitDamage",
+		"Conditions": ["Damage:1000", "Weapon:APG"],
 		"Amount": 50,
 		"RewardType": "Exp",
 		"RewardValue": "1500",
@@ -239,7 +295,15 @@
 	},
 	{
 		"Category": "HitDamage",
-		"Conditions": ["Damage:2000", "Weapon:Gun"],
+		"Conditions": ["Damage:2000", "Weapon:AHSS"],
+		"Amount": 20,
+		"RewardType": "Exp",
+		"RewardValue": "2200",
+		"Icon": "Sword1"
+	},
+	{
+		"Category": "HitDamage",
+		"Conditions": ["Damage:2000", "Weapon:APG"],
 		"Amount": 20,
 		"RewardType": "Exp",
 		"RewardValue": "2200",
@@ -278,7 +342,15 @@
 	},
 	{
 		"Category": "DealDamage",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 80000,
+		"RewardType": "Exp",
+		"RewardValue": "2400",
+		"Icon": "Sword1"
+	},
+	{
+		"Category": "DealDamage",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 80000,
 		"RewardType": "Exp",
 		"RewardValue": "2400",

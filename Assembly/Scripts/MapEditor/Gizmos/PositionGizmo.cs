@@ -22,12 +22,18 @@ namespace MapEditor
         private Transform _activeLine;
         private Vector3 _previousMousePoint;
 
+
         public static PositionGizmo Create()
         {
             var go = AssetBundleManager.InstantiateAsset<GameObject>("PositionGizmo");
             var gizmo = go.AddComponent<PositionGizmo>();
             go.SetActive(false);
             return gizmo;
+        }
+
+        public override bool IsActive()
+        {
+            return _activeLine != null;
         }
 
         protected override void Awake()
@@ -41,7 +47,7 @@ namespace MapEditor
 
         public override void OnSelectionChange()
         {
-            if (_gameManager.SelectedObjects.Count > 0)
+            if (_gameManager.SelectedObjects.Count > 0 && _gameManager.CurrentGizmo == this)
             {
                 gameObject.SetActive(true);
                 ResetCenter();

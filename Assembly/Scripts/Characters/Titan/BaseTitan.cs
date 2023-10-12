@@ -25,10 +25,9 @@ namespace Characters
         public float Size = 1f;
         public virtual float CrippleTime => 8f;
         public float StunTime = 0.3f;
-        public float ActionDelayMin = 0.2f;
-        public float ActionDelayMax = 0.2f;
-        public float TurnDelayMin = 0.5f;
-        public float TurnDelayMax = 0.5f;
+        public float ActionPause = 0.5f;
+        public float AttackPause = 0.5f;
+        public float TurnPause = 0.5f;
         public BaseCharacter TargetEnemy = null;
         protected BaseTitanAnimations BaseTitanAnimations;
         protected override float GroundDistance => 1f;
@@ -41,6 +40,7 @@ namespace Characters
         public float WalkSpeed;
         public float JumpForce;
         public float RotateSpeed;
+        public float TurnSpeed;
         protected override Vector3 Gravity => Vector3.down * 100f;
         protected Vector3 LastTargetDirection;
         protected Quaternion _turnStartRotation;
@@ -72,16 +72,32 @@ namespace Characters
                     JumpForce = data["JumpForce"].AsFloat;
                 if (data.HasKey("RotateSpeed"))
                     RotateSpeed = data["RotateSpeed"].AsFloat;
-                if (data.HasKey("ActionDelayMin"))
-                    ActionDelayMin = data["ActionDelayMin"].AsFloat;
-                if (data.HasKey("ActionDelayMax"))
-                    ActionDelayMax = data["ActionDelayMax"].AsFloat;
-                if (data.HasKey("TurnDelayMin"))
-                    TurnDelayMin = data["TurnDelayMin"].AsFloat;
-                if (data.HasKey("TurnDelayMax"))
-                    TurnDelayMax = data["TurnDelayMax"].AsFloat;
+                if (data.HasKey("ActionPause"))
+                    ActionPause = data["ActionPause"].AsFloat;
+                if (data.HasKey("TurnPause"))
+                    TurnPause = data["TurnPause"].AsFloat;
+                if (data.HasKey("AttackPause"))
+                    AttackPause = data["AttackPause"].AsFloat;
                 if (data.HasKey("Health"))
                     SetHealth(data["Health"].AsInt);
+                if (data.HasKey("HandHitboxRadius"))
+                {
+                    BaseTitanCache.HandLHitbox.UpdateSphereCollider(data["HandHitboxRadius"].AsFloat);
+                    BaseTitanCache.HandRHitbox.UpdateSphereCollider(data["HandHitboxRadius"].AsFloat);
+                }
+                if (data.HasKey("FootHitboxRadius"))
+                {
+                    BaseTitanCache.FootLHitbox.UpdateSphereCollider(data["FootHitboxRadius"].AsFloat);
+                    BaseTitanCache.FootRHitbox.UpdateSphereCollider(data["FootHitboxRadius"].AsFloat);
+                }
+                if (data.HasKey("TurnSpeed"))
+                {
+                    TurnSpeed = data["TurnSpeed"].AsFloat;
+                    if (BaseTitanAnimations.Turn90L != "")
+                        Cache.Animation[BaseTitanAnimations.Turn90L].speed *= TurnSpeed;
+                    if (BaseTitanAnimations.Turn90R != "")
+                        Cache.Animation[BaseTitanAnimations.Turn90R].speed *= TurnSpeed;
+                }
             }
         }
 
@@ -201,7 +217,7 @@ namespace Characters
             _turnStartRotation = Cache.Transform.rotation;
             _turnTargetRotation = Quaternion.LookRotation(targetDirection);
             _currentTurnTime = 0f;
-            _maxTurnTime = Cache.Animation[animation].length;
+            _maxTurnTime = Cache.Animation[animation].length / Cache.Animation[animation].speed;
             StateActionWithTime(TitanState.Turn, animation, _maxTurnTime, 0.1f);
         }
 
@@ -417,16 +433,12 @@ namespace Characters
                     StartJump();
                 else if (State == TitanState.StartJump)
                     State = TitanState.Jump;
-                else if (State == TitanState.Attack || State == TitanState.Eat || State == TitanState.Land)
-                {
-                    float delay = UnityEngine.Random.Range(ActionDelayMin, ActionDelayMax);
-                    IdleWait(delay);
-                }
+                else if (State == TitanState.Attack || State == TitanState.Eat)
+                    IdleWait(AttackPause);
+                else if (State == TitanState.Land)
+                    IdleWait(ActionPause);
                 else if (State == TitanState.Turn)
-                {
-                    float delay = UnityEngine.Random.Range(TurnDelayMin, TurnDelayMax);
-                    IdleWait(delay);
-                }
+                    IdleWait(TurnPause);
                 else if (State == TitanState.Blind || State == TitanState.SitUp || State == TitanState.Emote)
                     IdleWait(0.3f);
                 else if (State == TitanState.SitBlind)

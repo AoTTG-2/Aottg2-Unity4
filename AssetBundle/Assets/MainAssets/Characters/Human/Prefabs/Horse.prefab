@@ -13,6 +13,7 @@ GameObject:
   - 54: {fileID: 5456738}
   - 114: {fileID: 11456738}
   - 65: {fileID: 6556738}
+  - 136: {fileID: 13615476}
   m_Layer: 17
   m_Name: Horse
   m_TagString: Untagged
@@ -1768,7 +1769,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 3, z: 3}
+  m_Size: {x: 1, y: 1, z: 2}
   m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!111 &11156738
 Animation:
@@ -1822,6 +1823,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7c99bae4a3a6147b47415598c1fe7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &13615476
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156616}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: .600000024
+  m_Height: 2
+  m_Direction: 2
+  m_Center: {x: 0, y: .5, z: 0}
 --- !u!137 &13756738
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

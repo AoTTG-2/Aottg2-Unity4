@@ -11,6 +11,7 @@ namespace Settings
         public StringSetting CurrentMap = new StringSetting(string.Empty, maxLength: 100);
         public FloatSetting CameraMoveSpeed = new FloatSetting(250f);
         public FloatSetting CameraSlowMoveSpeed = new FloatSetting(50f);
+        public FloatSetting CameraFastMoveSpeed = new FloatSetting(750f);
         public FloatSetting CameraRotateSpeed = new FloatSetting(300f);
         public IntSetting RenderDistance = new IntSetting(1500, minValue: 10, maxValue: 1000000);
 

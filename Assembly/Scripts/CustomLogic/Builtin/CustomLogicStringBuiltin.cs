@@ -77,5 +77,12 @@ namespace CustomLogic
                 return ((string)parameters[0]).Insert((int)parameters[2], (string)parameters[1]);
             return base.CallMethod(name, parameters);
         }
+
+        public override object GetField(string name)
+        {
+            if (name == "Newline")
+                return "\n";
+            return null;
+        }
     }
 }

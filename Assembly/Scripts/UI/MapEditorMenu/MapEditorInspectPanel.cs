@@ -191,8 +191,11 @@ namespace UI
         private void OnAddComponent()
         {
             string component = _menu.SelectComponentPopup.FinishSetting.Value;
-            _components.Add(_gameManager.LogicEvaluator.GetComponentSettings(component, new List<string>()));
-            _componentNames.Add(component);
+            if (!_componentNames.Contains(component))
+            {
+                _components.Add(_gameManager.LogicEvaluator.GetComponentSettings(component, new List<string>()));
+                _componentNames.Add(component);
+            }
             OnChange();
         }
 

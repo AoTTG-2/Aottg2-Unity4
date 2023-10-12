@@ -40,6 +40,10 @@ namespace UI
             _rightLabel.text = victim;
             _scoreLabel.text = score.ToString();
             _backgroundLabel.text = score.ToString();
+            if (score >= 1000)
+                _backgroundLabel.color = Color.red;
+            else
+                _backgroundLabel.color = Color.white;
             IsActive = false;
             TimeLeft = timeLeft;
             ShowImmediate();

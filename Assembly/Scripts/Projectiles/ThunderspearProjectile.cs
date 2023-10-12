@@ -9,6 +9,7 @@ using ApplicationManagers;
 using GameManagers;
 using UI;
 using Utility;
+using CustomLogic;
 
 namespace Projectiles
 {
@@ -18,8 +19,10 @@ namespace Projectiles
         float _radius;
         public Vector3 InitialPlayerVelocity;
         Vector3 _lastPosition;
-        LayerMask _collideMask = PhysicsLayer.GetMask(PhysicsLayer.MapObjectAll, PhysicsLayer.MapObjectEntities, PhysicsLayer.MapObjectProjectiles,
+        static LayerMask _collideMask = PhysicsLayer.GetMask(PhysicsLayer.MapObjectAll, PhysicsLayer.MapObjectEntities, PhysicsLayer.MapObjectProjectiles,
             PhysicsLayer.TitanPushbox);
+        static LayerMask _blockMask = PhysicsLayer.GetMask(PhysicsLayer.MapObjectAll, PhysicsLayer.MapObjectEntities, PhysicsLayer.MapObjectProjectiles,
+            PhysicsLayer.TitanPushbox, PhysicsLayer.Human);
 
         protected override void SetupSettings(object[] settings)
         {
@@ -46,7 +49,13 @@ namespace Projectiles
         {
             if (photonView.isMine && !Disabled)
             {
-                rigidbody.velocity = rigidbody.velocity.normalized * _velocity.magnitude * 0.2f;
+                if (CharacterData.HumanWeaponInfo["Thunderspear"]["Ricochet"].AsBool)
+                    rigidbody.velocity = rigidbody.velocity.normalized * _velocity.magnitude * CharacterData.HumanWeaponInfo["Thunderspear"]["RicochetSpeed"].AsFloat;
+                else
+                {
+                    Explode();
+                    _rigidbody.velocity = Vector3.zero;
+                }
             }
         }
 
@@ -59,11 +68,34 @@ namespace Projectiles
         {
             if (!Disabled)
             {
-                EffectSpawner.Spawn(EffectPrefabs.ThunderspearExplode, transform.position, transform.rotation, _radius * 2f, true,
-                    new object[] { _color });
+                float effectRadius = _radius * 4f;
+                if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value)
+                    effectRadius = _radius * 2f;
+                EffectSpawner.Spawn(EffectPrefabs.ThunderspearExplode, transform.position, transform.rotation, effectRadius, true, new object[] { _color });
+                StunMyHuman();
                 KillPlayersInRadius(_radius);
                 KillTitansInRadius(_radius);
                 DestroySelf();
+            }
+        }
+
+        void StunMyHuman()
+        {
+            if (_owner == null || !(_owner is Human) || !_owner.IsMainCharacter())
+                return;
+            if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value)
+                return;
+            float radius = CharacterData.HumanWeaponInfo["Thunderspear"]["StunBlockRadius"].AsFloat;
+            float range = CharacterData.HumanWeaponInfo["Thunderspear"]["StunRange"].AsFloat;
+            Vector3 direction = _owner.Cache.Transform.position - transform.position;
+            RaycastHit hit;
+            if (Vector3.Distance(_owner.Cache.Transform.position, transform.position) < range)
+            {
+                if (Physics.SphereCast(transform.position, radius, direction.normalized, out hit, range, _blockMask))
+                {
+                    if (hit.collider.transform.root.gameObject == _owner.gameObject)
+                        ((Human)_owner).GetStunnedByTS(transform.position);
+                }
             }
         }
 
@@ -74,6 +106,12 @@ namespace Projectiles
             foreach (var collider in colliders)
             {
                 var titan = collider.transform.root.gameObject.GetComponent<BaseTitan>();
+                var handler = collider.gameObject.GetComponent<CustomLogicCollisionHandler>();
+                if (handler != null)
+                {
+                    handler.GetHit(_owner, "Thunderspear", 100, "Thunderspear");
+                    return;
+                }
                 if (titan != null && titan != _owner && !TeamInfo.SameTeam(titan, _team) && !titan.Dead)
                 {
                     if (collider == titan.BaseTitanCache.NapeHurtbox && CheckTitanNapeAngle(position, titan.BaseTitanCache.Head))

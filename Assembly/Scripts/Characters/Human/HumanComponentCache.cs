@@ -25,7 +25,8 @@ namespace Characters
         public Transform HookRightAnchorGun;
         public BaseHitbox BladeHitLeft;
         public BaseHitbox BladeHitRight;
-        public BaseHitbox GunHit;
+        public BaseHitbox AHSSHit;
+        public BaseHitbox APGHit;
         
         public HumanComponentCache(GameObject owner): base(owner)
         {
@@ -56,18 +57,38 @@ namespace Characters
                 BladeHitLeft.OnEnter = false;
                 BladeHitRight = BaseHitbox.Create(human, hero.checkBoxRight);
                 BladeHitRight.OnEnter = false;
-                GameObject obj = new GameObject();
-                obj.layer = PhysicsLayer.Hitbox;
-                var capsule = obj.AddComponent<CapsuleCollider>();
-                capsule.direction = 2;
-                capsule.isTrigger = true;
-                var gunInfo = CharacterData.HumanWeaponInfo["Gun"];
-                capsule.radius = gunInfo["Radius"].AsFloat;
-                capsule.height = gunInfo["RangeMin"].AsFloat;
-                capsule.center = new Vector3(0f, 0f, capsule.height * 0.5f + 0.5f);
-                GunHit = BaseHitbox.Create(human, obj);
+                CreateAHSSHitbox(human);
+                CreateAPGHitbox(human);
                 LoadAudio("HumanSounds", Transform);
             }
+        }
+
+        private void CreateAHSSHitbox(BaseCharacter human)
+        {
+            GameObject obj = new GameObject();
+            obj.layer = PhysicsLayer.Hitbox;
+            var capsule = obj.AddComponent<CapsuleCollider>();
+            capsule.direction = 2;
+            capsule.isTrigger = true;
+            var ahssInfo = CharacterData.HumanWeaponInfo["AHSS"];
+            capsule.radius = ahssInfo["Radius"].AsFloat;
+            capsule.height = ahssInfo["Range"].AsFloat;
+            capsule.center = new Vector3(0f, 0f, capsule.height * 0.5f + 0.5f);
+            AHSSHit = BaseHitbox.Create(human, obj);
+        }
+
+        private void CreateAPGHitbox(BaseCharacter human)
+        {
+            GameObject obj = new GameObject();
+            obj.layer = PhysicsLayer.Hitbox;
+            var capsule = obj.AddComponent<CapsuleCollider>();
+            capsule.direction = 2;
+            capsule.isTrigger = true;
+            var ahssInfo = CharacterData.HumanWeaponInfo["APG"];
+            capsule.radius = ahssInfo["Radius1"].AsFloat;
+            capsule.height = ahssInfo["Range"].AsFloat;
+            capsule.center = new Vector3(0f, 0f, capsule.height * 0.5f + 0.5f);
+            APGHit = BaseHitbox.Create(human, obj);
         }
     }
 }

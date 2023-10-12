@@ -26,6 +26,11 @@ namespace Effects
                 effect = go.AddComponent<ThunderspearExplodeEffect>();
                 effect.Setup(info.sender, 10f, settings);
             }
+            else if (name == EffectPrefabs.APGTrail)
+            {
+                effect = go.AddComponent<LineRendererEffect>();
+                effect.Setup(info.sender, 10f, settings);
+            }
             else
             {
                 effect = go.AddComponent<BaseEffect>();

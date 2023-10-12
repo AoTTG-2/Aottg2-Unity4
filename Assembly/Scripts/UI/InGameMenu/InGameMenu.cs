@@ -19,6 +19,7 @@ namespace UI
         public EmoteHandler EmoteHandler;
         public ItemHandler ItemHandler;
         public CharacterInfoHandler CharacterInfoHandler;
+        public HUDBottomHandler HUDBottomHandler;
         public GameObject NapeLock;
         public ChatPanel ChatPanel;
         public FeedPanel FeedPanel;
@@ -41,17 +42,6 @@ namespace UI
         private Text _bottomLeftLabel;
         private Text _bottomRightLabel;
         private Text _bottomCenterLabel;
-        private GameObject _hudBottom;
-        private Image _hudBottomSpecialFillBackground;
-        private Image _hudBottomSpecialFillIcon;
-        private Image _hudBottomGasFill;
-        private Image _hudBottomBladeFill;
-        private Text _hudBottomLeftLabel;
-        private Text _hudBottomRightLabel;
-        private Text _hudBottomGasLabel;
-        private string _currentSpecialIcon = "";
-        private string _specialIcon = "";
-        private Human _human;
         private bool _showingBlood;
         private List<BasePopup> _allPausePopups = new List<BasePopup>();
         private Dictionary<string, float> _labelTimeLeft = new Dictionary<string, float>();
@@ -64,6 +54,7 @@ namespace UI
         private InGameManager _gameManager;
         private Color _goldColor = new Color(1f, 0.73f, 0f);
         private Color _greenColor = new Color(0f, 0.75f, 0f);
+        private Dictionary<string, BasePopup> _customPopups = new Dictionary<string, BasePopup>();
         
         public override void Setup()
         {
@@ -72,6 +63,7 @@ namespace UI
             SetupLabels();
             EmoteHandler = gameObject.AddComponent<EmoteHandler>();
             ItemHandler = gameObject.AddComponent<ItemHandler>();
+            HUDBottomHandler = gameObject.AddComponent<HUDBottomHandler>();
             CharacterInfoHandler = gameObject.AddComponent<CharacterInfoHandler>();
             gameObject.AddComponent<CrosshairHandler>();
             NapeLock = ElementFactory.InstantiateAndBind(transform, "NapeLockImage");
@@ -81,9 +73,16 @@ namespace UI
             HideAllMenus();
         }
 
-        public void SetSpecialIcon(string icon)
+        public void CreateCustomPopup(string name, string title, float width, float height)
         {
-            _specialIcon = icon;
+            var popup = ElementFactory.InstantiateAndSetupCustomPopup(transform, title, width, height).GetComponent<CustomPopup>();
+            _popups.Add(popup);
+            _customPopups[name] = popup;
+        }
+
+        public CustomPopup GetCustomPopup(string name)
+        {
+            return (CustomPopup)_customPopups[name];
         }
 
         public void SetupMinimap()
@@ -141,7 +140,7 @@ namespace UI
             ElementFactory.SetAnchor(_killFeedBigPopup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, -120f));
             for (int i = 0; i < 4; i++)
             {
-                float y = -162f - i * 55f;
+                float y = -162f - i * 35f;
                 var popup = ElementFactory.CreateDefaultPopup<KillFeedSmallPopup>(transform);
                 ElementFactory.SetAnchor(popup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, y));
                 _killFeedSmallPopups.Add(popup);
@@ -319,41 +318,10 @@ namespace UI
             _showingBlood = false;
         }
 
-        public void SetBottomHUD(Human myHuman = null)
-        {
-            _human = myHuman;
-            if (_hudBottom != null)
-                Destroy(_hudBottom);
-            if (_human == null)
-                return;
-            if (_human.Setup.Weapon == HumanWeapon.Gun)
-                _hudBottom = ElementFactory.InstantiateAndBind(transform, "HUDBottomGun");
-            else if (_human.Setup.Weapon == HumanWeapon.Thunderspear)
-                _hudBottom = ElementFactory.InstantiateAndBind(transform, "HUDBottomTS");
-            else
-            {
-                _hudBottom = ElementFactory.InstantiateAndBind(transform, "HUDBottomBlade");
-                _hudBottomBladeFill = _hudBottom.transform.Find("BladeFill").GetComponent<Image>();
-            }
-            ElementFactory.SetAnchor(_hudBottom, TextAnchor.LowerCenter, TextAnchor.LowerCenter, Vector3.up * 10f);
-            _hudBottomSpecialFillBackground = _hudBottom.transform.Find("SkillFillBackground").GetComponent<Image>();
-            _hudBottomSpecialFillIcon = _hudBottom.transform.Find("SkillFillIcon").GetComponent<Image>();
-            _hudBottomGasFill = _hudBottom.transform.Find("GasFill").GetComponent<Image>();
-            _hudBottomLeftLabel = _hudBottom.transform.Find("LeftLabel").GetComponent<Text>();
-            _hudBottomRightLabel = _hudBottom.transform.Find("RightLabel").GetComponent<Text>();
-            _hudBottomGasLabel = _hudBottom.transform.Find("GasLabel").GetComponent<Text>();
-            _currentSpecialIcon = "";
-        }
-
         void Update()
         {
             if (_gameManager == null)
                 return;
-            if (_human != null)
-            {
-                UpdateHumanSpecial();
-                UpdateHumanHUD();
-            }
             foreach (string label in new List<string>(_labelHasTimeLeft.Keys))
             {
                 if (_labelHasTimeLeft[label])
@@ -416,100 +384,6 @@ namespace UI
                 popup.TimeLeft -= Time.deltaTime;
                 if (popup.IsActive && popup.TimeLeft <= 0f)
                     popup.Hide();
-            }
-        }
-
-        private void UpdateHumanSpecial()
-        {
-            if (_human.Special == null)
-            {
-                _hudBottomSpecialFillBackground.fillAmount = 0f;
-                if (_hudBottomSpecialFillIcon.gameObject.activeSelf)
-                    _hudBottomSpecialFillIcon.gameObject.SetActive(false);
-            }
-            else
-            {
-                var ratio = _human.Special.GetCooldownRatio();
-                _hudBottomSpecialFillBackground.fillAmount = ratio;
-                if (_currentSpecialIcon != _specialIcon)
-                {
-                    _currentSpecialIcon = _specialIcon;
-                    if (_currentSpecialIcon != "")
-                    {
-                        var icon = (Texture2D)AssetBundleManager.LoadAsset(_currentSpecialIcon, true);
-                        var sprite = UnityEngine.Sprite.Create(icon, new Rect(0f, 0f, 32f, 32f), new Vector2(0.5f, 0.5f));
-                        _hudBottomSpecialFillIcon.sprite = sprite;
-                    }
-                }
-                if (_currentSpecialIcon == "")
-                {
-                    if (_hudBottomSpecialFillIcon.gameObject.activeSelf)
-                        _hudBottomSpecialFillIcon.gameObject.SetActive(false);
-                }
-                else
-                {
-                    if (!_hudBottomSpecialFillIcon.gameObject.activeSelf)
-                        _hudBottomSpecialFillIcon.gameObject.SetActive(true);
-                    _hudBottomSpecialFillIcon.fillAmount = ratio;
-                }
-            }
-        }
-
-        private void UpdateHumanHUD()
-        {
-            float gasRatio;
-            if (_human.MaxGas <= 0f)
-                gasRatio = 0f;
-            else
-                gasRatio = _human.CurrentGas / _human.MaxGas;
-            _hudBottomGasFill.fillAmount = gasRatio;
-            _hudBottomGasLabel.text = ((int)(gasRatio * 100f)).ToString() + "%";
-            if (gasRatio <= 0.2f)
-                _hudBottomGasLabel.color = Color.red;
-            else
-                _hudBottomGasLabel.color = _goldColor;
-            if (_human.Weapon is BladeWeapon)
-            {
-                var weapon = (BladeWeapon)_human.Weapon;
-                _hudBottomBladeFill.fillAmount = weapon.CurrentDurability / weapon.MaxDurability;
-                float percent = (int)(weapon.CurrentDurability * 100f / weapon.MaxDurability);
-                _hudBottomLeftLabel.text = percent.ToString() + "%";
-                _hudBottomRightLabel.text = weapon.BladesLeft.ToString();
-                if (percent <= 20)
-                    _hudBottomLeftLabel.color = Color.red;
-                else
-                    _hudBottomLeftLabel.color = _greenColor;
-                if (weapon.BladesLeft == 0)
-                    _hudBottomRightLabel.color = Color.red;
-                else
-                    _hudBottomRightLabel.color = _greenColor;
-            }
-            else if (_human.Weapon is AmmoWeapon)
-            {
-                var weapon = (AmmoWeapon)_human.Weapon;
-                if (weapon.RoundLeft == -1)
-                {
-                    float cooldown = weapon.GetCooldownLeft();
-                    _hudBottomRightLabel.text = Util.FormatFloat(cooldown, 2);
-                    _hudBottomLeftLabel.text = string.Empty;
-                    if (cooldown > 0f)
-                        _hudBottomRightLabel.color = Color.red;
-                    else
-                        _hudBottomRightLabel.color = _greenColor;
-                }
-                else
-                {
-                    _hudBottomLeftLabel.text = weapon.RoundLeft.ToString();
-                    _hudBottomRightLabel.text = weapon.AmmoLeft.ToString();
-                    if (weapon.RoundLeft == 0)
-                        _hudBottomLeftLabel.color = Color.red;
-                    else
-                        _hudBottomLeftLabel.color = _greenColor;
-                    if (weapon.AmmoLeft == 0)
-                        _hudBottomRightLabel.color = Color.red;
-                    else
-                        _hudBottomRightLabel.color = _greenColor;
-                }
             }
         }
 

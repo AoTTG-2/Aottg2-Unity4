@@ -30,7 +30,7 @@ namespace UI
             ElementStyle style = new ElementStyle(fontSize: 28, themePanel: ThemePanel);
             List<string> categories = new List<string>();
             InGameMiscSettings settings = SettingsManager.InGameCurrent.Misc;
-            if (settings.AllowGuns.Value || settings.AllowBlades.Value || settings.AllowThunderspears.Value)
+            if (settings.AllowAHSS.Value || settings.AllowBlades.Value || settings.AllowThunderspears.Value || settings.AllowAPG.Value)
                 categories.Add("Human");
             if (settings.AllowPlayerTitans.Value)
                 categories.Add("Titan");

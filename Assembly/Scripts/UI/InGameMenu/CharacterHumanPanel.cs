@@ -24,8 +24,10 @@ namespace UI
             List<string> loadouts = new List<string>();
             if (miscSettings.AllowBlades.Value)
                 loadouts.Add(HumanLoadout.Blades);
-            if (miscSettings.AllowGuns.Value)
-                loadouts.Add(HumanLoadout.Guns);
+            if (miscSettings.AllowAHSS.Value)
+                loadouts.Add(HumanLoadout.AHSS);
+            if (miscSettings.AllowAPG.Value)
+                loadouts.Add(HumanLoadout.APG);
             if (miscSettings.AllowThunderspears.Value)
                 loadouts.Add(HumanLoadout.Thunderspears);
             if (loadouts.Count == 0)

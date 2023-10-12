@@ -39,8 +39,9 @@ namespace GameManagers
     class HumanLoadout
     {
         public static string Blades = "Blades";
-        public static string Guns = "Guns";
+        public static string AHSS = "AHSS";
         public static string Thunderspears = "Thunderspears";
+        public static string APG = "APG";
     }
 
     class TeamInfo

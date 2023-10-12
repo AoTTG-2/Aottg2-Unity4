@@ -30,8 +30,9 @@ namespace UI
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.ThunderspearPVP, UIManager.GetLocale(cat, sub, "ThunderspearPVP"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.GunsAirReload, UIManager.GetLocale(cat, sub, "GunsAirReload"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowBlades, UIManager.GetLocale(cat, sub, "AllowBlades"));
-            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowGuns, UIManager.GetLocale(cat, sub, "AllowGuns"));
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowAHSS, UIManager.GetLocale(cat, sub, "AllowAHSS"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowThunderspears, UIManager.GetLocale(cat, sub, "AllowThunderspears"));
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowAPG, UIManager.GetLocale(cat, sub, "AllowAPG"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowPlayerTitans, UIManager.GetLocale(cat, sub, "AllowPlayerTitans"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowShifters, UIManager.GetLocale(cat, sub, "AllowShifters"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowShifterSpecials, UIManager.GetLocale(cat, sub, "AllowShifterSpecials"));

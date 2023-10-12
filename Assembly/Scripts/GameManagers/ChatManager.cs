@@ -90,7 +90,9 @@ namespace GameManagers
                 Lines.RemoveAt(0);
             if (IsChatAvailable())
             {
-                GetChatPanel().AddLine(line);
+                var panel = GetChatPanel();
+                if (panel != null)
+                    panel.AddLine(line);
             }
         }
 

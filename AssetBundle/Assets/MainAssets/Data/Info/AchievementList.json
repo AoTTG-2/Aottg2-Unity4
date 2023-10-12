@@ -15,7 +15,14 @@
 	},
 	{
 		"Category": "KillTitan",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 500,
+		"Icon": "Sword2",
+		"Tier": "Bronze"
+	},
+	{
+		"Category": "KillTitan",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 500,
 		"Icon": "Sword2",
 		"Tier": "Bronze"
@@ -42,7 +49,14 @@
 	},
 	{
 		"Category": "KillHuman",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 500,
+		"Icon": "Sword2",
+		"Tier": "Bronze"
+	},
+	{
+		"Category": "KillHuman",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 500,
 		"Icon": "Sword2",
 		"Tier": "Bronze"
@@ -84,7 +98,14 @@
 	},
 	{
 		"Category": "HitDamage",
-		"Conditions": ["Damage:1000", "Weapon:Gun"],
+		"Conditions": ["Damage:1000", "Weapon:AHSS"],
+		"Amount": 100,
+		"Icon": "Sword1",
+		"Tier": "Bronze"
+	},
+	{
+		"Category": "HitDamage",
+		"Conditions": ["Damage:1000", "Weapon:APG"],
 		"Amount": 100,
 		"Icon": "Sword1",
 		"Tier": "Bronze"
@@ -104,7 +125,14 @@
 	},
 	{
 		"Category": "DealDamage",
-		"Conditions": ["Weapon:Gun"],
+		"Conditions": ["Weapon:AHSS"],
+		"Amount": 300000,
+		"Icon": "Sword1",
+		"Tier": "Bronze"
+	},
+	{
+		"Category": "DealDamage",
+		"Conditions": ["Weapon:APG"],
 		"Amount": 300000,
 		"Icon": "Sword1",
 		"Tier": "Bronze"

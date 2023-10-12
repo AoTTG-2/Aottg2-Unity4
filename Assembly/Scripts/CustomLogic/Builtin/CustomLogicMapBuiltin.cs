@@ -35,7 +35,15 @@ namespace CustomLogic
                 }
                 return listBuiltin;
             }
+            else if (name == "FindMapObjectByID")
+            {
+                int id = (int)parameters[0];
+                if (MapLoader.IdToMapObject.ContainsKey(id))
+                    return new CustomLogicMapObjectBuiltin(MapLoader.IdToMapObject[id]);
+                return null;
+            }
             else if (name == "FindMapObjectByTag")
+
             {
                 string tag = (string)parameters[0];
                 if (MapLoader.Tags.ContainsKey(tag))
@@ -73,19 +81,56 @@ namespace CustomLogic
             else if (name == "DestroyMapObject")
             {
                 var mapObject = (CustomLogicMapObjectBuiltin)parameters[0];
-                MapLoader.DeleteObject(mapObject.Value);
+                bool incldueChildren = (bool)parameters[1];
+                DestroyMapObject(mapObject.Value, incldueChildren);
             }
             else if (name == "CopyMapObject")
             {
                 var mapObject = (CustomLogicMapObjectBuiltin)parameters[0];
-                var script = new MapScriptSceneObject();
-                script.Deserialize(mapObject.Value.ScriptObject.Serialize());
-                script.Id = MapLoader.GetNextObjectId();
-                var copy = MapLoader.LoadObject(script, false);
-                MapLoader.SetParent(copy);
+                bool includeChildren = (bool)parameters[1];
+                var copy = CopyMapObject(mapObject.Value, mapObject.Value.Parent, includeChildren);
                 return new CustomLogicMapObjectBuiltin(copy);
             }
             return base.CallMethod(name, parameters);
+        }
+
+        protected MapObject CopyMapObject(MapObject obj, int parent, bool recursive)
+        {
+            var script = new MapScriptSceneObject();
+            script.Deserialize(obj.ScriptObject.Serialize());
+            script.Id = MapLoader.GetNextObjectId();
+            script.Parent = parent;
+            var copy = MapLoader.LoadObject(script, false);
+            MapLoader.SetParent(copy);
+            CustomLogicManager.Evaluator.LoadMapObjectComponents(copy, true);
+            if (recursive && MapLoader.IdToChildren.ContainsKey(obj.ScriptObject.Id))
+            {
+                foreach (int child in MapLoader.IdToChildren[obj.ScriptObject.Id])
+                {
+                    if (MapLoader.IdToMapObject.ContainsKey(child))
+                    {
+                        CopyMapObject(MapLoader.IdToMapObject[child], script.Id, true);
+                    }
+                }
+            }
+            return copy;
+        }
+
+        protected void DestroyMapObject(MapObject obj, bool recursive)
+        {
+            var id = obj.ScriptObject.Id;
+            HashSet<int> children = new HashSet<int>();
+            if (MapLoader.IdToChildren.ContainsKey(id))
+                children = MapLoader.IdToChildren[obj.ScriptObject.Id];
+            MapLoader.DeleteObject(obj);
+            if (recursive)
+            {
+                foreach (int child in children)
+                {
+                    if (MapLoader.IdToMapObject.ContainsKey(child))
+                        DestroyMapObject(MapLoader.IdToMapObject[child], true);
+                }
+            }
         }
 
         public override object GetField(string name)

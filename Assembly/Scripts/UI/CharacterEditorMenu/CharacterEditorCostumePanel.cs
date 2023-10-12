@@ -169,6 +169,7 @@ namespace UI
                         if (findSet.Name.Value == UIManager.CurrentMenu.SelectListPopup.FinishSetting.Value)
                         {
                             settings.GetSelectedSet().Copy(findSet);
+                            settings.GetSelectedSet().Preset.Value = false;
                             settings.GetSelectedSet().Name.Value = setName;
                         }
                     }

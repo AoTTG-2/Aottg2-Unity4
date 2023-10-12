@@ -35,9 +35,17 @@ namespace CustomLogic
                 else if (methodName == "ClearRightHook")
                     Human.HookRight.DisableAnyHook();
                 else if (methodName == "MountMapObject")
-                    Human.Mount(((CustomLogicMapObjectBuiltin)parameters[0]).Value);
+                {
+                    Vector3 positionOffset = ((CustomLogicVector3Builtin)parameters[1]).Value;
+                    Vector3 rotationOffset = ((CustomLogicVector3Builtin)parameters[2]).Value;
+                    Human.Mount(((CustomLogicMapObjectBuiltin)parameters[0]).Value, positionOffset, rotationOffset);
+                }
                 else if (methodName == "MountTransform")
-                    Human.Mount(((CustomLogicTransformBuiltin)parameters[0]).Value);
+                {
+                    Vector3 positionOffset = ((CustomLogicVector3Builtin)parameters[1]).Value;
+                    Vector3 rotationOffset = ((CustomLogicVector3Builtin)parameters[2]).Value;
+                    Human.Mount(((CustomLogicTransformBuiltin)parameters[0]).Value, positionOffset, rotationOffset);
+                }
                 else if (methodName == "Unmount")
                     Human.Unmount(true);
             }

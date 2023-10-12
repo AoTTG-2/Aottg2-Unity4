@@ -47,7 +47,7 @@ namespace UI
                 bool showHealth = (showHealthMode == ShowMode.All || (showHealthMode == ShowMode.Mine && character.IsMainCharacter()) ||
                     (showHealthMode == ShowMode.Others && !character.IsMainCharacter()));
                 bool toggleName = showName && !character.AI && !(character is BasicTitan);
-                bool toggleHealth = showHealth && character.MaxHealth > 1;
+                bool toggleHealth = showHealth && character.MaxHealth > 1 && character.CurrentHealth < character.MaxHealth;
                 if ((!toggleName && !toggleHealth) || inMenu)
                 {
                     popup.HideImmediate();

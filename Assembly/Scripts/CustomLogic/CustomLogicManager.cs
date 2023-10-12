@@ -21,10 +21,11 @@ namespace CustomLogic
         public static string Logic;
         public static string BaseLogic;
         public static bool Cutscene;
+        public static bool ManualCamera;
         public static bool SkipCutscene;
-        public static Vector3 CutsceneCameraPosition;
-        public static Vector3 CutsceneCameraRotation;
-        public static Vector3 CutsceneCameraVelocity;
+        public static Vector3 CameraPosition;
+        public static Vector3 CameraRotation;
+        public static Vector3 CameraVelocity;
 
         public static void Init()
         {
@@ -48,9 +49,10 @@ namespace CustomLogic
             LogicLoaded = false;
             Cutscene = false;
             SkipCutscene = false;
-            CutsceneCameraPosition = Vector3.zero;
-            CutsceneCameraRotation = Vector3.zero;
-            CutsceneCameraVelocity = Vector3.zero;
+            ManualCamera = false;
+            CameraPosition = Vector3.zero;
+            CameraRotation = Vector3.zero;
+            CameraVelocity = Vector3.zero;
         }
 
         public static void ToggleCutscene(bool cutscene)
@@ -181,8 +183,8 @@ namespace CustomLogic
             if (Evaluator != null)
             {
                 Evaluator.OnTick();
-                if (Cutscene)
-                    CutsceneCameraPosition += CutsceneCameraVelocity * Time.fixedDeltaTime;
+                if (Cutscene || ManualCamera)
+                    CameraPosition += CameraVelocity * Time.fixedDeltaTime;
             }
         }
 
@@ -197,6 +199,12 @@ namespace CustomLogic
             {
                 SkipCutscene = true;
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (Evaluator != null)
+                Evaluator.OnLateFrame();
         }
     }
 }

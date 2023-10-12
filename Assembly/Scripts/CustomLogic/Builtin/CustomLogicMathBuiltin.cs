@@ -33,7 +33,7 @@ namespace CustomLogic
             else if (name == "Min")
             {
                 if (parameters[0] is int && parameters[1] is int)
-                    return Mathf.Max((int)parameters[0], (int)parameters[1]);
+                    return Mathf.Min((int)parameters[0], (int)parameters[1]);
                 float a = parameters[0].UnboxToFloat();
                 float b = parameters[1].UnboxToFloat();
                 return Mathf.Min(a, b);

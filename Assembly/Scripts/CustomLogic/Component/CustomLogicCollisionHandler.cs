@@ -4,7 +4,7 @@ using Map;
 using Characters;
 using System.Collections.Generic;
 
-namespace Map
+namespace CustomLogic
 {
     class CustomLogicCollisionHandler : MonoBehaviour
     {
@@ -13,6 +13,19 @@ namespace Map
         public void RegisterInstance(CustomLogicComponentInstance classInstance)
         {
             _classInstances.Add(classInstance);
+        }
+
+        public void GetHit(BaseCharacter character, string name, int damage, string type)
+        {
+            CustomLogicCharacterBuiltin builtin = null;
+            if (character is Human)
+                builtin = new CustomLogicHumanBuiltin((Human)character);
+            else if (character is BasicTitan)
+                builtin = new CustomLogicTitanBuiltin((BasicTitan)character);
+            else if (character is BaseShifter)
+                builtin = new CustomLogicShifterBuiltin((BaseShifter)character);
+            foreach (var classInstance in _classInstances)
+                classInstance.OnGetHit(builtin, name, damage, type);
         }
 
         protected void OnCollisionEnter(Collision other)

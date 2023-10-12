@@ -149,6 +149,18 @@ namespace CustomLogic
                 EvaluateMethod(instance, "OnFrame", new List<object>());
         }
 
+        public void OnLateFrame()
+        {
+            foreach (var instance in _callback)
+                EvaluateMethod(instance, "OnLateFrame", new List<object>());
+        }
+
+        public void OnButtonClick(string name)
+        {
+            foreach (var instance in _callback)
+                EvaluateMethod(instance, "OnButtonClick", new List<object>() { name });
+        }
+
         public void OnPlayerSpawn(PhotonPlayer player, BaseCharacter character)
         {
             var playerBuiltin = new CustomLogicPlayerBuiltin(player);
@@ -237,7 +249,7 @@ namespace CustomLogic
         private void Init()
         {
             foreach (string name in new string[] {"Game", "Vector3", "Color", "Convert", "Cutscene", "Time", "Network", "UI", "Input", "Math", "Map",
-            "Random", "String"})
+            "Random", "String", "Camera"})
                 CreateStaticClass(name);
             foreach (string className in new List<string>(_start.Classes.Keys))
             {
@@ -254,15 +266,24 @@ namespace CustomLogic
             foreach (int id in MapLoader.IdToMapObject.Keys)
             {
                 MapObject obj = MapLoader.IdToMapObject[id];
-                if (obj.ScriptObject is MapScriptSceneObject)
+                LoadMapObjectComponents(obj);
+            }
+        }
+
+        public void LoadMapObjectComponents(MapObject obj, bool init = false)
+        {
+            if (obj.ScriptObject is MapScriptSceneObject)
+            {
+                List<MapScriptComponent> components = ((MapScriptSceneObject)obj.ScriptObject).Components;
+                foreach (var component in components)
                 {
-                    List<MapScriptComponent> components = ((MapScriptSceneObject)obj.ScriptObject).Components;
-                    foreach (var component in components)
+                    if (_start.Classes.ContainsKey(component.ComponentName))
                     {
-                        if (_start.Classes.ContainsKey(component.ComponentName))
+                        CustomLogicComponentInstance instance = CreateComponentInstance(component.ComponentName, obj, component);
+                        obj.RegisterComponentInstance(instance);
+                        if (init)
                         {
-                            CustomLogicComponentInstance instance = CreateComponentInstance(component.ComponentName, obj, component);
-                            obj.RegisterComponentInstance(instance);
+                            EvaluateMethod(instance, "Init", new List<object>());
                         }
                     }
                 }
@@ -298,6 +319,8 @@ namespace CustomLogic
                     instance = new CustomLogicStringBuiltin();
                 else if (className == "Random")
                     instance = new CustomLogicRandomBuiltin();
+                else if (className == "Camera")
+                    instance = new CustomLogicCameraBuiltin();
                 else
                     instance = CreateClassInstance(className, new List<object>(), false);
                 _staticClasses.Add(className, instance);

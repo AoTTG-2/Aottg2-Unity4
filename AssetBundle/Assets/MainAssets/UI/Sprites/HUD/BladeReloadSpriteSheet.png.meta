@@ -1,0 +1,201 @@
+fileFormatVersion: 2
+guid: 895e3f7717f877743b8f5694abb6c784
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: BladeReloadSpriteSheet_0
+    21300002: BladeReloadSpriteSheet_1
+    21300004: BladeReloadSpriteSheet_2
+    21300006: BladeReloadSpriteSheet_3
+    21300008: BladeReloadSpriteSheet_4
+    21300010: BladeReloadSpriteSheet_5
+    21300012: BladeReloadSpriteSheet_6
+    21300014: BladeReloadSpriteSheet_7
+    21300016: BladeReloadSpriteSheet_8
+    21300018: BladeReloadSpriteSheet_9
+    21300020: BladeReloadSpriteSheet_10
+    21300022: BladeReloadSpriteSheet_11
+    21300024: BladeReloadSpriteSheet_12
+    21300026: BladeReloadSpriteSheet_13
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: BladeReloadSpriteSheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 700
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_1
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 700
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_2
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 700
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 540
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_4
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 540
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_5
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 540
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 380
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_7
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 380
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_8
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 380
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 220
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_10
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 220
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_11
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 220
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 60
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BladeReloadSpriteSheet_13
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 60
+        width: 1024
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

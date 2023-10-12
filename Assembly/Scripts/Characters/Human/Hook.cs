@@ -231,14 +231,16 @@ namespace Characters
                     RaycastHit finalHit = hitArr[0];
                     foreach (RaycastHit hit in hitArr)
                     {
+                        if (hit.collider.gameObject.layer == PhysicsLayer.EntityDetection)
+                        {
+                            hit.collider.gameObject.GetComponent<TitanEntityDetection>().RegisterHook(this);
+                            continue;
+                        }
                         if (hit.collider.gameObject == _owner.gameObject)
                             continue;
-                        else
-                        {
-                            finalHit = hit;
-                            foundHit = true;
-                            break;
-                        }
+                        finalHit = hit;
+                        foundHit = true;
+                        break;
                     }
                     if (foundHit)
                     {
@@ -250,10 +252,6 @@ namespace Characters
                                 point = obj.transform.position + Vector3.up * 0.8f;
                             SetHooked(point, obj.transform, obj.transform.root.gameObject.GetPhotonView().viewID);
                             return;
-                        }
-                        else if (obj.layer == PhysicsLayer.EntityDetection)
-                        {
-                            obj.GetComponent<TitanEntityDetection>().RegisterHook(this);
                         }
                         else
                         {

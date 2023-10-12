@@ -17,7 +17,7 @@ namespace Characters
         public string GetHandMesh(bool left)
         {
             string mesh = left ? "character_hand_l" : "character_hand_r";
-            if (_setup.Weapon == HumanWeapon.Gun)
+            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
                 mesh += "_ah";
             return mesh;
         }
@@ -25,7 +25,7 @@ namespace Characters
         public string GetArmMesh(bool left)
         {
             string mesh = "character_arm";
-            if (_setup.Weapon == HumanWeapon.Gun)
+            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
             {
                 return mesh + (left ? "_casual_l_ah" : "_casual_r_ah");
             }
@@ -38,24 +38,24 @@ namespace Characters
 
         public string Get3dmgMesh()
         {
-            return _setup.Weapon == HumanWeapon.Gun ? "character_3dmg_2" : "character_3dmg";
+            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? "character_3dmg_2" : "character_3dmg";
         }
 
         public string GetBeltMesh()
         {
-            return _setup.Weapon == HumanWeapon.Gun ? string.Empty : "character_3dmg_belt";
+            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? string.Empty : "character_3dmg_belt";
         }
 
         public string GetGasMesh(bool left)
         {
-            if (_setup.Weapon == HumanWeapon.Gun)
+            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
                 return left ? "character_gun_mag_l" : "character_gun_mag_r";
             return left ? "character_3dmg_gas_l" : "character_3dmg_gas_r";
         }
 
         public string GetWeaponMesh(bool left)
         {
-            if (_setup.Weapon == HumanWeapon.Gun)
+            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
                 return left ? "character_gun_l" : "character_gun_r";
             else if (_setup.Weapon == HumanWeapon.Thunderspear)
                 return string.Empty;

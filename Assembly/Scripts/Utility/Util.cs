@@ -19,6 +19,25 @@ namespace Utility
             obj.AddComponent<DontDestroyOnLoadTag>();
         }
 
+        public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)
+        {
+            float unsignedAngle = Vector3.Angle(from, to);
+
+            float cross_x = from.y * to.z - from.z * to.y;
+            float cross_y = from.z * to.x - from.x * to.z;
+            float cross_z = from.x * to.y - from.y * to.x;
+            float sign = Mathf.Sign(axis.x * cross_x + axis.y * cross_y + axis.z * cross_z);
+            return unsignedAngle * sign;
+        }
+
+        public static bool IsVectorBetween(Vector3 v, Vector3 start, Vector3 end)
+        {
+            bool x = (v.x >= start.x && v.x <= end.x) || (v.x >= end.x && v.x <= start.x);
+            bool y = (v.y >= start.y && v.y <= end.y) || (v.y >= end.y && v.y <= start.y);
+            bool z = (v.z >= start.z && v.z <= end.z) || (v.z >= end.z && v.z <= start.z);
+            return x && y && z;
+        }
+
         public static BaseCharacter FindCharacterByViewId(int viewId)
         {
             if (viewId < 0)

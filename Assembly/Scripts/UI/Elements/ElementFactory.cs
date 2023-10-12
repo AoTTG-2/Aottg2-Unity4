@@ -332,6 +332,15 @@ namespace UI
             return panel;
         }
 
+        public static GameObject InstantiateAndSetupCustomPopup(Transform parent, string title, float width, float height, bool enabled = false)
+        {
+            GameObject panel = InstantiateAndBind(parent, "HeadedPanel");
+            panel.AddComponent<CustomPopup>().Setup(parent.GetComponent<BasePanel>(), title, width, height);
+            panel.SetActive(false);
+            panel.SetActive(enabled);
+            return panel;
+        }
+
         public static GameObject InstantiateAndBind(Transform parent, string asset)
         {
             GameObject obj = AssetBundleManager.InstantiateAsset<GameObject>(asset, cached: true);

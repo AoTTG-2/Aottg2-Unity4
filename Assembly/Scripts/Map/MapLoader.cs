@@ -448,6 +448,8 @@ namespace Map
                 layer = PhysicsLayer.MapObjectEntities;
             else if (collideWith == MapObjectCollideWith.MapEditor)
                 layer = PhysicsLayer.MapEditorObject;
+            else if (collideWith == MapObjectCollideWith.Hitboxes)
+                layer = PhysicsLayer.Hurtbox;
             return layer;
         }
 
@@ -492,6 +494,7 @@ namespace Map
         public static string Characters = "Characters";
         public static string Projectiles = "Projectiles";
         public static string Entities = "Entities";
+        public static string Hitboxes = "Hitboxes";
         public static string MapEditor = "MapEditor";
     }
 }

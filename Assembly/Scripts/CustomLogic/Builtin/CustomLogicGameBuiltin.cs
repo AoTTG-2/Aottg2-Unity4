@@ -6,6 +6,7 @@ using Projectiles;
 using Settings;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 
 namespace CustomLogic
 {
@@ -46,6 +47,14 @@ namespace CustomLogic
             {
                 if (PhotonNetwork.isMasterClient)
                     RPCManager.PhotonView.RPC("EndGameRPC", PhotonTargets.All, new object[] { parameters[0].UnboxToFloat() });
+            }
+            else if (name == "FindCharacterByViewID")
+            {
+                int viewID = (int)parameters[0];
+                var character = Util.FindCharacterByViewId(viewID);
+                if (character == null || character.Dead)
+                    return null;
+                return CustomLogicEvaluator.GetCharacterBuiltin(character);
             }
             else if (name == "SpawnTitan")
             {
@@ -245,6 +254,26 @@ namespace CustomLogic
                 }
                 return list;
             }
+            else if (name == "AITitans")
+            {
+                var list = new CustomLogicListBuiltin();
+                foreach (var titan in gameManager.Titans)
+                {
+                    if (titan != null && !titan.Dead && titan.AI)
+                        list.List.Add(new CustomLogicTitanBuiltin(titan));
+                }
+                return list;
+            }
+            else if (name == "PlayerTitans")
+            {
+                var list = new CustomLogicListBuiltin();
+                foreach (var titan in gameManager.Titans)
+                {
+                    if (titan != null && !titan.Dead && !titan.AI)
+                        list.List.Add(new CustomLogicTitanBuiltin(titan));
+                }
+                return list;
+            }
             else if (name == "Shifters")
             {
                 var list = new CustomLogicListBuiltin();
@@ -281,6 +310,26 @@ namespace CustomLogic
                 foreach (var human in gameManager.Humans)
                 {
                     if (human != null && !human.Dead)
+                        list.List.Add(new CustomLogicHumanBuiltin(human));
+                }
+                return list;
+            }
+            else if (name == "AIHumans")
+            {
+                var list = new CustomLogicListBuiltin();
+                foreach (var human in gameManager.Humans)
+                {
+                    if (human != null && !human.Dead && human.AI)
+                        list.List.Add(new CustomLogicHumanBuiltin(human));
+                }
+                return list;
+            }
+            else if (name == "PlayerHumans")
+            {
+                var list = new CustomLogicListBuiltin();
+                foreach (var human in gameManager.Humans)
+                {
+                    if (human != null && !human.Dead && !human.AI)
                         list.List.Add(new CustomLogicHumanBuiltin(human));
                 }
                 return list;

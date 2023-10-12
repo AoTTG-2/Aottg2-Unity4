@@ -38,7 +38,7 @@
 		},
 		{
 			"Name": "PVP",
-			"IncludedModes": ["Thunderspear PVP", "Blade PVP", "Gun PVP", "None"],
+			"IncludedModes": ["Thunderspear PVP", "Blade PVP", "AHSS PVP", "None"],
 			"Maps": [
 				{
 					"Name": "Forest"
@@ -198,7 +198,8 @@
 			"MiscSettings": {
 				"PVP": 1,
 				"AllowBlades": false,
-				"AllowGuns": false,
+				"AllowAHSS": false,
+				"AllowAPG": false,
 				"AllowPlayerTitans": false,
 				"ThunderspearPVP": true,
 				"AllowShifterSpecials": false
@@ -209,19 +210,21 @@
 			"MiscSettings": {
 				"PVP": 1,
 				"AllowThunderspears": false,
-				"AllowGuns": false,
+				"AllowAHSS": false,
+				"AllowAPG": false,
 				"AllowPlayerTitans": false,
 				"AllowShifterSpecials": false
 			}
 		},
 		{
-			"Name": "Gun PVP",
+			"Name": "AHSS PVP",
 			"MiscSettings": {
 				"PVP": 1,
 				"AllowThunderspears": false,
 				"AllowBlades": false,
 				"AllowPlayerTitans": false,
-				"AllowShifterSpecials": false
+				"AllowShifterSpecials": false,
+				"AllowAPG": false
 			}
 		},
 		{

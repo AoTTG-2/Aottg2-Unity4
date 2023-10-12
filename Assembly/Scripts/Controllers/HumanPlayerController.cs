@@ -139,11 +139,11 @@ namespace Controllers
                 var leftPosition = SceneLoader.CurrentCamera.Camera.WorldToScreenPoint(leftTarget);
                 leftPosition.z = 0f;
                 var leftRotation = GetHookArrowRotation(true, leftPosition);
-                CursorManager.SetHookArrow(true, leftPosition, leftRotation, Vector3.Distance(_human.Cache.Transform.position, leftTarget) <= 120f);
+                CursorManager.SetHookArrow(true, leftPosition, leftRotation, Physics.Raycast(_human.Cache.Transform.position, (leftTarget - _human.Cache.Transform.position).normalized, 120f, HookMask.value));
                 var rightPosition = SceneLoader.CurrentCamera.Camera.WorldToScreenPoint(rightTarget);
                 rightPosition.z = 0f;
                 var rightRotation = GetHookArrowRotation(false, rightPosition);
-                CursorManager.SetHookArrow(false, rightPosition, rightRotation, Vector3.Distance(_human.Cache.Transform.position, rightTarget) <= 120f);
+                CursorManager.SetHookArrow(false, rightPosition, rightRotation, Physics.Raycast(_human.Cache.Transform.position, (rightTarget - _human.Cache.Transform.position).normalized, 120f, HookMask.value));
             }
         }
 
@@ -162,11 +162,34 @@ namespace Controllers
             bool canHook = _human.State != HumanState.Grab && _human.State != HumanState.Stun && _human.CurrentGas > 0f 
                 && _human.MountState != HumanMountState.MapObject && !_human.Dead;
             bool hookBoth = _humanInput.HookBoth.GetKey();
+            bool hookLeft = _humanInput.HookLeft.GetKey();
+            bool hookRight = _humanInput.HookRight.GetKey();
             bool hasHook = _human.HookLeft.HasHook() || _human.HookRight.HasHook();
-            _human.HookLeft.HookBoth = hookBoth && !_humanInput.HookLeft.GetKey();
-            _human.HookRight.HookBoth = hookBoth && !_humanInput.HookRight.GetKey();
-            _human.HookLeft.SetInput(canHook && _humanInput.HookLeft.GetKey() || (hookBoth && (_human.HookLeft.IsHooked() || !hasHook)));
-            _human.HookRight.SetInput(canHook && _humanInput.HookRight.GetKey() || (hookBoth && (_human.HookRight.IsHooked() || !hasHook)));
+            if (_human.CancelHookBothKey)
+            {
+                if (hookBoth)
+                    hookBoth = false;
+                else
+                    _human.CancelHookBothKey = false;
+            }
+            if (_human.CancelHookLeftKey)
+            {
+                if (hookLeft)
+                    hookLeft = false;
+                else
+                    _human.CancelHookLeftKey = false;
+            }
+            if (_human.CancelHookRightKey)
+            {
+                if (hookRight)
+                    hookRight = false;
+                else
+                    _human.CancelHookRightKey = false;
+            }
+            _human.HookLeft.HookBoth = hookBoth && !hookLeft;
+            _human.HookRight.HookBoth = hookBoth && !hookRight;
+            _human.HookLeft.SetInput(canHook && hookLeft || (hookBoth && (_human.HookLeft.IsHooked() || !hasHook)));
+            _human.HookRight.SetInput(canHook && hookRight || (hookBoth && (_human.HookRight.IsHooked() || !hasHook)));
         }
 
         protected override void UpdateActionInput(bool inMenu)
@@ -190,6 +213,7 @@ namespace Controllers
                 attackInput = _humanInput.AttackSpecial;
                 specialInput = _humanInput.AttackDefault;
             }
+            _human._gunArmAim = false;
             if (canWeapon)
             {
                 if (_human.Weapon is AmmoWeapon && ((AmmoWeapon)_human.Weapon).RoundLeft == 0 && 
@@ -199,7 +223,18 @@ namespace Controllers
                         _human.Reload();
                 }
                 else
-                    _human.Weapon.ReadInput(attackInput);
+                {
+                    if (_human.Weapon is AHSSWeapon)
+                    {
+                        if (attackInput.GetKeyUp())
+                            _human.Weapon.SetInput(true);
+                        else
+                            _human.Weapon.SetInput(false);
+                        _human._gunArmAim = attackInput.GetKey();
+                    }
+                    else
+                        _human.Weapon.ReadInput(attackInput);
+                }
             }
             else
                 _human.Weapon.SetInput(false);

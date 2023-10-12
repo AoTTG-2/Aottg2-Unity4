@@ -1,10 +1,12 @@
 ﻿Shader "Outlined/Silhouette Only"
 	{
+
 	Properties
 		{
 		_OutlineColor("Outline Color", Color) = (0,0,0,1)
 		_Outline("Outline width", Range(0.0, 0.03)) = .005
 		}
+
 
 		CGINCLUDE
 		#include "UnityCG.cginc"
@@ -40,13 +42,12 @@
 
 	SubShader
 		{
-		Tags { "Queue" = "Overlay" }
+		Tags { "Queue" = "Geometry+501" "RenderType"="Opaque" }
 
 		Pass
 			{
 			Name "BASE"
 			CULL OFF
-			ZTEST ALWAYS
 			ZWRITE OFF
 			Blend ONE ONE
 
@@ -73,9 +74,9 @@
 			{
 			Name "INNER"
 			CULL OFF
-			ZTEST ALWAYS
 			ZWRITE OFF
 			Blend One One
+
 
 			Stencil
 				{

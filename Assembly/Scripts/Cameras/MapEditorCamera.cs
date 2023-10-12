@@ -69,7 +69,11 @@ namespace Cameras
                 direction += Cache.Transform.up;
             else if (_input.Down.GetKey())
                 direction -= Cache.Transform.up;
-            float speed = _input.Slow.GetKey() ? _settings.CameraSlowMoveSpeed.Value : _settings.CameraMoveSpeed.Value;
+            float speed = _settings.CameraMoveSpeed.Value;
+            if (_input.Slow.GetKey())
+                speed = _settings.CameraSlowMoveSpeed.Value;
+            else if (_input.Fast.GetKey())
+                speed = _settings.CameraFastMoveSpeed.Value;
              Cache.Transform.position += direction * Time.deltaTime * speed;
         }
 

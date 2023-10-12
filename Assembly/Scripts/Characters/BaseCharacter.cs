@@ -271,7 +271,7 @@ namespace Characters
                 photonView.RPC("SetHealthRPC", PhotonTargets.All, new object[] { CurrentHealth, MaxHealth });
         }
 
-        public virtual void OnHit(BaseHitbox hitbox, BaseCharacter victim, Collider collider, string type, bool firstHit)
+        public virtual void OnHit(BaseHitbox hitbox, object victim, Collider collider, string type, bool firstHit)
         {
         }
 

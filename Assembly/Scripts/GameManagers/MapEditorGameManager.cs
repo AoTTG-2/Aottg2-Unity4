@@ -19,15 +19,20 @@ namespace GameManagers
         public MapScript MapScript;
         public CustomLogicEvaluator LogicEvaluator;
         public HashSet<MapObject> SelectedObjects = new HashSet<MapObject>();
+        public BaseGizmo CurrentGizmo;
         private List<BaseCommand> _undoCommands = new List<BaseCommand>();
         private List<BaseCommand> _redoCommands = new List<BaseCommand>();
         private string _clipboard = string.Empty;
         private MapEditorMenu _menu;
         private MapEditorInputSettings _input;
-        private PositionGizmo _positionGizmo;
+        public PositionGizmo _positionGizmo;
+        public RotationGizmo _rotationGizmo;
+        public ScaleGizmo _scaleGizmo;
         private OutlineGizmo _outlineGizmo;
         private int _currentObjectId;
         public bool IgnoreNextSelect;
+        private bool _isDrag;
+        private Vector3 _dragStart;
         
         public void ShowAddObject()
         {
@@ -118,39 +123,60 @@ namespace GameManagers
         public void Select(bool multi)
         {
             var camera = SceneLoader.CurrentCamera;
+            Vector3 diff = Input.mousePosition - _dragStart;
             RaycastHit hit;
-            if (Physics.Raycast(camera.Camera.ScreenPointToRay(Input.mousePosition), out hit, 100000f, PhysicsLayer.GetMask(PhysicsLayer.MapEditorGizmo)))
+            if (diff.magnitude < 1f)
             {
-            }
-            else if (Physics.Raycast(camera.Camera.ScreenPointToRay(Input.mousePosition), out hit, 100000f, PhysicsLayer.GetMask(PhysicsLayer.MapEditorObject)))
-            {
-                var mapObject = MapLoader.FindObjectFromCollider(hit.collider);
-                if (multi)
+                if (!_menu.IsMouseUI)
                 {
-                    if (SelectedObjects.Contains(mapObject))
-                        DeselectObject(mapObject);
-                    else
-                        SelectObject(mapObject);
-                }
-                else
-                {
-                    if (SelectedObjects.Count == 1 && SelectedObjects.Contains(mapObject))
-                        DeselectAll();
-                    else if (SelectedObjects.Count > 0)
+                    if (Physics.Raycast(camera.Camera.ScreenPointToRay(Input.mousePosition), out hit, 100000f, PhysicsLayer.GetMask(PhysicsLayer.MapEditorObject)))
                     {
-                        DeselectAll();
-                        SelectObject(mapObject);
+
+                        var mapObject = MapLoader.FindObjectFromCollider(hit.collider);
+                        if (multi)
+                        {
+                            if (SelectedObjects.Contains(mapObject))
+                                DeselectObject(mapObject);
+                            else
+                                SelectObject(mapObject);
+                        }
+                        else
+                        {
+                            if (SelectedObjects.Count == 1 && SelectedObjects.Contains(mapObject))
+                                DeselectAll();
+                            else if (SelectedObjects.Count > 0)
+                            {
+                                DeselectAll();
+                                SelectObject(mapObject);
+                            }
+                            else
+                                SelectObject(mapObject);
+                        }
                     }
                     else
-                        SelectObject(mapObject);
+                        DeselectAll();
                 }
-                OnSelectionChange();
             }
             else
             {
                 DeselectAll();
-                OnSelectionChange();
+                foreach (var gameObject in MapLoader.GoToMapObject.Keys)
+                {
+                    var mapObject = MapLoader.GoToMapObject[gameObject];
+                    var renderer = gameObject.GetComponentInChildren<Renderer>();
+                    if (renderer != null)
+                    {
+                        Vector3 center = renderer.bounds.center;
+                        Vector2 screenPosition = camera.Camera.WorldToScreenPoint(center);
+                        if (Vector3.Distance(center, camera.Cache.Transform.position) < camera.Camera.farClipPlane && Util.IsVectorBetween(screenPosition, (Vector2)_dragStart, (Vector2)Input.mousePosition))
+                        {
+                            if (!SelectedObjects.Contains(mapObject))
+                                SelectedObjects.Add(mapObject);
+                        }
+                    }
+                }
             }
+            OnSelectionChange();
         }
 
         public void DeselectAll()
@@ -174,7 +200,7 @@ namespace GameManagers
             command.Execute();
             _undoCommands.Add(command);
             _redoCommands.Clear();
-            if (command is TransformPositionCommand)
+            if (command is TransformPositionCommand || command is TransformPositionRotationCommand || command is TransformScaleCommand )
                 _menu.SyncInspector();
         }
 
@@ -184,9 +210,12 @@ namespace GameManagers
             _menu = (MapEditorMenu)UIManager.CurrentMenu;
             _positionGizmo = PositionGizmo.Create();
             _outlineGizmo = OutlineGizmo.Create();
+            _rotationGizmo = RotationGizmo.Create();
+            _scaleGizmo = ScaleGizmo.Create();
             _currentObjectId = GetHighestObjectId();
             _menu.ShowHierarchyPanel();
             LogicEvaluator = CustomLogicManager.GetEditorEvaluator(MapScript.Logic);
+            CurrentGizmo = _positionGizmo;
         }
 
         protected override void Awake()
@@ -198,6 +227,35 @@ namespace GameManagers
         protected void Update()
         {
             UpdateInput();
+            UpdateDrag();
+        }
+
+        protected void UpdateDrag()
+        {
+            if (_menu == null)
+                return;
+            if (CurrentGizmo != null && CurrentGizmo.IsActive())
+                _isDrag = false;
+            if (_menu.IsPopupActive())
+                _isDrag = false;
+            var system = EventSystem.current;
+            var selected = system.currentSelectedGameObject;
+            if (selected != null && selected.GetComponent<InputField>() != null)
+                _isDrag = false;
+            if (_isDrag)
+            {
+                _menu.SetDrag(true, _dragStart, Input.mousePosition);
+                if (_input.Select.GetKeyUp())
+                {
+                    Select(_input.Multiselect.GetKey() && SelectedObjects.Count > 0);
+                    _isDrag = false;
+                    _menu.SetDrag(false, Vector2.zero, Vector2.zero);
+                }
+            }
+            else
+            {
+                _menu.SetDrag(false, Vector2.zero, Vector2.zero);
+            }
         }
 
         protected void UpdateInput()
@@ -229,14 +287,18 @@ namespace GameManagers
                 ShowAddObject();
             else if (_input.Delete.GetKeyDown())
                 Delete();
-            else if (_input.Select.GetKeyUp() && !_menu.IsMouseUI && !IgnoreNextSelect)
-                Select(_input.Multiselect.GetKey() && SelectedObjects.Count > 0);
             else if (_input.Deselect.GetKeyDown())
             {
                 DeselectAll();
                 OnSelectionChange();
             }
-            
+            else if (_input.ChangeGizmo.GetKeyDown())
+                _menu._topPanel.NextGizmo();
+            else if (_input.Select.GetKeyDown() && !_menu.IsMouseUI)
+            {
+                _isDrag = true;
+                _dragStart = Input.mousePosition;
+            }
             IgnoreNextSelect = false;
         }
 
@@ -264,6 +326,19 @@ namespace GameManagers
         {
             _outlineGizmo.OnSelectionChange();
             _positionGizmo.OnSelectionChange();
+            _rotationGizmo.OnSelectionChange();
+            _scaleGizmo.OnSelectionChange();
+        }
+
+        public void SetGizmo(string gizmo)
+        {
+            if (gizmo == "Position")
+                CurrentGizmo = _positionGizmo;
+            else if (gizmo == "Rotation")
+                CurrentGizmo = _rotationGizmo;
+            else
+                CurrentGizmo = _scaleGizmo;
+            SyncGizmos();
         }
 
         public int GetNextObjectId()

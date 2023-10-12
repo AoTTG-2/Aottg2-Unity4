@@ -50,8 +50,10 @@ namespace Characters
         public void DisableActiveHook()
         {
             if (_activeHook != null && _activeHook.State == HookState.Hooked)
+            {
                 _activeHook.SetHookState(HookState.DisablingHooked);
-            _activeHook = null;
+                _activeHook = null;
+            }
         }
 
         public void DisableAnyHook()

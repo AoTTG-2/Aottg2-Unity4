@@ -33,27 +33,5 @@
 		[40, 40, 40, 255],
 		[130, 50, 50, 255]
 	],
-	"BodyHeadCombos": [
-		{"Body": 0, "Head": 0, "Chance": 0.1},
-		{"Body": 0, "Head": 1, "Chance": 0.1},
-		{"Body": 0, "Head": 3, "Chance": 0.1},
-		{"Body": 0, "Head": 4, "Chance": 0.1},
-		{"Body": 1, "Head": 0, "Chance": 0.1},
-		{"Body": 1, "Head": 1, "Chance": 0.1},
-		{"Body": 1, "Head": 3, "Chance": 0.1},
-		{"Body": 1, "Head": 4, "Chance": 0.1},
-		{"Body": 2, "Head": 0, "Chance": 0.1},
-		{"Body": 2, "Head": 1, "Chance": 0.1},
-		{"Body": 2, "Head": 3, "Chance": 0.1},
-		{"Body": 2, "Head": 4, "Chance": 0.1},
-		{"Body": 3, "Head": 0, "Chance": 0.1},
-		{"Body": 3, "Head": 1, "Chance": 0.1},
-		{"Body": 3, "Head": 3, "Chance": 0.1},
-		{"Body": 3, "Head": 4, "Chance": 0.1},
-		{"Body": 4, "Head": 0, "Chance": 0.1},
-		{"Body": 4, "Head": 1, "Chance": 0.1},
-		{"Body": 4, "Head": 3, "Chance": 0.1},
-		{"Body": 4, "Head": 4, "Chance": 0.1}
-	],
 	"EyeTextureCount": 11
 }

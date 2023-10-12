@@ -4,6 +4,8 @@ using Utility;
 using GameManagers;
 using System.Collections;
 using ApplicationManagers;
+using Map;
+using CustomLogic;
 
 namespace Characters
 {
@@ -24,33 +26,35 @@ namespace Characters
                 collider = obj.GetComponent<Collider>();
             hitbox._collider = collider;
             hitbox.Deactivate();
+            if (collider is SphereCollider)
+                hitbox.UpdateDebugCollider((SphereCollider)collider);
+            return hitbox;
+        }
+
+        public void UpdateSphereCollider(float radius)
+        {
+            if (_collider is SphereCollider)
+            {
+                SphereCollider collider = (SphereCollider)_collider;
+                collider.radius = radius;
+                UpdateDebugCollider(collider);
+            }
+        }
+
+        protected void UpdateDebugCollider(SphereCollider collider)
+        {
             if (DebugTesting.DebugColliders)
             {
-                if (collider is SphereCollider)
-                {
-                    var sphere = AssetBundleManager.InstantiateAsset<GameObject>("TestSphere");
-                    sphere.transform.parent = obj.transform;
-                    sphere.transform.localPosition = ((SphereCollider)collider).center;
-                    sphere.transform.localScale = Vector3.one * ((SphereCollider)collider).radius * 2f;
-                    sphere.GetComponent<Renderer>().material.color = Color.red;
-                    hitbox._debugObject = sphere;
-                    hitbox._debugObject.SetActive(false);
-                }
-                else if (collider is CapsuleCollider)
-                {
-                    var capsule = AssetBundleManager.InstantiateAsset<GameObject>("TestCapsule");
-                    capsule.transform.parent = obj.transform;
-                    capsule.transform.localPosition = ((CapsuleCollider)collider).center;
-                    capsule.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                    float radius = ((CapsuleCollider)collider).radius;
-                    float height = ((CapsuleCollider)collider).height;
-                    capsule.transform.localScale = new Vector3(radius * 2f, height * 0.5f, radius * 2f);
-                    capsule.GetComponent<Renderer>().material.color = Color.red;
-                    hitbox._debugObject = capsule;
-                    hitbox._debugObject.SetActive(false);
-                }
+                if (_debugObject != null)
+                    Destroy(_debugObject);
+                var sphere = AssetBundleManager.InstantiateAsset<GameObject>("TestSphere");
+                sphere.transform.parent = gameObject.transform;
+                sphere.transform.localPosition = collider.center;
+                sphere.transform.localScale = Vector3.one * collider.radius * 2f;
+                sphere.GetComponent<Renderer>().material.color = Color.red;
+                _debugObject = sphere;
+                _debugObject.SetActive(false);
             }
-            return hitbox;
         }
 
         public bool IsActive()
@@ -113,16 +117,28 @@ namespace Characters
         {
             var go = other.transform.root.gameObject;
             BaseCharacter character = go.GetComponent<BaseCharacter>();
+            CustomLogicCollisionHandler handler = other.gameObject.GetComponent<CustomLogicCollisionHandler>();
             if (character != null && !TeamInfo.SameTeam(Owner, character) && !_hitGameObjects.Contains(other.gameObject))
             {
                 _hitGameObjects.Add(other.gameObject);
                 OnHit(character, other);
+            }
+            else if (handler != null && !_hitGameObjects.Contains(other.gameObject))
+            {
+                _hitGameObjects.Add(other.gameObject);
+                OnHit(handler, other);
             }
         }
 
         protected virtual void OnHit(BaseCharacter victim, Collider collider)
         {
             Owner.OnHit(this, victim, collider, "", _firstHit);
+            _firstHit = false;
+        }
+
+        protected virtual void OnHit(CustomLogicCollisionHandler handler, Collider collider)
+        {
+            Owner.OnHit(this, handler, collider, "", _firstHit);
             _firstHit = false;
         }
 

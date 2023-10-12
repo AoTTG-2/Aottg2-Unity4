@@ -42,8 +42,13 @@ namespace Characters
         public Transform GrabHand;
         public MapObject MountedMapObject;
         public Transform MountedTransform;
+        public Vector3 MountedPositionOffset;
+        public Vector3 MountedRotationOffset;
         public int AccelerationStat;
         public int RunSpeedStat;
+        public bool CancelHookLeftKey;
+        public bool CancelHookRightKey;
+        public bool CancelHookBothKey;
 
         // physics
         public float ReelInAxis = 0f;
@@ -72,16 +77,14 @@ namespace Characters
         // actions
         public string StandAnimation;
         public string AttackAnimation;
+        public bool _gunArmAim;
         public string RunAnimation;
         public bool _attackRelease;
         public bool _attackButtonRelease;
         private float _stateTimeLeft = 0f;
         private float _dashTimeLeft = 0f;
         private bool _cancelGasDisable;
-        private bool _leftArmAim;
-        private bool _rightArmAim;
         private bool _animationStopped;
-        private Vector3 _gunTarget;
         private bool _needFinishReload;
         private string _reloadAnimation;
         private float _dashCooldownLeft = 0f;
@@ -141,18 +144,23 @@ namespace Characters
             ToggleSparks(false);
         }
 
-        public void Mount(Transform transform)
+        public void Mount(Transform transform, Vector3 positionOffset, Vector3 rotationOffset)
         {
-            Unmount(true);
+            if (MountedTransform != transform)
+            {
+                Unmount(true);
+                SetInterpolation(false);
+                GetComponent<CapsuleCollider>().isTrigger = true;
+            }
             MountState = HumanMountState.MapObject;
             MountedTransform = transform;
-            SetInterpolation(false);
-            GetComponent<CapsuleCollider>().isTrigger = true;
+            MountedPositionOffset = positionOffset;
+            MountedRotationOffset = rotationOffset;
         }
 
-        public void Mount(MapObject mapObject)
+        public void Mount(MapObject mapObject, Vector3 positionOffset, Vector3 rotationOffset)
         {
-            Mount(mapObject.GameObject.transform);
+            Mount(mapObject.GameObject.transform, positionOffset, rotationOffset);
             MountedMapObject = mapObject;
         }
 
@@ -220,6 +228,7 @@ namespace Characters
                 FalseAttack();
                 Cache.Rigidbody.AddForce(direction * 40f, ForceMode.VelocityChange);
                 _dashCooldownLeft = 0.2f;
+                ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.ShakeGas();
             }
         }
 
@@ -229,7 +238,7 @@ namespace Characters
                 FalseAttack();
             State = HumanState.Idle;
             string animation = HumanAnimations.StandFemale;
-            if (Setup.Weapon == HumanWeapon.Gun)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
                 animation = HumanAnimations.StandGun;
             else if (Setup.CustomSet.Sex.Value == (int)HumanSex.Male)
                 animation = HumanAnimations.StandMale;
@@ -240,8 +249,8 @@ namespace Characters
         {
             if (MountState != HumanMountState.None)
                 Unmount(true);
-            HookLeft.DisableActiveHook();
-            HookRight.DisableActiveHook();
+            HookLeft.DisableAnyHook();
+            HookRight.DisableAnyHook();
             UnhookHuman(true);
             UnhookHuman(false);
             State = HumanState.Grab;
@@ -311,13 +320,13 @@ namespace Characters
 
         public void Reload()
         {
-            if (Setup.Weapon == HumanWeapon.Gun && !SettingsManager.InGameCurrent.Misc.GunsAirReload.Value && !Grounded)
+            if ((Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG) && !SettingsManager.InGameCurrent.Misc.GunsAirReload.Value && !Grounded)
                 return;
             if (Weapon is AmmoWeapon)
             {
                 if (((AmmoWeapon)Weapon).AmmoLeft <= 0)
                     return;
-                if (Weapon is GunWeapon)
+                if (Weapon is AHSSWeapon || Weapon is APGWeapon)
                 {
                     Setup._part_blade_l.SetActive(false);
                     Setup._part_blade_r.SetActive(false);
@@ -325,6 +334,9 @@ namespace Characters
                 else if (Weapon is ThunderspearWeapon)
                 {
                     SetThunderspears(false, false);
+                    CancelHookLeftKey = true;
+                    CancelHookRightKey = true;
+                    CancelHookBothKey = true;
                 }
                 PlaySound(HumanSounds.GunReload);
             }
@@ -339,12 +351,12 @@ namespace Characters
                 else
                     PlaySound(HumanSounds.BladeReloadAir);
             }
-            if (Setup.Weapon == HumanWeapon.Gun || Setup.Weapon == HumanWeapon.Thunderspear)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.Thunderspear || Setup.Weapon == HumanWeapon.APG)
             {
                 if (Grounded)
-                    _reloadAnimation = "AHSS_gun_reload_both_air";
-                else
                     _reloadAnimation = "AHSS_gun_reload_both";
+                else
+                    _reloadAnimation = "AHSS_gun_reload_both_air";
             }
             else
             {
@@ -357,6 +369,7 @@ namespace Characters
             State = HumanState.Reload;
             _stateTimeLeft = Cache.Animation[_reloadAnimation].length / Cache.Animation[_reloadAnimation].speed;
             _needFinishReload = true;
+            ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.Reload();
         }
 
         protected void FinishReload()
@@ -365,7 +378,7 @@ namespace Characters
                 return;
             _needFinishReload = false;
             Weapon.Reload();
-            if (Weapon is BladeWeapon || Weapon is GunWeapon)
+            if (Weapon is BladeWeapon || Weapon is AHSSWeapon || Weapon is APGWeapon)
             {
                 Setup._part_blade_l.SetActive(true);
                 Setup._part_blade_r.SetActive(true);
@@ -495,7 +508,6 @@ namespace Characters
             Setup = gameObject.AddComponent<HumanSetup>();
             _customSkinLoader = gameObject.AddComponent<HumanCustomSkinLoader>();
             Destroy(gameObject.GetComponent<SmoothSyncMovement>());
-            CustomAnimationSpeed();
         }
 
         protected override void Start()
@@ -554,14 +566,16 @@ namespace Characters
                 base.GetHitRPC(viewId, name, damage, type, collider);
         }
 
-        public override void OnHit(BaseHitbox hitbox, BaseCharacter victim, Collider collider, string type, bool firstHit)
+        public override void OnHit(BaseHitbox hitbox, object victim, Collider collider, string type, bool firstHit)
         {
             if (hitbox != null)
             {
                 if (hitbox == HumanCache.BladeHitLeft || hitbox == HumanCache.BladeHitRight)
                     type = "Blade";
-                else if (hitbox == HumanCache.GunHit)
-                    type = "Gun";
+                else if (hitbox == HumanCache.AHSSHit)
+                    type = "AHSS";
+                else if (hitbox == HumanCache.APGHit)
+                    type = "APG";
             }
             int damage = Mathf.Max((int)(Cache.Rigidbody.velocity.magnitude * 10f), 10);
             if (type == "Blade")
@@ -578,22 +592,33 @@ namespace Characters
                 }
                 damage = (int)(damage * CharacterData.HumanWeaponInfo["Blade"]["DamageMultiplier"].AsFloat);
             }
-            else if (type == "Gun")
-                damage = (int)(damage * CharacterData.HumanWeaponInfo["Gun"]["DamageMultiplier"].AsFloat);
+            else if (type == "AHSS")
+                damage = (int)(damage * CharacterData.HumanWeaponInfo["AHSS"]["DamageMultiplier"].AsFloat);
+            else if (type == "APG")
+                damage = (int)(damage * CharacterData.HumanWeaponInfo["APG"]["DamageMultiplier"].AsFloat);
             if (CustomDamageEnabled)
                 damage = CustomDamage;
-            if (!victim.Dead)
+            if (victim is CustomLogicCollisionHandler)
             {
-                if (victim is BaseTitan)
+                (victim as CustomLogicCollisionHandler).GetHit(this, Name, damage, type);
+                return;
+            }
+            var victimChar = (BaseCharacter)victim;
+            if (!victimChar.Dead)
+            {
+                if (victimChar is BaseTitan)
                 {
-                    var titan = (BaseTitan)victim;
+                    var titan = (BaseTitan)victimChar;
                     if (titan.BaseTitanCache.NapeHurtbox == collider)
                     {
                         if (type == "Blade" && !CheckTitanNapeAngle(hitbox.transform.position, titan.BaseTitanCache.Head.transform,
                             CharacterData.HumanWeaponInfo["Blade"]["RestrictAngle"].AsFloat))
                             return;
-                        if (type == "Gun" && !CheckTitanNapeAngle(hitbox.transform.position, titan.BaseTitanCache.Head.transform,
-                            CharacterData.HumanWeaponInfo["Gun"]["RestrictAngle"].AsFloat))
+                        if (type == "AHSS" && !CheckTitanNapeAngle(hitbox.transform.position, titan.BaseTitanCache.Head.transform,
+                            CharacterData.HumanWeaponInfo["AHSS"]["RestrictAngle"].AsFloat))
+                            return;
+                        if (type == "APG" && !CheckTitanNapeAngle(hitbox.transform.position, titan.BaseTitanCache.Head.transform,
+                            CharacterData.HumanWeaponInfo["APG"]["RestrictAngle"].AsFloat))
                             return;
                         if (_lastNapeHitTimes.ContainsKey(titan) && (_lastNapeHitTimes[titan] + 0.2f) > Time.time)
                             return;
@@ -603,17 +628,19 @@ namespace Characters
                         if (type == "Blade")
                             PlaySound(HumanSounds.BladeHitNape);
                         _lastNapeHitTimes[titan] = Time.time;
+                        if (type == "APG" && damage < titan.CurrentHealth)
+                            ((APGWeapon)Weapon).SetBigShot(true);
                     }
                     if (titan.BaseTitanCache.Hurtboxes.Contains(collider))
                     {
                         if (collider != titan.BaseTitanCache.NapeHurtbox && titan is BasicTitan && ((BasicTitan)titan).IsCrawler)
                             return;
                         EffectSpawner.Spawn(EffectPrefabs.CriticalHit, hitbox.transform.position, Quaternion.Euler(270f, 0f, 0f));
-                        victim.GetHit(this, damage, type, collider.name);
+                        victimChar.GetHit(this, damage, type, collider.name);
                     }
                 }
                 else
-                    victim.GetHit(this, damage, type, collider.name);
+                    victimChar.GetHit(this, damage, type, collider.name);
             }
         }
 
@@ -646,8 +673,8 @@ namespace Characters
                         Unmount(true);
                     else
                     {
-                        Cache.Transform.position = MountedTransform.position;
-                        Cache.Transform.rotation = MountedTransform.rotation;
+                        Cache.Transform.position = MountedTransform.position + MountedPositionOffset;
+                        Cache.Transform.rotation = Quaternion.Euler(MountedTransform.rotation.eulerAngles + MountedRotationOffset);
                     }
                 }
                 else if (MountState == HumanMountState.Horse)
@@ -711,7 +738,7 @@ namespace Characters
                         if (Cache.Animation[AttackAnimation].normalizedTime >= 1f)
                             Idle();
                     }
-                    else if (Setup.Weapon == HumanWeapon.Gun || Setup.Weapon == HumanWeapon.Thunderspear)
+                    else if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.Thunderspear || Setup.Weapon == HumanWeapon.APG)
                     {
                         if (Cache.Animation[AttackAnimation].normalizedTime >= 1f)
                             Idle();
@@ -966,7 +993,7 @@ namespace Characters
                                 else if (!Cache.Animation.IsPlaying("air2_backward"))
                                     CrossFade("air2_backward", 0.2f);
                             }
-                            else if (Setup.Weapon == HumanWeapon.Gun)
+                            else if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
                             {
                                 if (IsHookedLeft())
                                 {
@@ -1238,7 +1265,7 @@ namespace Characters
                 if (hookDiff.sqrMagnitude < 4f)
                 {
                     TargetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-                    if (Setup.Weapon == HumanWeapon.Gun && State != HumanState.Attack)
+                    if ((Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG) && State != HumanState.Attack)
                     {
                         float current = -Mathf.Atan2(Cache.Rigidbody.velocity.z, Cache.Rigidbody.velocity.x) * Mathf.Rad2Deg;
                         float target = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
@@ -1283,7 +1310,7 @@ namespace Characters
                     float angle1 = -Mathf.Atan2(Cache.Rigidbody.velocity.z, Cache.Rigidbody.velocity.x) * Mathf.Rad2Deg;
                     float angle2 = -Mathf.Atan2(v.z, v.x) * Mathf.Rad2Deg;
                     float delta = -Mathf.DeltaAngle(angle1, angle2);
-                    if (Setup.Weapon == HumanWeapon.Gun)
+                    if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
                         TargetAngle += delta;
                     else
                     {
@@ -1302,7 +1329,7 @@ namespace Characters
         {
             float z = 0f;
             _needLean = false;
-            if (Setup.Weapon != HumanWeapon.Gun && State == HumanState.Attack && !IsFiringThunderspear())
+            if (Setup.Weapon != HumanWeapon.AHSS && Setup.Weapon != HumanWeapon.APG && State == HumanState.Attack && !IsFiringThunderspear())
             {
                 Vector3 v = Cache.Rigidbody.velocity;
                 float diag = Mathf.Sqrt((v.x * v.x) + (v.z * v.z));
@@ -1335,7 +1362,7 @@ namespace Characters
                 if (_needLean)
                 {
                     float a = 0f;
-                    if (Setup.Weapon != HumanWeapon.Gun && State != HumanState.Attack)
+                    if (Setup.Weapon != HumanWeapon.AHSS && Setup.Weapon != HumanWeapon.APG && State != HumanState.Attack)
                     {
                         a = Cache.Rigidbody.velocity.magnitude * 0.1f;
                         a = Mathf.Min(a, 20f);
@@ -1413,18 +1440,26 @@ namespace Characters
 
         private void LateUpdateGun()
         {
-            if (Setup.Weapon == HumanWeapon.Gun)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
             {
-                if (_leftArmAim || _rightArmAim)
+                if (_gunArmAim && Setup.Weapon == HumanWeapon.AHSS)
                 {
-                    Vector3 direction = _gunTarget - Cache.Transform.position;
+                    Vector3 target = GetAimPoint();
+                    Vector3 direction = (target - Cache.Transform.position).normalized;
                     float angle = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
                     float delta = -Mathf.DeltaAngle(angle, Cache.Transform.rotation.eulerAngles.y - 90f);
                     GunHeadMovement();
-                    if (!IsHookedLeft() && _leftArmAim && delta < 40f && delta > -90f)
-                        LeftArmAim(_gunTarget);
-                    if (!IsHookedRight() && _rightArmAim && delta > -40f && delta < 90f)
-                        RightArmAim(_gunTarget);
+                    if (!IsHookedAny())
+                    {
+                        if (delta <= 0f && delta > -90f)
+                            LeftArmAim(target);
+                        else if (delta > 0f && delta < 90f)
+                            RightArmAim(target);
+                    }
+                    else if (!IsHookedLeft() && delta < 40f && delta > -90f)
+                        LeftArmAim(target);
+                    else if (!IsHookedRight() && delta > -40f && delta < 90f)
+                        RightArmAim(target);
                 }
                 else if (!Grounded)
                 {
@@ -1441,10 +1476,10 @@ namespace Characters
         private void GunHeadMovement()
         {
             return;
+            Vector3 _gunTarget = GetAimPoint();
             Vector3 position = Cache.Transform.position;
             float x = Mathf.Sqrt(Mathf.Pow(_gunTarget.x - position.x, 2f) + Mathf.Pow(_gunTarget.z - position.z, 2f));
             var originalRotation = Cache.Transform.rotation;
-            var targetRotation = originalRotation;
             Vector3 euler = originalRotation.eulerAngles;
             Vector3 direction = _gunTarget - position;
             float angle = -Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
@@ -1453,8 +1488,8 @@ namespace Characters
             float y = HumanCache.Neck.position.y - _gunTarget.y;
             float deltaX = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
             deltaX = Mathf.Clamp(deltaX, -40f, 30f);
-            targetRotation = Quaternion.Euler(euler.x + deltaX, euler.y + deltaY, euler.z);
-            Cache.Transform.rotation = Quaternion.Lerp(originalRotation, targetRotation, Time.deltaTime * 60f);
+            var targetRotation = Quaternion.Euler(euler.x + deltaX, euler.y + deltaY, euler.z);
+            _targetRotation = Quaternion.Lerp(_targetRotation, targetRotation, Time.deltaTime * 100f);
         }
 
         private void LeftArmAim(Vector3 target)
@@ -1499,8 +1534,9 @@ namespace Characters
             HumanCustomSet set = new HumanCustomSet();
             set.DeserializeFromJsonString(customSetJson);
             Setup.Load(set, (HumanWeapon)humanWeapon, false);
-            HookLeft = new HookUseable(this, true, humanWeapon == (int)HumanWeapon.Gun);
-            HookRight = new HookUseable(this, false, humanWeapon == (int)HumanWeapon.Gun);
+            bool isGun = humanWeapon == (int)HumanWeapon.AHSS || humanWeapon == (int)HumanWeapon.APG;
+            HookLeft = new HookUseable(this, true, isGun);
+            HookRight = new HookUseable(this, false, isGun);
             if (MaxGas == -1f)
                 MaxGas = set.Gas.Value;
             if (CurrentGas == -1f)
@@ -1509,7 +1545,7 @@ namespace Characters
             SetRunSpeed(set.Speed.Value);
             StandAnimation = HumanAnimations.StandFemale;
             RunAnimation = HumanAnimations.Run;
-            if (humanWeapon == (int)HumanWeapon.Gun)
+            if (isGun)
                 StandAnimation = HumanAnimations.StandGun;
             else if (Setup.CustomSet.Sex.Value == (int)HumanSex.Male)
                 StandAnimation = HumanAnimations.StandMale;
@@ -1520,6 +1556,7 @@ namespace Characters
                 SetupSpecial();
             }
             FinishSetup = true;
+            CustomAnimationSpeed();
         }
 
         public void SetAcceleration(int acceleration)
@@ -1541,10 +1578,15 @@ namespace Characters
                 var bladeInfo = CharacterData.HumanWeaponInfo["Blade"];
                 Weapon = new BladeWeapon(this, set.Blade.Value * bladeInfo["DurabilityMultiplier"].AsFloat, bladeInfo["Blades"].AsInt);
             }
-            else if (humanWeapon == (int)HumanWeapon.Gun)
+            else if (humanWeapon == (int)HumanWeapon.AHSS)
             {
-                var gunInfo = CharacterData.HumanWeaponInfo["Gun"];
-                Weapon = new GunWeapon(this, gunInfo["AmmoTotal"].AsInt, gunInfo["AmmoRound"].AsInt, gunInfo["CD"].AsFloat);
+                var gunInfo = CharacterData.HumanWeaponInfo["AHSS"];
+                Weapon = new AHSSWeapon(this, gunInfo["AmmoTotal"].AsInt, gunInfo["AmmoRound"].AsInt, gunInfo["CD"].AsFloat);
+            }
+            else if (humanWeapon == (int)HumanWeapon.APG)
+            {
+                var gunInfo = CharacterData.HumanWeaponInfo["APG"];
+                Weapon = new APGWeapon(this, gunInfo["AmmoTotal"].AsInt, gunInfo["AmmoRound"].AsInt, gunInfo["CD"].AsFloat);
             }
             else if (humanWeapon == (int)HumanWeapon.Thunderspear)
             {
@@ -1595,7 +1637,7 @@ namespace Characters
             var special = SettingsManager.InGameCharacterSettings.Special.Value;
             var loadout = SettingsManager.InGameCharacterSettings.Loadout.Value;
             Special = HumanSpecials.GetSpecialUseable(this, special);
-            ((InGameMenu)UIManager.CurrentMenu).SetSpecialIcon(HumanSpecials.GetSpecialIcon(loadout, special));
+            ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.SetSpecialIcon(HumanSpecials.GetSpecialIcon(loadout, special));
         }
 
         protected void LoadSkin()
@@ -1714,22 +1756,25 @@ namespace Characters
                 return;
             if (MountState == HumanMountState.Horse)
                 Unmount(true);
-            if (State != HumanState.Attack)
+            if (State != HumanState.Attack && State != HumanState.SpecialAttack)
                 Idle();
             Vector3 v = (position - Cache.Transform.position).normalized * 20f;
             if (IsHookedLeft() && IsHookedRight())
                 v *= 0.8f;
-            FalseAttack();
-            Idle();
-            if (Setup.Weapon == HumanWeapon.Gun)
-                CrossFade("AHSS_hook_forward_both", 0.1f);
-            else if (left && !IsHookedRight())
-                CrossFade("air_hook_l_just", 0.1f);
-            else if (!left && !IsHookedLeft())
-                CrossFade("air_hook_r_just", 0.1f);
-            else
+            if (State != HumanState.SpecialAttack)
             {
-                CrossFade(HumanAnimations.Dash, 0.1f);
+                FalseAttack();
+                Idle();
+                if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
+                    CrossFade("AHSS_hook_forward_both", 0.1f);
+                else if (left && !IsHookedRight())
+                    CrossFade("air_hook_l_just", 0.1f);
+                else if (!left && !IsHookedLeft())
+                    CrossFade("air_hook_r_just", 0.1f);
+                else
+                {
+                    CrossFade(HumanAnimations.Dash, 0.1f);
+                }
             }
             Vector3 force = v;
             if (v.y < 30f)
@@ -1794,6 +1839,26 @@ namespace Characters
             }
         }
 
+        public void GetStunnedByTS(Vector3 origin)
+        {
+            Vector3 direction = Cache.Transform.position - origin;
+            Cache.Rigidbody.AddForce(direction.normalized * CharacterData.HumanWeaponInfo["Thunderspear"]["StunForce"].AsFloat, ForceMode.VelocityChange);
+            CrossFade("dash", 0.05f, 0.1f / Cache.Animation["dash"].length);
+            State = HumanState.Stun;
+            _stateTimeLeft = CharacterData.HumanWeaponInfo["Thunderspear"]["StunDuration"].AsFloat;
+            FalseAttack();
+            float facingDirection = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            Quaternion quaternion = Quaternion.Euler(0f, facingDirection, 0f);
+            Cache.Rigidbody.rotation = quaternion;
+            Cache.Transform.rotation = quaternion;
+            _targetRotation = quaternion;
+            TargetAngle = facingDirection;
+            UseGas(MaxGas * CharacterData.HumanWeaponInfo["Thunderspear"]["StunGasPenalty"].AsFloat);
+            ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.ShakeGas();
+            EffectSpawner.Spawn(EffectPrefabs.GasBurst, Cache.Transform.position, Cache.Transform.rotation);
+            PlaySound(HumanSounds.GasBurst);
+        }
+
         private void SetInterpolation(bool interpolate)
         {
             if (IsMine())
@@ -1833,7 +1898,7 @@ namespace Characters
 
         private float GetLeanAngle(Vector3 hookPosition, bool left)
         {
-            if (Setup.Weapon != HumanWeapon.Gun && State == HumanState.Attack)
+            if (Setup.Weapon != HumanWeapon.AHSS && Setup.Weapon != HumanWeapon.APG && State == HumanState.Attack)
                 return 0f;
             float height = hookPosition.y - Cache.Transform.position.y;
             float dist = Vector3.Distance(hookPosition, Cache.Transform.position);
@@ -1846,7 +1911,7 @@ namespace Characters
             if (State != HumanState.Attack)
                 angle = Mathf.Min(angle, 80f);
             _leanLeft = delta > 0f;
-            if (Setup.Weapon == HumanWeapon.Gun)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
                 return angle * (delta >= 0f ? 1f : -1f);
             float multiplier = 0.5f;
             if ((left && delta < 0f) || (!left && delta > 0f))
@@ -1986,7 +2051,7 @@ namespace Characters
 
         private void FalseAttack()
         {
-            if (Setup.Weapon == HumanWeapon.Gun || Setup.Weapon == HumanWeapon.Thunderspear)
+            if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.Thunderspear || Setup.Weapon == HumanWeapon.APG)
             {
                 if (!_attackRelease)
                     _attackRelease = true;
@@ -2056,6 +2121,11 @@ namespace Characters
             Cache.Animation["AHSS_gun_reload_l_air"].speed = 0.5f;
             Cache.Animation["AHSS_gun_reload_r"].speed = 0.4f;
             Cache.Animation["AHSS_gun_reload_r_air"].speed = 0.5f;
+            if (Setup.Weapon == HumanWeapon.Thunderspear)
+            {
+                Cache.Animation["AHSS_gun_reload_both"].speed = 0.76f;
+                Cache.Animation["AHSS_gun_reload_both_air"].speed = 1f;
+            }
         }
 
         private bool HasHook()
@@ -2160,8 +2230,10 @@ namespace Characters
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (HumanCache.GunHit != null)
-                Destroy(HumanCache.GunHit.gameObject);
+            if (HumanCache.AHSSHit != null)
+                Destroy(HumanCache.AHSSHit.gameObject);
+            if (HumanCache.APGHit != null)
+                Destroy(HumanCache.APGHit.gameObject);
             Setup.DeleteDie();
         }
 
@@ -2210,8 +2282,9 @@ namespace Characters
     public enum HumanWeapon
     {
         Blade,
-        Gun,
-        Thunderspear
+        AHSS,
+        Thunderspear,
+        APG
     }
 
     public enum HumanDashDirection

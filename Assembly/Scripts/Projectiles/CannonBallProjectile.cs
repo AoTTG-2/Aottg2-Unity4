@@ -8,6 +8,7 @@ using Effects;
 using ApplicationManagers;
 using GameManagers;
 using UI;
+using CustomLogic;
 
 namespace Projectiles
 {
@@ -24,6 +25,12 @@ namespace Projectiles
             if (photonView.isMine && !Disabled)
             {
                 var character = collision.collider.gameObject.transform.root.GetComponent<BaseCharacter>();
+                var handler = collider.gameObject.GetComponent<CustomLogicCollisionHandler>();
+                if (handler != null)
+                {
+                    handler.GetHit(_owner, "CannonBall", 100, "CannonBall");
+                    return;
+                }
                 if (character != null && !TeamInfo.SameTeam(character, _team))
                 {
                     if (_owner == null || !(_owner is Human))

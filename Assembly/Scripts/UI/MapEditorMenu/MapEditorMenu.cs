@@ -26,6 +26,7 @@ namespace UI
         public MapEditorSettingsPopup SettingsPopup;
         public MapEditorCustomLogicPopup CustomLogicPopup;
         public MapEditorSelectComponentPopup SelectComponentPopup;
+        public Image DragImage;
         public bool IsMouseUI;
 
         public override void Setup()
@@ -34,6 +35,9 @@ namespace UI
             RebuildPanels();
             _topPanel = ElementFactory.CreateHeadedPanel<MapEditorTopPanel>(transform, true);
             ElementFactory.SetAnchor(_topPanel.gameObject, TextAnchor.UpperCenter, TextAnchor.UpperCenter, new Vector2(0f, 0f));
+            DragImage = ElementFactory.InstantiateAndBind(transform, "MapEditorDragImage").GetComponent<Image>();
+            ElementFactory.SetAnchor(DragImage.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, Vector2.zero);
+            DragImage.gameObject.SetActive(false);
         }
 
         protected override void SetupPopups()
@@ -53,6 +57,28 @@ namespace UI
             _popups.Add(SettingsPopup);
             _popups.Add(CustomLogicPopup);
             _popups.Add(SelectComponentPopup);
+        }
+
+        public void SetDrag(bool active, Vector2 start, Vector2 end)
+        {
+            if (active)
+            {
+                if (!DragImage.gameObject.activeSelf)
+                    DragImage.gameObject.SetActive(true);
+                float x1 = Mathf.Min(start.x, end.x);
+                float y1 = Mathf.Min(start.y, end.y);
+                float x2 = Mathf.Max(start.x, end.x);
+                float y2 = Mathf.Max(start.y, end.y);
+                start = new Vector2(x1, y1);
+                end = new Vector2(x2, y2);
+                DragImage.rectTransform.anchoredPosition = start;
+                DragImage.rectTransform.sizeDelta = end - start;
+            }
+            else
+            {
+                if (DragImage.gameObject.activeSelf)
+                    DragImage.gameObject.SetActive(false);
+            }
         }
 
         public void ShowInspector(MapObject obj)

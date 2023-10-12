@@ -63,8 +63,11 @@ namespace GameProgress
                 case KillWeapon.Blade:
                     _gameStat.TitansKilledBlade.Value++;
                     break;
-                case KillWeapon.Gun:
-                    _gameStat.TitansKilledGun.Value++;
+                case KillWeapon.AHSS:
+                    _gameStat.TitansKilledAHSS.Value++;
+                    break;
+                case KillWeapon.APG:
+                    _gameStat.TitansKilledAPG.Value++;
                     break;
                 case KillWeapon.Thunderspear:
                     _gameStat.TitansKilledThunderspear.Value++;
@@ -84,8 +87,11 @@ namespace GameProgress
                 case KillWeapon.Blade:
                     _gameStat.HumansKilledBlade.Value++;
                     break;
-                case KillWeapon.Gun:
-                    _gameStat.HumansKilledGun.Value++;
+                case KillWeapon.AHSS:
+                    _gameStat.HumansKilledAHSS.Value++;
+                    break;
+                case KillWeapon.APG:
+                    _gameStat.HumansKilledAPG.Value++;
                     break;
                 case KillWeapon.Thunderspear:
                     _gameStat.HumansKilledThunderspear.Value++;
@@ -103,7 +109,7 @@ namespace GameProgress
 
         public override void RegisterDamage(GameObject character, GameObject victim, KillWeapon weapon, int damage)
         {
-            if (weapon == KillWeapon.Blade || weapon == KillWeapon.Gun || weapon == KillWeapon.Thunderspear)
+            if (weapon == KillWeapon.Blade || weapon == KillWeapon.AHSS || weapon == KillWeapon.Thunderspear || weapon == KillWeapon.APG)
             {
                 _gameStat.DamageHighestOverall.Value = Math.Max(_gameStat.DamageHighestOverall.Value, damage);
                 _gameStat.DamageTotalOverall.Value += damage;
@@ -112,10 +118,15 @@ namespace GameProgress
                     _gameStat.DamageHighestBlade.Value = Math.Max(_gameStat.DamageHighestBlade.Value, damage);
                     _gameStat.DamageTotalBlade.Value += damage;
                 }
-                else if (weapon == KillWeapon.Gun)
+                else if (weapon == KillWeapon.AHSS)
                 {
-                    _gameStat.DamageHighestGun.Value = Math.Max(_gameStat.DamageHighestGun.Value, damage);
-                    _gameStat.DamageTotalGun.Value += damage;
+                    _gameStat.DamageHighestAHSS.Value = Math.Max(_gameStat.DamageHighestAHSS.Value, damage);
+                    _gameStat.DamageTotalAHSS.Value += damage;
+                }
+                else if (weapon == KillWeapon.APG)
+                {
+                    _gameStat.DamageHighestAPG.Value = Math.Max(_gameStat.DamageHighestAPG.Value, damage);
+                    _gameStat.DamageTotalAPG.Value += damage;
                 }
                 else if (weapon == KillWeapon.Thunderspear)
                 {

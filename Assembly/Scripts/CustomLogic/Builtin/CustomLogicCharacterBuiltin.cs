@@ -45,6 +45,12 @@ namespace CustomLogic
                 if (Character.IsMine() && !Character.Dead)
                     Character.PlaySound(sound);
             }
+            else if (name == "LookAt")
+            {
+                Vector3 position = ((CustomLogicVector3Builtin)parameters[0]).Value;
+                if (Character.IsMine() && !Character.Dead)
+                    Character.Cache.Transform.LookAt(position);
+            }
             return base.CallMethod(name, parameters);
         }
 
@@ -52,6 +58,8 @@ namespace CustomLogic
         {
             if (name == "Player")
                 return new CustomLogicPlayerBuiltin(Character.Cache.PhotonView.owner);
+            else if (name == "ViewID")
+                return Character.Cache.PhotonView.viewID;
             else if (name == "IsMine")
                 return Character.IsMine();
             else if (name == "Name")
@@ -64,6 +72,16 @@ namespace CustomLogic
                 return new CustomLogicVector3Builtin(Character.Cache.Transform.rotation.eulerAngles);
             else if (name == "Velocity")
                 return new CustomLogicVector3Builtin(Character.Cache.Rigidbody.velocity);
+            else if (name == "Forward")
+                return new CustomLogicVector3Builtin(Character.Cache.Transform.forward);
+            else if (name == "Right")
+                return new CustomLogicVector3Builtin(Character.Cache.Transform.right);
+            else if (name == "Up")
+                return new CustomLogicVector3Builtin(Character.Cache.Transform.up);
+            else if (name == "HasTargetDirection")
+                return Character.HasDirection;
+            else if (name == "TargetDirection")
+                return new CustomLogicVector3Builtin(Character.GetTargetDirection());
             else if (name == "Team")
                 return Character.Team;
             else if (name == "IsCharacter")
@@ -89,6 +107,12 @@ namespace CustomLogic
                 Character.Cache.Transform.rotation = Quaternion.Euler(((CustomLogicVector3Builtin)value).Value);
             else if (name == "Velocity")
                 Character.Cache.Rigidbody.velocity = ((CustomLogicVector3Builtin)value).Value;
+            else if (name == "Forward")
+                Character.Cache.Transform.forward = ((CustomLogicVector3Builtin)value).Value;
+            else if (name == "Right")
+                Character.Cache.Transform.right = ((CustomLogicVector3Builtin)value).Value;
+            else if (name == "Up")
+                Character.Cache.Transform.up = ((CustomLogicVector3Builtin)value).Value;
             else if (name == "Health")
                 Character.SetCurrentHealth(value.UnboxToInt());
             else if (name == "MaxHealth")

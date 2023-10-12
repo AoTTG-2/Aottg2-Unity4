@@ -12,6 +12,7 @@ using System.Collections;
 using Effects;
 using UI;
 using Settings;
+using CustomLogic;
 
 namespace Characters
 {
@@ -356,8 +357,8 @@ namespace Characters
             _turnStartRotation = Cache.Transform.rotation;
             _turnTargetRotation = Quaternion.LookRotation(targetDirection);
             _currentTurnTime = 0f;
-            _maxTurnTime = Cache.Animation[animation].length * 0.71f;
-            StateActionWithTime(TitanState.Turn, animation, Cache.Animation[animation].length * 0.71f, 0.1f);
+            _maxTurnTime = Cache.Animation[animation].length * 0.71f / Cache.Animation[animation].speed;
+            StateActionWithTime(TitanState.Turn, animation, _maxTurnTime, 0.1f);
         }
 
         protected override IEnumerator WaitAndDie()
@@ -1022,20 +1023,27 @@ namespace Characters
             }
         }
 
-        public override void OnHit(BaseHitbox hitbox, BaseCharacter victim, Collider collider, string type, bool firstHit)
+        public override void OnHit(BaseHitbox hitbox, object victim, Collider collider, string type, bool firstHit)
         {
             int damage = 100;
             if (CustomDamageEnabled)
                 damage = CustomDamage;
+            if (victim is CustomLogicCollisionHandler)
+            {
+                ((CustomLogicCollisionHandler)victim).GetHit(this, Name, damage, type);
+                return;
+            }
+            var victimChar = (BaseCharacter)victim;
             if (State == TitanState.Attack && _currentAttack == BasicTitanAttacks.AttackGrab && victim is Human)
             {
-                if (HoldHuman == null && firstHit && !victim.Dead)
+                var human = (Human)victim;
+                if (HoldHuman == null && firstHit && !human.Dead)
                 {
                     HoldHumanLeft = hitbox == BasicCache.HandLHitbox;
                     if (HoldHumanLeft)
-                        victim.GetHit(this, 0, "GrabLeft", collider.name);
+                        human.GetHit(this, 0, "GrabLeft", collider.name);
                     else
-                        victim.GetHit(this, 0, "GrabRight", collider.name);
+                        human.GetHit(this, 0, "GrabRight", collider.name);
                 }
             }
             else if (victim is BaseTitan)
@@ -1043,21 +1051,21 @@ namespace Characters
                 if (firstHit)
                 {
                     EffectSpawner.Spawn(EffectPrefabs.PunchHit, hitbox.transform.position, Quaternion.identity);
-                    if (!victim.Dead)
+                    if (!victimChar.Dead)
                     {
                         if (IsMainCharacter())
                             ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
-                        victim.GetHit(this, damage, "Stun", collider.name);
+                        victimChar.GetHit(this, damage, "Stun", collider.name);
                     }
                 }
             }
             else
             {
-                if (!victim.Dead)
+                if (!victimChar.Dead)
                 {
                     if (IsMainCharacter())
                         ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
-                    victim.GetHit(this, damage, "", collider.name);
+                    victimChar.GetHit(this, damage, "", collider.name);
                 }
             }
         }

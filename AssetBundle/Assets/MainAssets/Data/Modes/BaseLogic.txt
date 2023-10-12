@@ -59,10 +59,11 @@ component Rigidbody
 {
     Mass = 1.0;
     Gravity = Vector3(0.0, -9.81, 0.0);
+    FreezeRotation = false;
 
     function Init()
     {
-        self.MapObject.AddBuiltinComponent("Rigidbody", self.Mass, self.Gravity);
+        self.MapObject.AddBuiltinComponent("Rigidbody", self.Mass, self.Gravity, self.FreezeRotation);
     }
 
     function SetVelocity(velocity)
@@ -74,188 +75,10 @@ component Rigidbody
     {
         self.MapObject.UpdateBuiltinComponent("Rigidbody", "AddForce", force);
     }
-}
 
-component Cannon
-{
-    UnlimitedAmmo = true;
-    MaxAmmo = 0;
-    Cooldown = 3.0;
-    IsGround = true;
-    _rotateSpeed = 0.2;
-    _ballSpeed = 300.0;
-    _barrel = null;
-    _humanMount = null;
-    _barrelEnd = null;
-    _inUse = false;
-    _cooldownLeft = 0.0;
-    _human = null;
-    _collidingHuman = null;
-
-    function Init()
+    function GetVelocity()
     {
-        self._barrel = self.MapObject.GetTransform("Barrel");
-        self._barrelEnd = self._barrel.GetTransform("End");
-        self._humanMount = self.MapObject.GetTransform("HumanMount");
-        self.MapObject.AddSphereCollider("Region", "Characters", Vector3.Zero, 15.0);
-    }
-
-    function SendNetworkStream()
-    {
-        self.NetworkView.SendStream(self._barrel.LocalRotation);
-        self.NetworkView.SendStream(self._inUse);
-    }
-
-    function OnNetworkStream()
-    {
-        rotation = self.NetworkView.ReceiveStream();
-        self._barrel.LocalRotation = rotation;
-        self._inUse = self.NetworkView.ReceiveStream();
-    }
-
-    function OnNetworkMessage(sender, message)
-    {
-        if (Network.IsMasterClient && self.NetworkView.Owner == Network.MyPlayer && !self._inUse && message == "request")
-        {
-            self.NetworkView.Transfer(sender);
-        }
-    }
-
-    function OnNetworkTransfer(oldOwner, newOwner) 
-    {
-        if (newOwner == Network.MasterClient && Network.IsMasterClient)
-        {
-            self._inUse = false;
-            self.ResetBarrel();
-        }
-        elif (newOwner == Network.MyPlayer)
-        {
-            self._inUse = true;
-            human = Network.MyPlayer.Character;
-            if (human != null && human.Type == "Human")
-            {
-                human.MountTransform(self._humanMount);
-                self._human = human;
-            }
-        }
-    }
-
-    function OnCollisionStay(other)
-    {
-        if (other.Type == "Human" && other.IsMine && !self._inUse)
-        {
-            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to use cannon.", 0.1);
-            self._collidingHuman = other;
-        }
-    }
-
-    function OnTick()
-    {
-        self._collidingHuman = null;
-    }
-
-    function OnFrame()
-    {
-        if (self._inUse && self.NetworkView.Owner == Network.MyPlayer)
-        {
-            self._cooldownLeft = self._cooldownLeft - Time.FrameTime;
-            barrelRotation = self._barrel.LocalRotation;
-            baseRotation = self.MapObject.Rotation;
-            if (Input.GetKeyHold("General/Left"))
-            {
-                baseRotation.Y = baseRotation.Y - self._rotateSpeed * Time.FrameTime;
-            }
-            elif (Input.GetKeyHold("General/Right"))
-            {
-                baseRotation.Y = baseRotation.Y + self._rotateSpeed * Time.FrameTime;
-            }
-            if (self.IsGround)
-            {
-                if (Input.GetKeyHold("General/Forward"))
-                {
-                    barrelRotation.Z = barrelRotation.Z + self._rotateSpeed * Time.FrameTime;
-                }
-                elif (Input.GetKeyHold("General/Back"))
-                {
-                    barrelRotation.Z = barrelRotation.Z - self._rotateSpeed * Time.FrameTime;
-                }
-                barrelRotation.Z = Math.Clamp(barrelRotation.Z, 80.0, 110.0);
-            }
-            else
-            {
-                if (Input.GetKeyHold("General/Forward"))
-                {
-                    barrelRotation.X = barrelRotation.X - self._rotateSpeed * Time.FrameTime;
-                }
-                elif (Input.GetKeyHold("General/Back"))
-                {
-                    barrelRotation.X = barrelRotation.X + self._rotateSpeed * Time.FrameTime;
-                }
-                barrelRotation.X = Math.Clamp(barrelRotation.X, 230.0, 300.0);
-            }
-            self._barrel.LocalRotation = barrelRotation;
-            self.MapObject.Rotation = baseRotation;
-            if (self._cooldownLeft <= 0.0 && Input.GetKeyHold("Human/AttackDefault"))
-            {
-                self.Fire();
-            }
-            if (Input.GetKeyDown("Interaction/Interact"))
-            {
-                self._human.Unmount();
-                self.NetworkView.Transfer(Network.MasterClient);
-                self._inUse = false;
-                self.ResetBarrel();
-            }
-        }
-        if (self.NetworkView.Owner == Network.MyPlayer && self._inUse)
-        {
-            if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._humanMount)
-            {
-                self.NetworkView.Transfer(Network.MasterClient);
-                self._inUse = false;
-                self.ResetBarrel();
-                return;
-            }
-        }
-        if (!self._inUse && self._collidingHuman != null)
-        {
-            if (Input.GetKeyDown("Interaction/Interact")) 
-            {
-                if (self.NetworkView.Owner == Network.MyPlayer) 
-                {
-                    self._inUse = true;
-                    self._collidingHuman.MountTransform(self._humanMount);
-                    self._human = self._collidingHuman;
-                }
-                else
-                {
-                    self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
-                }
-            }
-        }
-    }
-
-    function ResetBarrel()
-    {
-        if (self.IsGround)
-        {
-            self._barrel.LocalRotation = Vector3(0, -90, 90);
-        }
-        else
-        {
-            self._barrel.LocalRotation = Vector3(270, 0, 0);
-        }
-    }
-
-    function Fire()
-    {
-        self._cooldownLeft = self.Cooldown;
-        if (self._human != null)
-        {
-            Game.SpawnEffect("Boom2", self._barrelEnd.Position, self._barrelEnd.Rotation, 0.5);
-            Game.SpawnProjectileWithOwner("CannonBall", self._barrelEnd.Position, Vector3.Zero, self._barrel.Up.Normalized * -1.0 * self._ballSpeed, 
-            Vector3(0, -20, 0), 2.0, self._human);
-        }
+        return self.MapObject.ReadBuiltinComponent("Rigidbody", "Velocity");
     }
 }
 
@@ -454,6 +277,394 @@ component TeleportRegion
                 return;
             }
             other.Position = self.Position;
+        }
+    }
+}
+
+component Dummy
+{
+    ResetCount = 0;
+    ResetDelay = 5.0;
+    _state = "Alive";
+    _currentResetTime = 0.0;
+
+    function Init()
+    {
+        self.MapObject.Transform.PlayAnimation("Armature|dummy_idle");
+        self.MapObject.AddSphereCollider("Region", "Hitboxes", Vector3(0, 12.4, -3.7), 1.0);
+    }
+
+    function OnNetworkMessage(sender, message)
+    {
+        if (message == "hit")
+        {
+            if (self._state == "Alive")
+            {
+                self.MapObject.Transform.PlayAnimation("Armature|dummy_fall");
+            }
+            self._currentResetTime = self.ResetDelay;
+            self._state = "Dead";
+        }
+    }
+
+    function OnTick()
+    {
+        self._currentResetTime = self._currentResetTime - Time.TickTime;
+        if (self._state == "Dead")
+        {
+            if (self._currentResetTime <= 0 && self.ResetCount > 0)
+            {
+                self.ResetCount = self.ResetCount - 1;
+                self._state = "Rise";
+                self.MapObject.Transform.PlayAnimation("Armature|dummy_rise");
+                self._currentResetTime = 1.0;
+            }
+        }
+        elif (self._state == "Rise")
+        {
+            if (self._currentResetTime <= 0)
+            {
+                self._state = "Alive";
+                self.MapObject.Transform.PlayAnimation("Armature|dummy_idle");
+            }
+        }
+    }
+
+    function OnGetHit(character, name, damage, type)
+    {
+        if (self._state == "Alive")
+        {
+            self.NetworkView.SendMessageAll("hit");
+        }
+    }
+}
+
+component Wagon
+{
+    MoveForce = 20.0;
+    MaxMoveSpeed = 50.0;
+    RotateSpeed = 3.0;
+    _inUse = false;
+    _horse = null;
+    _human = null;
+    _collidingHuman = null;
+    _lastHuman = null;
+    _rigidbody = null;
+
+    function Init()
+    {
+        self._horse = self.MapObject.GetTransform("Horse");
+        self.MapObject.AddSphereCollider("Region", "Characters", Vector3.Zero, 10.0);
+        self._rigidbody = self.MapObject.GetComponent("Rigidbody");
+    }
+
+    function OnNetworkMessage(sender, message)
+    {
+        if (Network.IsMasterClient && self.NetworkView.Owner == Network.MyPlayer && !self._inUse && message == "request")
+        {
+            self.NetworkView.Transfer(sender);
+        }
+    }
+
+    function OnNetworkTransfer(oldOwner, newOwner) 
+    {
+        if (newOwner == Network.MasterClient && Network.IsMasterClient)
+        {
+            self._inUse = false;
+        }
+        elif (newOwner == Network.MyPlayer)
+        {
+            self._inUse = true;
+            human = Network.MyPlayer.Character;
+            if (human != null && human.Type == "Human")
+            {
+                human.MountTransform(self._horse, Vector3(0, 1.68, 0), Vector3.Zero);
+                self._human = human;
+            }
+        }
+    }
+
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine && !self._inUse)
+        {
+            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to use wagon.", 0.1);
+            self._collidingHuman = other;
+        }
+        if (other.Type == "Human" && other.IsMine && other != self._lastHuman)
+        {
+            if (other.Refill(true))
+            {
+                self._lastHuman = other;
+            }
+        }
+    }
+
+    function OnCollisionExit(other)
+    {
+        if (other.Type == "Human" && other.IsMine)
+        {
+            self._lastHuman = null;
+        }
+    }
+
+    function OnTick()
+    {
+        self._collidingHuman = null;
+    }
+
+    function OnFrame()
+    {
+        if (self._inUse && self.NetworkView.Owner == Network.MyPlayer)
+        {
+            if (self._human.HasTargetDirection)
+            {
+                self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, self._human.TargetDirection, self.RotateSpeed * Time.FrameTime);
+                self._rigidbody.AddForce(self.MapObject.Forward * self.MoveForce);
+                velocity = self._rigidbody.GetVelocity();
+                self._rigidbody.SetVelocity(velocity.Normalized * Math.Min(velocity.Magnitude, self.MaxMoveSpeed));
+            }
+            else
+            {
+                velocity = self._rigidbody.GetVelocity();
+                if (velocity.Magnitude < 1)
+                {
+                    self._rigidbody.SetVelocity(Vector3.Up * velocity.Y);
+                }
+                else
+                {
+                    self._rigidbody.AddForce(-0.5 * velocity.Normalized * velocity.Magnitude);
+                }
+            }
+            if (Input.GetKeyDown("Interaction/Interact"))
+            {
+                self._human.Unmount();
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+            }
+        }
+        if (self.NetworkView.Owner == Network.MyPlayer && self._inUse)
+        {
+            if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._horse)
+            {
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+                return;
+            }
+        }
+        if (!self._inUse && self._collidingHuman != null)
+        {
+            if (Input.GetKeyDown("Interaction/Interact")) 
+            {
+                if (self.NetworkView.Owner == Network.MyPlayer) 
+                {
+                    self._inUse = true;
+                    self._collidingHuman.MountTransform(self._horse, Vector3(0, 1.68, 0), Vector3.Zero);
+                    self._human = self._collidingHuman;
+                }
+                else
+                {
+                    self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
+                }
+            }
+        }
+        self.UpdateHorse();
+    }
+
+    function UpdateHorse()
+    {
+        if (self._rigidbody.GetVelocity().Magnitude > 1)
+        {
+            self._horse.PlayAnimation("horse_Run");
+            self.MapObject.GetTransform("Dust").ToggleParticle(true);
+        }
+        else
+        {
+            self._horse.PlayAnimation("horse_idle0");
+            self.MapObject.GetTransform("Dust").ToggleParticle(false);
+        }
+    }
+}
+
+component Cannon
+{
+    UnlimitedAmmo = true;
+    MaxAmmo = 0;
+    Cooldown = 3.0;
+    IsGround = true;
+    _rotateSpeed = 20;
+    _ballSpeed = 300.0;
+    _barrel = null;
+    _humanMount = null;
+    _barrelEnd = null;
+    _inUse = false;
+    _cooldownLeft = 0.0;
+    _human = null;
+    _collidingHuman = null;
+
+    function Init()
+    {
+        self._barrel = self.MapObject.GetTransform("Barrel");
+        self._barrelEnd = self._barrel.GetTransform("End");
+        self._humanMount = self.MapObject.GetTransform("HumanMount");
+        self.MapObject.AddSphereCollider("Region", "Characters", Vector3.Zero, 15.0);
+    }
+
+    function SendNetworkStream()
+    {
+        self.NetworkView.SendStream(self._barrel.LocalRotation);
+        self.NetworkView.SendStream(self._inUse);
+    }
+
+    function OnNetworkStream()
+    {
+        rotation = self.NetworkView.ReceiveStream();
+        self._barrel.LocalRotation = rotation;
+        self._inUse = self.NetworkView.ReceiveStream();
+    }
+
+    function OnNetworkMessage(sender, message)
+    {
+        if (Network.IsMasterClient && self.NetworkView.Owner == Network.MyPlayer && !self._inUse && message == "request")
+        {
+            self.NetworkView.Transfer(sender);
+        }
+    }
+
+    function OnNetworkTransfer(oldOwner, newOwner) 
+    {
+        if (newOwner == Network.MasterClient && Network.IsMasterClient)
+        {
+            self._inUse = false;
+            self.ResetBarrel();
+        }
+        elif (newOwner == Network.MyPlayer)
+        {
+            self._inUse = true;
+            human = Network.MyPlayer.Character;
+            if (human != null && human.Type == "Human")
+            {
+                human.MountTransform(self._humanMount, Vector3.Zero, Vector3.Zero);
+                self._human = human;
+            }
+        }
+    }
+
+    function OnCollisionStay(other)
+    {
+        if (other.Type == "Human" && other.IsMine && !self._inUse)
+        {
+            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to use cannon.", 0.1);
+            self._collidingHuman = other;
+        }
+    }
+
+    function OnTick()
+    {
+        self._collidingHuman = null;
+    }
+
+    function OnFrame()
+    {
+        if (self._inUse && self.NetworkView.Owner == Network.MyPlayer)
+        {
+            self._cooldownLeft = self._cooldownLeft - Time.FrameTime;
+            barrelRotation = self._barrel.LocalRotation;
+            baseRotation = self.MapObject.Rotation;
+            if (Input.GetKeyHold("General/Left"))
+            {
+                baseRotation.Y = baseRotation.Y - self._rotateSpeed * Time.FrameTime;
+            }
+            elif (Input.GetKeyHold("General/Right"))
+            {
+                baseRotation.Y = baseRotation.Y + self._rotateSpeed * Time.FrameTime;
+            }
+            if (self.IsGround)
+            {
+                if (Input.GetKeyHold("General/Forward"))
+                {
+                    barrelRotation.Z = barrelRotation.Z + self._rotateSpeed * Time.FrameTime;
+                }
+                elif (Input.GetKeyHold("General/Back"))
+                {
+                    barrelRotation.Z = barrelRotation.Z - self._rotateSpeed * Time.FrameTime;
+                }
+                barrelRotation.Z = Math.Clamp(barrelRotation.Z, 80.0, 110.0);
+            }
+            else
+            {
+                if (Input.GetKeyHold("General/Forward"))
+                {
+                    barrelRotation.X = barrelRotation.X - self._rotateSpeed * Time.FrameTime;
+                }
+                elif (Input.GetKeyHold("General/Back"))
+                {
+                    barrelRotation.X = barrelRotation.X + self._rotateSpeed * Time.FrameTime;
+                }
+                barrelRotation.X = Math.Clamp(barrelRotation.X, 230.0, 300.0);
+            }
+            self._barrel.LocalRotation = barrelRotation;
+            self.MapObject.Rotation = baseRotation;
+            if (self._cooldownLeft <= 0.0 && Input.GetKeyHold("Human/AttackDefault"))
+            {
+                self.Fire();
+            }
+            if (Input.GetKeyDown("Interaction/Interact"))
+            {
+                self._human.Unmount();
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+                self.ResetBarrel();
+            }
+        }
+        if (self.NetworkView.Owner == Network.MyPlayer && self._inUse)
+        {
+            if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._humanMount)
+            {
+                self.NetworkView.Transfer(Network.MasterClient);
+                self._inUse = false;
+                self.ResetBarrel();
+                return;
+            }
+        }
+        if (!self._inUse && self._collidingHuman != null)
+        {
+            if (Input.GetKeyDown("Interaction/Interact")) 
+            {
+                if (self.NetworkView.Owner == Network.MyPlayer) 
+                {
+                    self._inUse = true;
+                    self._collidingHuman.MountTransform(self._humanMount, Vector3.Zero, Vector3.Zero);
+                    self._human = self._collidingHuman;
+                }
+                else
+                {
+                    self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
+                }
+            }
+        }
+    }
+
+    function ResetBarrel()
+    {
+        if (self.IsGround)
+        {
+            self._barrel.LocalRotation = Vector3(0, -90, 90);
+        }
+        else
+        {
+            self._barrel.LocalRotation = Vector3(270, 0, 0);
+        }
+    }
+
+    function Fire()
+    {
+        self._cooldownLeft = self.Cooldown;
+        if (self._human != null)
+        {
+            Game.SpawnEffect("Boom2", self._barrelEnd.Position, self._barrelEnd.Rotation, 0.5);
+            Game.SpawnProjectileWithOwner("CannonBall", self._barrelEnd.Position, Vector3.Zero, self._barrel.Up.Normalized * -1.0 * self._ballSpeed, 
+            Vector3(0, -20, 0), 2.0, self._human);
         }
     }
 }

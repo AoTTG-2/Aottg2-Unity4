@@ -15,7 +15,7 @@ namespace Characters
 
         public string Get3dmgTexture()
         {
-            if (_setup.Weapon == HumanWeapon.Gun)
+            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
                 return "aottg_hero_AHSS_3dmg";
             return "AOTTG_HERO_3DMG";
         }

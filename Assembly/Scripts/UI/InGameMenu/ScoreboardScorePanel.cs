@@ -138,7 +138,7 @@ namespace UI
                 loadoutImage.color = UIManager.GetThemeColor(ThemePanel, "Icon", "LoadoutHuman");
                 if (loadout == HumanLoadout.Blades)
                     loadoutImage.texture = (Texture2D)AssetBundleManager.LoadAsset("BladeIcon", true);
-                else if (loadout == HumanLoadout.Guns)
+                else if (loadout == HumanLoadout.AHSS || loadout == HumanLoadout.APG)
                     loadoutImage.texture = (Texture2D)AssetBundleManager.LoadAsset("BladeIcon", true);
                 else if (loadout == HumanLoadout.Thunderspears)
                     loadoutImage.texture = (Texture2D)AssetBundleManager.LoadAsset("ThunderspearIcon", true);

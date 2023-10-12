@@ -40,7 +40,7 @@ namespace CustomLogic
         public bool UsesCollider()
         {
             var eval = CustomLogicManager.Evaluator;
-            return eval.HasMethod(this, "OnCollisionStay") || eval.HasMethod(this, "OnCollisionEnter") || eval.HasMethod(this, "OnCollisionExit");
+            return eval.HasMethod(this, "OnCollisionStay") || eval.HasMethod(this, "OnCollisionEnter") || eval.HasMethod(this, "OnCollisionExit") || eval.HasMethod(this, "OnGetHit");
         }
 
         public void OnCollisionStay(CustomLogicBaseBuiltin other)
@@ -56,6 +56,11 @@ namespace CustomLogic
         public void OnCollisionExit(CustomLogicBaseBuiltin other)
         {
             CustomLogicManager.Evaluator.EvaluateMethod(this, "OnCollisionExit", new List<object>() { other });
+        }
+
+        public void OnGetHit(CustomLogicCharacterBuiltin character, string name, int damage, string type)
+        {
+            CustomLogicManager.Evaluator.EvaluateMethod(this, "OnGetHit", new List<object>() { character, name, damage, type });
         }
 
         public static object DeserializeValue(object obj, string value)

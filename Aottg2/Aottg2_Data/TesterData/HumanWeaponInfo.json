@@ -1,7 +1,7 @@
 {
 	"Blade": {
 		"DurabilityMultiplier": 1.0,
-		"Blades": 5,
+		"Blades": 4,
 		"DamageMultiplier": 1.0,
 		"RestrictAngle": 70
 	},
@@ -9,23 +9,37 @@
 		"Range": 250,
 		"Radius": 10,
 		"Speed": 500,
+		"StunRange": 40,
+		"StunBlockRadius": 1,
+		"StunDuration": 0.5,
+		"StunGasPenalty": 0.2,
+		"StunForce": 80,
 		"CD": 0.8,
 		"Delay": 0.12,
 		"AmmoRound": 6,
-		"AmmoTotal": 36,
+		"AmmoTotal": 24,
 		"DamageMultiplier": 1,
-		"RestrictAngle": 100
+		"RestrictAngle": 100,
+		"Ricochet": false,
+		"RicochetSpeed": 0.2
 	},
-	"Gun": {
-		"RangeMin": 8.5,
-		"RangeMax": 75,
-		"RangeA": 0.846722,
-		"RangeC": 1.01902,
-		"RangeB": 1.00009,
-		"Radius": 0.1,
+	"AHSS": {
+		"Range": 25,
+		"Radius": 3,
 		"CD": 0.5,
-		"AmmoRound": 12,
-		"AmmoTotal": 48,
+		"AmmoRound": 4,
+		"AmmoTotal": 24,
+		"DamageMultiplier": 1,
+		"RestrictAngle": 60	
+	},
+	"APG": {
+		"Range": 50,
+		"Radius1": 0.1,
+		"Radius2": 0.5,
+		"Radius2Time": 2.0,
+		"CD": 0.5,
+		"AmmoRound": 6,
+		"AmmoTotal": 24,
 		"DamageMultiplier": 1,
 		"RestrictAngle": 60	
 	}

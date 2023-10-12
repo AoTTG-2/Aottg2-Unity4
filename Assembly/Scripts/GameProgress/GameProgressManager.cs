@@ -110,8 +110,9 @@ namespace GameProgress
     public enum KillWeapon
     {
         Blade,
-        Gun,
+        AHSS,
         Thunderspear,
+        APG,
         Other,
         Shifter,
         Titan

@@ -2,6 +2,7 @@
 using Effects;
 using Projectiles;
 using Settings;
+using UI;
 using UnityEngine;
 using Utility;
 
@@ -62,6 +63,7 @@ namespace Characters
                 spawnDirection * Speed, Vector3.zero, TravelTime, human.Cache.PhotonView.viewID, "", new object[] {Radius, SettingsManager.AbilitySettings.BombColor.Value.ToColor()});
             Current.InitialPlayerVelocity = human.Cache.Rigidbody.velocity;
             _delayTimeLeft = Delay;
+            ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.ShootTS();
         }
 
         public bool HasActiveProjectile()

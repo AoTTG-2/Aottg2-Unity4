@@ -23,16 +23,18 @@ namespace Characters
             Info = JSON.Parse(File.ReadAllText(FolderPaths.TesterData + "/TitanSetupInfo.json"));
         }
 
-        public static int[] GetRandomBodyHeadCombo()
+        public static int[] GetRandomBodyHeadCombo(JSONNode node = null)
         {
             int[] result = new int[2];
-            var combos = Info["BodyHeadCombos"];
+            if (node == null)
+                node = CharacterData.TitanAIInfo["Default"];
+            var combos = node["BodyHeadCombos"];
             List<object> nodes = new List<object>();
             List<float> weights = new List<float>();
-            foreach (JSONNode node in combos)
+            foreach (JSONNode n in combos)
             {
-                nodes.Add(node);
-                weights.Add(node["Chance"].AsFloat);
+                nodes.Add(n);
+                weights.Add(n["Chance"].AsFloat);
             }
             var combo = (JSONNode)Util.GetRandomFromWeightedList(nodes, weights);
             result[0] = combo["Body"].AsInt;

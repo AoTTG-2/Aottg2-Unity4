@@ -139,8 +139,10 @@ namespace Characters
             var loadout = settings.Loadout.Value;
             if (loadout == HumanLoadout.Blades)
                 Weapon = HumanWeapon.Blade;
-            else if (loadout == HumanLoadout.Guns)
-                Weapon = HumanWeapon.Gun;
+            else if (loadout == HumanLoadout.AHSS)
+                Weapon = HumanWeapon.AHSS;
+            else if (loadout == HumanLoadout.APG)
+                Weapon = HumanWeapon.APG;
             else if (loadout == HumanLoadout.Thunderspears)
                 Weapon = HumanWeapon.Thunderspear;
         }
@@ -250,13 +252,13 @@ namespace Characters
             }
             _part_gas_l = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetGasMesh(left: true), cached: true);
             _part_gas_l.renderer.material = material;
-            if (Weapon == HumanWeapon.Gun)
+            if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.APG)
                 AttachToMount(_part_gas_l, _mount_gun_mag_l);
             else
                 AttachToMount(_part_gas_l, _mount_gas_l);
             _part_gas_r = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetGasMesh(left: false), cached: true);
             _part_gas_r.renderer.material = material;
-            if (Weapon == HumanWeapon.Gun)
+            if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.APG)
                 AttachToMount(_part_gas_r, _mount_gun_mag_r);
             else
                 AttachToMount(_part_gas_r, _mount_gas_r);
@@ -268,7 +270,7 @@ namespace Characters
             DestroyIfExists(_part_blade_r);
             DestroyIfExists(ThunderspearL);
             DestroyIfExists(ThunderspearR);
-            if (Weapon == HumanWeapon.Gun || Weapon == HumanWeapon.Blade)
+            if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.Blade || Weapon == HumanWeapon.APG)
             {
                 Material material = HumanSetupMaterials.Materials[_textures.Get3dmgTexture()];
                 string weaponLMesh = _meshes.GetWeaponMesh(left: true);

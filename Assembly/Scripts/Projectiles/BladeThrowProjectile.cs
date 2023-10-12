@@ -10,6 +10,7 @@ using GameManagers;
 using Xft;
 using UI;
 using Utility;
+using CustomLogic;
 
 namespace Projectiles
 {
@@ -84,6 +85,12 @@ namespace Projectiles
             foreach (var collider in colliders)
             {
                 var character = collider.transform.root.gameObject.GetComponent<BaseCharacter>();
+                var handler = collider.gameObject.GetComponent<CustomLogicCollisionHandler>();
+                if (handler != null)
+                {
+                    handler.GetHit(_owner, "Blade", 100, "BladeThrow");
+                    continue;
+                }
                 if (character == null || character == _owner || TeamInfo.SameTeam(character, _team) || character.Dead)
                     continue;
                 var damage = CalculateDamage();

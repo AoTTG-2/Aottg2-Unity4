@@ -58,6 +58,7 @@ namespace CustomLogic
                     rigidbody.mass = mass;
                     var force = Value.GameObject.AddComponent<ConstantForce>();
                     force.force = gravity;
+                    rigidbody.freezeRotation = (bool)parameters[3];
                 }
             }
             else if (methodName == "UpdateBuiltinComponent")
@@ -75,7 +76,20 @@ namespace CustomLogic
                     else if (param == "AddForce")
                     {
                         Vector3 force = ((CustomLogicVector3Builtin)parameters[2]).Value;
-                        rigidbody.AddForce(force, ForceMode.Force);
+                        rigidbody.AddForce(force, ForceMode.Acceleration);
+                    }
+                }
+            }
+            else if (methodName == "ReadBuiltinComponent")
+            {
+                string name = (string)parameters[0];
+                string param = (string)parameters[1];
+                if (name == "Rigidbody")
+                {
+                    var rigidbody = Value.GameObject.GetComponent<Rigidbody>();
+                    if (param == "Velocity")
+                    {
+                        return new CustomLogicVector3Builtin(rigidbody.velocity);
                     }
                 }
             }
@@ -140,9 +154,12 @@ namespace CustomLogic
                 {
                     foreach (int childId in MapLoader.IdToChildren[Value.ScriptObject.Id])
                     {
-                        var go = MapLoader.IdToMapObject[childId];
-                        if (go.ScriptObject.Name == name)
-                            return new CustomLogicMapObjectBuiltin(go);
+                        if (MapLoader.IdToMapObject.ContainsKey(childId))
+                        {
+                            var go = MapLoader.IdToMapObject[childId];
+                            if (go.ScriptObject.Name == name)
+                                return new CustomLogicMapObjectBuiltin(go);
+                        }
                     }
                 }
             }

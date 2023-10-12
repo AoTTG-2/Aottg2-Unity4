@@ -18,10 +18,10 @@ namespace ApplicationManagers
         public const string LauncherVersion = "1.0";
 
         // must be manually changed every update
-        public const string GameVersion = "4/07/2023";
+        public const string GameVersion = "10/12/2023";
 
         // must be manually updated every compatibility-breaking update
-        public const string LobbyVersion = "04202023";
+        public const string LobbyVersion = "10122023";
 
         public static void Init()
         {
