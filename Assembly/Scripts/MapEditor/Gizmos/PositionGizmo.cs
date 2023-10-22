@@ -18,7 +18,6 @@ namespace MapEditor
         private Color LineXColor = Color.red;
         private Color LineYColor = Color.yellow;
         private Color LineZColor = Color.blue;
-        private Vector3 _totalDelta;
         private Transform _activeLine;
         private Vector3 _previousMousePoint;
 
@@ -74,7 +73,6 @@ namespace MapEditor
                     ResetColors();
                     SetLineColor(_activeLine, SelectedColor);
                     _previousMousePoint = hit.point;
-                    _totalDelta = Vector3.zero;
                 }
             }
             else
@@ -90,18 +88,44 @@ namespace MapEditor
                     if (_activeLine != _lineY)
                         drag += previousRay.normalized * Vector3.Dot(drag, camera.Cache.Transform.up) * 2f;
                     drag = _activeLine.right * Vector3.Dot(drag, _activeLine.right);
-                    Vector3 frameDelta = drag;
-                    _totalDelta += frameDelta;
+                    Vector3 frameDelta = Vector3.zero;
+                    if (_activeLine == _lineX)
+                        frameDelta.x = drag.x;
+                    else if (_activeLine == _lineY)
+                        frameDelta.y = drag.y;
+                    else if (_activeLine == _lineZ)
+                        frameDelta.z = drag.z;
+                    if (_gameManager.Snap)
+                    {
+                        float snap = SettingsManager.MapEditorSettings.SnapMove.Value;
+                        if (_activeLine == _lineX)
+                        {
+                            float x = Mathf.Round((_transform.position.x + frameDelta.x) / snap) * snap;
+                            frameDelta.x = x - _transform.position.x;
+                        }
+                        else if (_activeLine == _lineY)
+                        {
+                            float y = Mathf.Round((_transform.position.y + frameDelta.y) / snap) * snap;
+                            frameDelta.y = y - _transform.position.y;
+                        }
+                        else if (_activeLine == _lineZ)
+                        {
+                            float z = Mathf.Round((_transform.position.z + frameDelta.z) / snap) * snap;
+                            frameDelta.z = z - _transform.position.z;
+                        }
+                        if (frameDelta.magnitude >= snap)
+                            _previousMousePoint = mousePoint;
+                    }
+                    else
+                        _previousMousePoint = mousePoint;
                     MoveSelectedObjects(frameDelta);
                     ResetCenter();
-                    _previousMousePoint = mousePoint;
                 }
                 else
                 {
                     _gameManager.NewCommand(new TransformPositionCommand(new List<MapObject>(_gameManager.SelectedObjects)));
                     ResetColors();
                     _activeLine = null;
-                    _totalDelta = Vector3.zero;
                 }
                 _gameManager.IgnoreNextSelect = true;
             }

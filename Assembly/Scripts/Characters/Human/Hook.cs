@@ -1,4 +1,5 @@
 ﻿using ApplicationManagers;
+using CustomLogic;
 using Map;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Characters
         public BaseCharacter HookCharacter;
         public Transform HookParent;
         protected bool _hasHookParent;
-        protected LineRenderer _renderer;
+        public LineRenderer _renderer;
         protected bool _left;
         protected Human _owner;
         protected int _id;
@@ -27,6 +28,8 @@ namespace Characters
         protected ParticleSystem _particles;
         private static LayerMask HookMask = PhysicsLayer.GetMask(PhysicsLayer.Human, PhysicsLayer.TitanPushbox, PhysicsLayer.EntityDetection,
             PhysicsLayer.MapObjectProjectiles, PhysicsLayer.MapObjectEntities, PhysicsLayer.MapObjectAll);
+        protected float _tiling;
+        protected float _lastLength;
 
         public static Hook CreateHook(Human owner, bool left, int id, bool gun = false)
         {
@@ -62,6 +65,24 @@ namespace Characters
             _particles = AssetBundleManager.InstantiateAsset<GameObject>("HookParticle", true).GetComponent<ParticleSystem>();
         }
 
+        public void SetSkin(float tiling)
+        {
+            _tiling = tiling;
+        }
+
+        private void UpdateSkin()
+        {
+            if (_tiling > 0f)
+            {
+                float ropeLength = (GetHookPosition() - Anchor.position).magnitude;
+                if (ropeLength != _lastLength)
+                {
+                    _lastLength = ropeLength;
+                    _renderer.material.mainTextureScale = new Vector2(_tiling * ropeLength, 1f);
+                }
+            }
+        }
+
         public void OnSetHookState(int state, PhotonMessageInfo info)
         {
             if (info.sender != _owner.Cache.PhotonView.owner)
@@ -75,16 +96,19 @@ namespace Characters
             if (info.sender != _owner.Cache.PhotonView.owner)
                 return;
             State = HookState.Hooking;
-            _particles.Stop();
-            _particles.Play();
+            
             _baseVelocity = baseVelocity;
             _relativeVelocity = relativeVelocity;
             _hookPosition = Anchor.position;
+            _hasHookParent = false;
             _nodes.Clear();
             _currentLiveTime = 0f;
             _nodes.Add(_hookPosition);
             _renderer.SetWidth(0.1f, 0.1f);
             _owner.PlaySoundRPC(HumanSounds.HookLaunch, null);
+            _particles.transform.position = GetHookPosition();
+            _particles.Stop();
+            _particles.Play();
         }
 
         public void OnSetHooked(Vector3 position, int photonViewId, int objectId, PhotonMessageInfo info)
@@ -260,6 +284,9 @@ namespace Characters
                                 SetHooked(finalHit.point);
                             else
                                 SetHooked(finalHit.point, obj.transform, -1, mapObject.ScriptObject.Id);
+                            var collisionHandler = mapObject.GameObject.GetComponent<CustomLogicCollisionHandler>();
+                            if (collisionHandler != null)
+                                collisionHandler.GetHooked(_owner, finalHit.point, _left);
                             return;
                         }
                     }
@@ -286,6 +313,8 @@ namespace Characters
                 UpdateDisablingHooking();
             else if (State == HookState.DisablingHooked)
                 UpdateDisablingHooked();
+            if (State != HookState.Disabled)
+                UpdateSkin();
         }
 
 
@@ -295,6 +324,11 @@ namespace Characters
                 FixedUpdateHooking();
             if (State == HookState.Hooking || State == HookState.Hooked)
                 _particles.transform.position = GetHookPosition();
+            if (State == HookState.Hooked)
+            {
+                if (_hasHookParent && HookParent == null)
+                    SetHookState(HookState.DisablingHooked);
+            }
         }
 
         public Vector3 GetHookPosition()
@@ -302,7 +336,7 @@ namespace Characters
             if (_hasHookParent)
             {
                 if (HookParent != null)
-                    return HookParent.TransformPoint(_hookPosition);
+                    _lastWorldHookPosition = HookParent.TransformPoint(_hookPosition);
                 return _lastWorldHookPosition;
             }
             return _hookPosition;
@@ -310,7 +344,8 @@ namespace Characters
 
         protected void OnDestroy()
         {
-            Destroy(_particles.gameObject);
+            if (_particles != null && _particles.gameObject != null)
+                Destroy(_particles.gameObject);
         }
     }
 

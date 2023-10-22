@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Characters;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,26 +7,20 @@ namespace CustomSkins
 {
     class HookCustomSkinPart : BaseCustomSkinPart
     {
-        public Material HookMaterial;
-        public bool Transparent;
+        private float _tiling;
 
-        public HookCustomSkinPart(BaseCustomSkinLoader loader, string rendererId, int maxSize, Vector2? textureScale = null) : base(loader, null, rendererId, maxSize, textureScale)
+        public HookCustomSkinPart(BaseCustomSkinLoader loader, List<Renderer> renderers, string rendererId, int maxSize, float tiling, Vector2? textureScale = null) : base(loader, renderers, rendererId, maxSize, textureScale, true)
         {
-        }
-
-        protected override bool IsValidPart()
-        {
-            return true;
-        }
-
-        protected override void DisableRenderers()
-        {
-            Transparent = true;
+            _tiling = tiling;
         }
 
         protected override void SetMaterial(Material material)
         {
-            HookMaterial = material;
+            foreach (Renderer renderer in _renderers)
+            {
+                renderer.material = material;
+                renderer.GetComponent<Hook>().SetSkin(_tiling);
+            }
         }
 
         protected override Material SetNewTexture(Texture2D texture)

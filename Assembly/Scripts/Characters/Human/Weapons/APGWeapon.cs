@@ -61,7 +61,7 @@ namespace Characters
             human.Cache.Transform.rotation = Quaternion.Lerp(human.Cache.Transform.rotation, human._targetRotation, Time.deltaTime * 30f);
             Vector3 start = human.Cache.Transform.position + human.Cache.Transform.up * 0.8f;
             direction = (target - start).normalized;
-            //EffectSpawner.Spawn(EffectPrefabs.GunExplode, start, Quaternion.LookRotation(direction));
+            EffectSpawner.Spawn(EffectPrefabs.GunExplode, start, Quaternion.LookRotation(direction), 0.2f);
             human.HumanCache.APGHit.transform.position = start;
             human.HumanCache.APGHit.transform.rotation = Quaternion.LookRotation(direction);
             var gunInfo = CharacterData.HumanWeaponInfo["APG"];

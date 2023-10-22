@@ -13,6 +13,7 @@ namespace Settings
         public FloatSetting Music = new FloatSetting(0.5f, minValue: 0f, maxValue: 1f);
         public FloatSetting MouseSpeed = new FloatSetting(0.5f, minValue: 0.01f, maxValue: 1f);
         public FloatSetting CameraDistance = new FloatSetting(1f, minValue: 0f, maxValue: 1f);
+        public FloatSetting CameraHeight = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
         public BoolSetting InvertMouse = new BoolSetting(false);
         public BoolSetting CameraTilt = new BoolSetting(true);
         public BoolSetting SnapshotsEnabled = new BoolSetting(false);

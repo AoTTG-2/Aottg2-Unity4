@@ -53,7 +53,14 @@ namespace UI
         protected void OnValueChanged(float value)
         {
             if (_settingType == SettingType.Float)
+            {
+                if (value >= 0.99f && value <= 1.01f)
+                {
+                    value = 1f;
+                    _slider.value = value;
+                }
                 ((FloatSetting)_setting).Value = value;
+            }
             else if (_settingType == SettingType.Int)
                 ((IntSetting)_setting).Value = (int)value;
             UpdateValueLabel();

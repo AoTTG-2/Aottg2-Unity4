@@ -67,6 +67,10 @@ namespace UI
                         name = "Clear KDR on restart";
                     else if (name == "ThunderspearPVP")
                         name = "Thunderspear PVP";
+                    else if (name == "AllowAHSS")
+                        name = "Allow ahss";
+                    else if (name == "AllowAPG")
+                        name = "Allow apg";
                 }
                 string label = Util.PascalToSentence(name) + ": " + value;
                 ElementFactory.CreateDefaultLabel(panel, style, label, alignment: TextAnchor.MiddleLeft);

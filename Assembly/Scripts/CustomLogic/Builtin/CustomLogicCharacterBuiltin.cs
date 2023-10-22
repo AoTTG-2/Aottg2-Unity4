@@ -94,6 +94,8 @@ namespace CustomLogic
                 return Character.CustomDamageEnabled;
             else if (name == "CustomDamage")
                 return Character.CustomDamage;
+            else if (name == "CurrentAnimation")
+                return Character.GetCurrentAnimation();
             return base.GetField(name);
         }
 

@@ -10,6 +10,8 @@ namespace Characters
             Neck = Transform.Find("ErenRig_VER2/Core/Controller_Body/hip/spine/chest/neck");
             Core = Transform.Find("ErenRig_VER2/Core");
             Hip = Transform.Find("ErenRig_VER2/Core/Controller_Body/hip");
+            LoadAudio("ShifterSounds", Neck);
+            LoadAudio("TitanSounds", Neck);
         }
     }
 }

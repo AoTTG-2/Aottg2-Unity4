@@ -76,6 +76,10 @@ namespace CustomLogic
             {
                 return new CustomLogicVector3Builtin(Titan.BasicCache.NapeHurtbox.transform.position);
             }
+            if (name == "IsCrawler")
+            {
+                return Titan.IsCrawler;
+            }
             return base.GetField(name);
         }
 

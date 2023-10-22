@@ -9,6 +9,7 @@ using CustomSkins;
 using System.Collections.Generic;
 using SimpleJSONFixed;
 using Effects;
+using Settings;
 
 namespace Characters
 {
@@ -16,7 +17,6 @@ namespace Characters
     {
         protected ErenComponentCache ErenCache;
         protected ErenAnimations ErenAnimations;
-        protected ErenCustomSkinLoader _customSkinLoader;
         public override List<string> EmoteActions => new List<string>() { "Nod", "Roar" };
         protected int _stepSoundPhase = 0;
 
@@ -32,6 +32,16 @@ namespace Characters
             base.CreateAnimations(ErenAnimations);
         }
 
+        protected override BaseCustomSkinLoader CreateCustomSkinLoader()
+        {
+            return gameObject.AddComponent<ErenCustomSkinLoader>();
+        }
+
+        protected override string GetSkinURL(ShifterCustomSkinSet set)
+        {
+            return set.Eren.Value;
+        }
+
         public override void Emote(string emote)
         {
             string anim = string.Empty;
@@ -44,12 +54,6 @@ namespace Characters
             }
             if (anim != "")
                 StateAction(TitanState.Emote, anim);
-        }
-
-        protected override void Awake()
-        {
-            base.Awake();
-            _customSkinLoader = gameObject.AddComponent<ErenCustomSkinLoader>();
         }
 
         protected override Dictionary<string, float> GetRootMotionAnimations()

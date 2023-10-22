@@ -24,11 +24,13 @@ namespace UI
         public BasePopup _aboutPopup;
         public BasePopup _questPopup;
         public BasePopup _tutorialPopup;
+        public ProfileIconPickPopup _profileIconPickPopup;
         public MainBackgroundMenu _backgroundMenu;
         public TipPanel _tipPanel;
         protected Dictionary<string, AudioSource> _sounds = new Dictionary<string, AudioSource>();
         protected Text _multiplayerStatusLabel;
         protected string _lastButtonClicked;
+        protected CanvasGroup _introPanelCanvasGroup;
         public static JSONNode MainBackgroundInfo = null;
         protected const float ChangeBackgroundTime = 20f;
 
@@ -43,7 +45,6 @@ namespace UI
             SetupMainBackground();
             SetupIntroPanel();
             SetupLabels();
-            
         }
 
         public void PlaySound(string sound)
@@ -89,6 +90,7 @@ namespace UI
             _aboutPopup = ElementFactory.CreateHeadedPanel<AboutPopup>(transform).GetComponent<BasePopup>();
             _questPopup = ElementFactory.CreateHeadedPanel<QuestPopup>(transform).GetComponent<BasePopup>();
             _tutorialPopup = ElementFactory.CreateHeadedPanel<TutorialPopup>(transform).GetComponent<BasePopup>();
+            _profileIconPickPopup = ElementFactory.CreateHeadedPanel<ProfileIconPickPopup>(transform).GetComponent<ProfileIconPickPopup>();
             _popups.Add(_createGamePopup);
             _popups.Add(_multiplayerMapPopup);
             _popups.Add(_editProfilePopup);
@@ -100,6 +102,7 @@ namespace UI
             _popups.Add(_aboutPopup);
             _popups.Add(_questPopup);
             _popups.Add(_tutorialPopup);
+            _popups.Add(_profileIconPickPopup);
         }
 
         private void SetupIntroPanel()
@@ -127,6 +130,7 @@ namespace UI
                 };
                 button.colors = block;
             }
+            _introPanelCanvasGroup = introPanel.GetComponent<CanvasGroup>();
         }
 
         private void SetupLabels()
@@ -174,6 +178,21 @@ namespace UI
                 }
                 _multiplayerStatusLabel.text = label;
             }
+            if (SettingsManager.UISettings.FadeMainMenu.Value)
+            {
+                if (HoverIntroPanel())
+                {
+                    if (_introPanelCanvasGroup.alpha < 1f)
+                        _introPanelCanvasGroup.alpha = Mathf.Min(1f, _introPanelCanvasGroup.alpha + Time.deltaTime * 2f);
+                }
+                else
+                {
+                    if (_introPanelCanvasGroup.alpha > 0.5f)
+                        _introPanelCanvasGroup.alpha = Mathf.Max(0.5f, _introPanelCanvasGroup.alpha - Time.deltaTime * 1f);
+                }
+            }
+            else
+                _introPanelCanvasGroup.alpha = 1f;
         }
 
         private bool IsPopupActive()
@@ -184,6 +203,12 @@ namespace UI
                     return true;
             }
             return false;
+        }
+
+        private bool HoverIntroPanel()
+        {
+            float x = _introPanelCanvasGroup.GetComponent<RectTransform>().sizeDelta.x * UIManager.CurrentMenu.GetComponent<Canvas>().scaleFactor * 0.25f;
+            return Input.mousePosition.x < x;
         }
 
         private void OnIntroButtonClick(string name)

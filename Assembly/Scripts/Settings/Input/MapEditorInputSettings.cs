@@ -17,6 +17,7 @@
         public KeybindSetting RotateCamera = new KeybindSetting(new string[] { "Mouse1", "None" });
         public KeybindSetting AddObject = new KeybindSetting(new string[] { "Space", "None" });
         public KeybindSetting ChangeGizmo = new KeybindSetting(new string[] { "C", "None" });
+        public KeybindSetting ToggleSnap = new KeybindSetting(new string[] { "G", "None" });
         public KeybindSetting Delete = new KeybindSetting(new string[] { "Delete", "None" });
         public KeybindSetting CopyObjects = new KeybindSetting(new string[] { "LeftControl+C", "None" });
         public KeybindSetting Paste = new KeybindSetting(new string[] { "LeftControl+V", "None" });

@@ -58,6 +58,7 @@ namespace CustomLogic
                     rigidbody.mass = mass;
                     var force = Value.GameObject.AddComponent<ConstantForce>();
                     force.force = gravity;
+                    rigidbody.useGravity = false;
                     rigidbody.freezeRotation = (bool)parameters[3];
                 }
             }
@@ -106,6 +107,7 @@ namespace CustomLogic
                 go.transform.SetParent(Value.GameObject.transform);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
                 SphereCollider c = go.AddComponent<SphereCollider>();
                 MapLoader.SetCollider(c, collideMode, collideWith);
                 c.radius = radius;
@@ -178,6 +180,8 @@ namespace CustomLogic
 
         public override object GetField(string name)
         {
+            if (name == "Static")
+                return Value.ScriptObject.Static;
             if (name == "Position")
                 return new CustomLogicVector3Builtin(Value.GameObject.transform.position);
             if (name == "LocalPosition")

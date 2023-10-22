@@ -1099,7 +1099,7 @@ namespace Characters
             base.LateUpdate();
             if (IsMine())
             {
-                if (TargetEnemy != null && (State == TitanState.Idle || State == TitanState.Run || State == TitanState.Walk))
+                if (TargetEnemy != null && (State == TitanState.Idle || State == TitanState.Run || State == TitanState.Walk || State == TitanState.Turn))
                 {
                     TargetViewId = TargetEnemy.Cache.PhotonView.viewID;
                     LateUpdateHead(TargetEnemy);

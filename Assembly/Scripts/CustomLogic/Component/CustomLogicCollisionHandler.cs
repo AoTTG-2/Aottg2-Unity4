@@ -28,6 +28,13 @@ namespace CustomLogic
                 classInstance.OnGetHit(builtin, name, damage, type);
         }
 
+        public void GetHooked(Human human, Vector3 position, bool left)
+        {
+            CustomLogicHumanBuiltin builtin = new CustomLogicHumanBuiltin(human);
+            foreach (var classInstance in _classInstances)
+                classInstance.OnGetHooked(builtin, new CustomLogicVector3Builtin(position), left);
+        }
+
         protected void OnCollisionEnter(Collision other)
         {
             var builtin = GetBuiltin(other.collider);
@@ -84,7 +91,11 @@ namespace CustomLogic
 
         protected CustomLogicBaseBuiltin GetBuiltin(Collider other)
         {
+            if (other == null || other.transform == null)
+                return null;
             var root = other.transform.root;
+            if (root == null)
+                return null;
             var character = root.GetComponent<BaseCharacter>();
             if (character != null)
             {

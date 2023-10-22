@@ -16,6 +16,7 @@ namespace Characters
         private float TeleportTime = 10f;
         private float _idleTimeLeft;
         private float _teleportTimeLeft;
+        private float _jumpCooldownLeft;
         private ParticleSystem _dust;
         
         public void Init(Human human)
@@ -23,6 +24,14 @@ namespace Characters
             base.Init(true, human.Team);
             _owner = human;
             RunSpeed = SettingsManager.InGameCurrent.Misc.HorseSpeed.Value;
+        }
+
+        public void Jump()
+        {
+            if (_jumpCooldownLeft > 0f || !Grounded)
+                return;
+            Cache.Rigidbody.AddForce(Vector3.up * 20f, ForceMode.VelocityChange);
+            _jumpCooldownLeft = 0f;
         }
 
         protected override void Awake()
@@ -93,6 +102,7 @@ namespace Characters
         {
             if (IsMine())
             {
+                _jumpCooldownLeft -= Time.deltaTime;
                 if (_owner == null || _owner.Dead)
                 {
                     PhotonNetwork.Destroy(gameObject);
@@ -217,8 +227,10 @@ namespace Characters
 
         protected override void CheckGround()
         {
+            RaycastHit hit;
             JustGrounded = false;
-            if (Physics.Raycast(Cache.Transform.position + Vector3.up * 0.1f, -Vector3.up, out RaycastHit hit, GroundDistance, GroundMask.value))
+            if (Physics.SphereCast(Cache.Transform.position + Vector3.up * 0.8f, 0.6f, Vector3.down,
+                out hit, 0.8f, GroundMask.value))
             {
                 if (!Grounded)
                     Grounded = JustGrounded = true;

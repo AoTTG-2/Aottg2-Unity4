@@ -9,6 +9,7 @@ using Settings;
 using System.Collections;
 using CustomLogic;
 using UI;
+using Cameras;
 
 namespace Characters
 {
@@ -424,7 +425,7 @@ namespace Characters
             MinimapHandler.CreateMinimapIcon(this);
         }
 
-        protected string GetCurrentAnimation()
+        public string GetCurrentAnimation()
         {
             foreach (AnimationState state in Cache.Animation)
             {

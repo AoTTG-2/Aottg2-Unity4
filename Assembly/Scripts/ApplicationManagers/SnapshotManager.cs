@@ -13,7 +13,7 @@ namespace ApplicationManagers
     {
         private static SnapshotManager _instance;
         public static readonly string SnapshotPath = FolderPaths.Snapshots;
-        private static readonly string SnapshotTempPath = FolderPaths.Snapshots+ "/Temp";
+        private static readonly string SnapshotTempPath = FolderPaths.Snapshots + "/Temp";
         private static readonly string SnapshotFilePrefix = "Snapshot";
         private static readonly int MaxSnapshots = 500;
         private static int _currentSnapshotSaveId = 0;

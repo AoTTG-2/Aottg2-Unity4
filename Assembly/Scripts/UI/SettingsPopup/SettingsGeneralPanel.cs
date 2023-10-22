@@ -27,6 +27,8 @@ namespace UI
                elementWidth: 135f);
             ElementFactory.CreateSliderSetting(DoublePanelLeft, style, settings.CameraDistance, UIManager.GetLocale(cat, sub, "CameraDistance"),
                elementWidth: 135f);
+            ElementFactory.CreateSliderSetting(DoublePanelLeft, style, settings.CameraHeight, UIManager.GetLocale(cat, sub, "CameraHeight"),
+               elementWidth: 135f);
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.InvertMouse, UIManager.GetLocale(cat, sub, "InvertMouse"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.SkipCutscenes, UIManager.GetLocale(cat, sub, "SkipCutscenes"));
             ElementFactory.CreateDropdownSetting(DoublePanelRight, style, settings.CameraMode, UIManager.GetLocale(cat, sub, "CameraMode"), 

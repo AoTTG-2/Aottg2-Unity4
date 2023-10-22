@@ -16,27 +16,37 @@ namespace UI
         protected override float Height => 400f;
         protected override bool CategoryPanel => true;
         protected override bool CategoryButtons => true;
-        protected override string DefaultCategoryPanel => "Human";
+        protected override string DefaultCategoryPanel => "";
         public string LocaleCategory = "CharacterPopup";
+        List<string> _allowedCategories = new List<string>();
 
         public override void Setup(BasePanel parent = null)
         {
+            SetAllowedCategories();
+            if (!_allowedCategories.Contains(UIManager.GetLastcategory(GetType())))
+                UIManager.SetLastCategory(GetType(), _allowedCategories[0]);
             base.Setup(parent);
             SetupBottomButtons();
+        }
+
+        protected void SetAllowedCategories()
+        {
+            InGameMiscSettings settings = SettingsManager.InGameCurrent.Misc;
+            if (settings.AllowAHSS.Value || settings.AllowBlades.Value || settings.AllowThunderspears.Value || settings.AllowAPG.Value)
+                _allowedCategories.Add("Human");
+            if (settings.AllowPlayerTitans.Value)
+                _allowedCategories.Add("Titan");
+            if (settings.AllowShifters.Value)
+                _allowedCategories.Add("Shifter");
+            if (_allowedCategories.Count == 0)
+                _allowedCategories.Add("Human");
         }
 
         protected override void SetupTopButtons()
         {
             ElementStyle style = new ElementStyle(fontSize: 28, themePanel: ThemePanel);
-            List<string> categories = new List<string>();
-            InGameMiscSettings settings = SettingsManager.InGameCurrent.Misc;
-            if (settings.AllowAHSS.Value || settings.AllowBlades.Value || settings.AllowThunderspears.Value || settings.AllowAPG.Value)
-                categories.Add("Human");
-            if (settings.AllowPlayerTitans.Value)
-                categories.Add("Titan");
-            if (settings.AllowShifters.Value)
-                categories.Add("Shifter");
-            foreach (string buttonName in categories)
+            
+            foreach (string buttonName in _allowedCategories)
             {
                 GameObject obj = ElementFactory.CreateCategoryButton(TopBar, style, UIManager.GetLocaleCommon(buttonName),
                     onClick: () => SetCategoryPanel(buttonName));

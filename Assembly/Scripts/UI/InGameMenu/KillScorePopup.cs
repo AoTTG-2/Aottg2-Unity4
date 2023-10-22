@@ -32,5 +32,15 @@ namespace UI
             IsActive = false;
             base.Show();
         }
+
+        public void ShowSnapshotViewer(int score)
+        {
+            _scoreLabel.text = score.ToString();
+            _backgroundLabel.text = score.ToString();
+            int fontSize = 40;
+            _scoreLabel.fontSize = fontSize;
+            _backgroundLabel.fontSize = fontSize;
+            base.ShowImmediate();
+        }
     }
 }

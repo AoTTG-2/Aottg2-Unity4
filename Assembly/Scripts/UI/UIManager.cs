@@ -92,6 +92,10 @@ namespace UI
                 CurrentMenu = ElementFactory.CreateDefaultMenu<CharacterEditorMenu>();
             else if (sceneName == SceneName.MapEditor)
                 CurrentMenu = ElementFactory.CreateDefaultMenu<MapEditorMenu>();
+            else if (sceneName == SceneName.SnapshotViewer)
+                CurrentMenu = ElementFactory.CreateDefaultMenu<SnapshotViewerMenu>();
+            else if (sceneName == SceneName.Gallery)
+                CurrentMenu = ElementFactory.CreateDefaultMenu<GalleryMenu>();
             if (CurrentMenu != null)
             {
                 CurrentMenu.Setup();

@@ -69,7 +69,6 @@ namespace Weather
         public static void OnFinishLoading()
         {
             _instance.RestartWeather();
-            
         }
 
         private static void LoadSkyboxes()
@@ -158,15 +157,11 @@ namespace Weather
             CreateEffects();
             SetSceneWeather();
             ApplyCurrentWeather(firstStart: true, applyAll: true);
-            bool weatherOff = SettingsManager.GraphicsSettings.WeatherEffects.Value == (int)WeatherEffectLevel.Off;
             if (SceneLoader.SceneName == SceneName.InGame && PhotonNetwork.isMasterClient)
             {
-                if (!weatherOff)
-                {
-                    _currentWeather.Copy(SettingsManager.WeatherSettings.WeatherSets.Sets.GetItemAt(SettingsManager.InGameCurrent.WeatherIndex.Value));
-                    CreateScheduleRunners(_currentWeather.Schedule.Value);
-                    _currentWeather.Schedule.SetDefault();
-                }
+                _currentWeather.Copy(SettingsManager.WeatherSettings.WeatherSets.Sets.GetItemAt(SettingsManager.InGameCurrent.WeatherIndex.Value));
+                CreateScheduleRunners(_currentWeather.Schedule.Value);
+                _currentWeather.Schedule.SetDefault();
                 if (_currentWeather.UseSchedule.Value)
                 {
                     foreach (WeatherScheduleRunner runner in _scheduleRunners)
@@ -345,6 +340,8 @@ namespace Weather
 
         private void ApplyCurrentWeather(bool firstStart, bool applyAll)
         {
+            if (!firstStart && !IsWeatherEnabled())
+                return;
             if (applyAll)
                 _needApply = Util.EnumToList<WeatherEffect>();
             WeatherEffectLevel level = (WeatherEffectLevel)SettingsManager.GraphicsSettings.WeatherEffects.Value;
@@ -423,7 +420,11 @@ namespace Weather
         private IEnumerator WaitAndApplySkybox()
         {
             yield return new WaitForEndOfFrame();
-            Material mat = GetBlendedSkybox(_currentWeather.Skybox.Value, _targetWeather.Skybox.Value);
+            Material mat;
+            if (!IsWeatherEnabled())
+                mat = GetBlendedSkybox("Day", "Day");
+            else
+                mat = GetBlendedSkybox(_currentWeather.Skybox.Value, _targetWeather.Skybox.Value);
             var skybox = SceneLoader.CurrentCamera.Skybox;
             if (mat != null && skybox.material != mat && SkyboxCustomSkinLoader.SkyboxMaterial == null)
             {
@@ -467,6 +468,11 @@ namespace Weather
             _currentTime = currentTime;
             LerpCurrentWeatherToTarget();
             ApplyCurrentWeather(firstStart: false, applyAll: true);
+        }
+
+        private bool IsWeatherEnabled()
+        {
+            return SettingsManager.GraphicsSettings.WeatherEffects.Value != (int)WeatherEffectLevel.Off;
         }
     }
 }

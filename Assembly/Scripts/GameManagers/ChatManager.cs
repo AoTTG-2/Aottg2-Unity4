@@ -223,6 +223,8 @@ namespace GameManagers
                     UnmutePlayer(player, false);
                 }
             }
+            else if (args[0] == "nextsong")
+                MusicManager.NextSong();
             else if (args[0] == "help")
             {
                 string help = "----Command list----" + "\n";
@@ -234,7 +236,8 @@ namespace GameManagers
                 help += "/kick [ID]: Kick the player with ID\n";
                 help += "/mute [ID]: Mute player with ID\n";
                 help += "/unmute[ID]: Unmute player with ID\n";
-                help += "/maxplayers [num]: Sets max players.";
+                help += "/maxplayers [num]: Sets max players\n";
+                help += "/nextsong: Play next song in playlist";
                 AddLine(help, ChatTextColor.System);
             }
         }

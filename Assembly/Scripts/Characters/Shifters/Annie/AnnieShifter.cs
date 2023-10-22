@@ -9,6 +9,7 @@ using CustomSkins;
 using System.Collections.Generic;
 using SimpleJSONFixed;
 using Effects;
+using Settings;
 
 namespace Characters
 {
@@ -16,7 +17,6 @@ namespace Characters
     {
         protected AnnieComponentCache AnnieCache;
         protected AnnieAnimations AnnieAnimations;
-        protected AnnieCustomSkinLoader _customSkinLoader;
         public override List<string> EmoteActions => new List<string>() { "Salute", "Roar", "Taunt", "Wave" };
 
         protected override void CreateCache(BaseComponentCache cache)
@@ -49,10 +49,14 @@ namespace Characters
                 StateAction(TitanState.Emote, anim);
         }
 
-        protected override void Awake()
+        protected override BaseCustomSkinLoader CreateCustomSkinLoader()
         {
-            base.Awake();
-            _customSkinLoader = gameObject.AddComponent<AnnieCustomSkinLoader>();
+            return gameObject.AddComponent<AnnieCustomSkinLoader>();
+        }
+
+        protected override string GetSkinURL(ShifterCustomSkinSet set)
+        {
+            return set.Annie.Value;
         }
 
         protected override Dictionary<string, float> GetRootMotionAnimations()

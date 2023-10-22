@@ -11,6 +11,7 @@ using ApplicationManagers;
 using Characters;
 using System.Collections;
 using Cameras;
+using CustomLogic;
 
 namespace UI
 {
@@ -20,6 +21,7 @@ namespace UI
         public ItemHandler ItemHandler;
         public CharacterInfoHandler CharacterInfoHandler;
         public HUDBottomHandler HUDBottomHandler;
+        public StylebarHandler StylebarHandler;
         public GameObject NapeLock;
         public ChatPanel ChatPanel;
         public FeedPanel FeedPanel;
@@ -28,7 +30,9 @@ namespace UI
         public BasePopup _pausePopup;
         public BasePopup _characterPopup;
         public BasePopup _scoreboardPopup;
+        public SnapshotPopup _snapshotPopup;
         public CutsceneDialoguePanel _cutsceneDialoguePanel;
+        public bool SkipAHSSInput;
         private TipPanel _tipPanel;
         private LoadingProgressPanel _loadingProgressPanel;
         private InGameBackgroundMenu _backgroundMenu;
@@ -47,13 +51,12 @@ namespace UI
         private Dictionary<string, float> _labelTimeLeft = new Dictionary<string, float>();
         private Dictionary<string, bool> _labelHasTimeLeft = new Dictionary<string, bool>();
         private float _killScoreTimeLeft;
+        private float _snapshotTimeLeft;
         private string _middleCenterText;
         private string _bottomRightText;
         private string _bottomCenterText;
         private string _topLeftText;
         private InGameManager _gameManager;
-        private Color _goldColor = new Color(1f, 0.73f, 0f);
-        private Color _greenColor = new Color(0f, 0.75f, 0f);
         private Dictionary<string, BasePopup> _customPopups = new Dictionary<string, BasePopup>();
         
         public override void Setup()
@@ -65,11 +68,13 @@ namespace UI
             ItemHandler = gameObject.AddComponent<ItemHandler>();
             HUDBottomHandler = gameObject.AddComponent<HUDBottomHandler>();
             CharacterInfoHandler = gameObject.AddComponent<CharacterInfoHandler>();
+            StylebarHandler = gameObject.AddComponent<StylebarHandler>();
             gameObject.AddComponent<CrosshairHandler>();
             NapeLock = ElementFactory.InstantiateAndBind(transform, "NapeLockImage");
             NapeLock.SetActive(false);
             SetupChat();
             SetupMinimap();
+            SetupSnapshot();
             HideAllMenus();
         }
 
@@ -92,9 +97,18 @@ namespace UI
             {
                 var minimap = ElementFactory.InstantiateAndBind(transform, "MinimapPanel");
                 ElementFactory.SetAnchor(minimap, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(-10f, -10f));
+                minimap.AddComponent<MinimapScaler>();
             }
             else
                 GetComponent<MinimapHandler>().Disable();
+        }
+
+        public void SetupSnapshot()
+        {
+            var go = ElementFactory.InstantiateAndSetupPanel<SnapshotPopup>(transform, "SnapshotPopup", false);
+            _snapshotPopup = go.GetComponent<SnapshotPopup>();
+            go.transform.localScale = new Vector2(0.8f, 0.8f);
+            ElementFactory.SetAnchor(go, TextAnchor.UpperLeft, TextAnchor.UpperLeft, new Vector2(20f, -130f));
         }
 
         public void UpdateLoading(float percentage, bool finished = false)
@@ -109,9 +123,8 @@ namespace UI
         {
             if (SettingsManager.UISettings.FeedConsole.Value && SettingsManager.UISettings.GameFeed.Value)
             {
-                float height = SettingsManager.UISettings.ChatHeight.Value;
-                FeedPanel = ElementFactory.InstantiateAndSetupPanel<FeedPanel>(transform, "FeedPanel", true).GetComponent<FeedPanel>();
-                ElementFactory.SetAnchor(FeedPanel.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, new Vector2(10f, height + 10f));
+                FeedPanel = ElementFactory.InstantiateAndSetupPanel<FeedPanel>(_bottomRightLabel.transform, "FeedPanel", true).GetComponent<FeedPanel>();
+                ElementFactory.SetAnchor(FeedPanel.gameObject, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(0f, -50f));
             }
             ChatPanel = ElementFactory.InstantiateAndSetupPanel<ChatPanel>(transform, "ChatPanel", true).GetComponent<ChatPanel>();
             ElementFactory.SetAnchor(ChatPanel.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, new Vector2(10f, 10f));
@@ -191,9 +204,11 @@ namespace UI
             {
                 HideAllMenus();
                 _pausePopup.Show();
-            }            else if (!enabled)
+            }            
+            else if (!enabled)
             {
                 HideAllMenus();
+                SkipAHSSInput = true;
             }
         }
 
@@ -256,6 +271,13 @@ namespace UI
             }
         }
 
+        public void ShowSnapshot(Texture2D texture)
+        {
+            _snapshotPopup.Load(texture);
+            _snapshotPopup.Show();
+            _snapshotTimeLeft = 2f;
+        }
+
         public void ShowKillFeed(string killer, string victim, int score)
         {
             if (_killFeedBigPopup.TimeLeft > 0f)
@@ -280,6 +302,7 @@ namespace UI
         {
             _killScorePopup.Show(score);
             _killScoreTimeLeft = 3f;
+            StylebarHandler.OnHit(score);
         }
 
         public void SetLabel(string label, string message, float time)
@@ -358,21 +381,8 @@ namespace UI
             }
             else
                 _bottomCenterLabel.text = _bottomCenterText;
-            _bottomRightLabel.text = _bottomRightText + GetKeybindStrings();
-            string telemetrics = "";
-            if (SettingsManager.GraphicsSettings.ShowFPS.Value)
-                telemetrics = "FPS:" + UIManager.GetFPS().ToString() + "\n";
-            if (!PhotonNetwork.offlineMode && SettingsManager.UISettings.ShowPing.Value)
-                telemetrics += "Ping:" + PhotonNetwork.GetPing().ToString() + "\n";
-            if (SettingsManager.UISettings.ShowKDR.Value)
-            {
-                string kills = PhotonNetwork.player.GetIntProperty(PlayerProperty.Kills).ToString();
-                string deaths = PhotonNetwork.player.GetIntProperty(PlayerProperty.Deaths).ToString();
-                string max = PhotonNetwork.player.GetIntProperty(PlayerProperty.HighestDamage).ToString();
-                string total = PhotonNetwork.player.GetIntProperty(PlayerProperty.TotalDamage).ToString();
-                telemetrics += "KDR: " + string.Join(" / ", new string[] { kills, deaths, max, total }) + "\n";
-            }
-            _topLeftLabel.text = telemetrics + _topLeftText;
+            _bottomRightLabel.text = (_bottomRightText + "\n" + GetKeybindStrings()).Trim();
+            _topLeftLabel.text = (GetTelemetricStrings().Trim() + "\n" + _topLeftText).Trim();
             _killFeedBigPopup.TimeLeft -= Time.deltaTime;
             if (_killFeedBigPopup.IsActive && _killFeedBigPopup.TimeLeft <= 0f)
                 _killFeedBigPopup.Hide();
@@ -385,6 +395,9 @@ namespace UI
                 if (popup.IsActive && popup.TimeLeft <= 0f)
                     popup.Hide();
             }
+            _snapshotTimeLeft -= Time.deltaTime;
+            if (_snapshotPopup.IsActive && _snapshotTimeLeft <= 0f)
+                _snapshotPopup.Hide();
         }
 
         private string GetKeybindStrings()
@@ -396,17 +409,67 @@ namespace UI
                 if (gameManager.CurrentCharacter != null && gameManager.CurrentCharacter is Human)
                 {
                     if (((Human)gameManager.CurrentCharacter).Cache.Rigidbody.interpolation == RigidbodyInterpolation.Interpolate)
-                        str = "\n" + "Interpolation: " + ChatManager.GetColorString("ON", ChatTextColor.System);
+                        str = "Interpolation: " + ChatManager.GetColorString("ON", ChatTextColor.System);
                     else
-                        str = "\n" + "Interpolation: " + ChatManager.GetColorString("OFF", ChatTextColor.System);
+                        str = "Interpolation: " + ChatManager.GetColorString("OFF", ChatTextColor.System);
                 }
             }
             if (!SettingsManager.UISettings.ShowKeybindTip.Value)
                 return str;
             var settings = SettingsManager.InputSettings;
-            str += "\n" + "Pause: " + ChatManager.GetColorString(settings.General.Pause.ToString(), ChatTextColor.System);
-            str += "\n" + "Scoreboard: " + ChatManager.GetColorString(settings.General.ToggleScoreboard.ToString(), ChatTextColor.System);
-            str += "\n" + "Change Char: " + ChatManager.GetColorString(settings.General.ChangeCharacter.ToString(), ChatTextColor.System);
+            if (str != "")
+                str += ", ";
+            str += "Pause: " + ChatManager.GetColorString(settings.General.Pause.ToString(), ChatTextColor.System);
+            str += ", " + "Scoreboard: " + ChatManager.GetColorString(settings.General.ToggleScoreboard.ToString(), ChatTextColor.System);
+            str += ", " + "Change Char: " + ChatManager.GetColorString(settings.General.ChangeCharacter.ToString(), ChatTextColor.System);
+            return str;
+        }
+
+        private string GetTelemetricStrings()
+        {
+            string timeLine = "";
+            string fpsLine = "";
+            string kdrLine = "";
+            if (SettingsManager.UISettings.ShowGameTime.Value)
+            {
+                if (CustomLogicManager.Evaluator != null)
+                    timeLine += "Game Time: " + ChatManager.GetColorString(Util.FormatFloat(CustomLogicManager.Evaluator.CurrentTime, 0), ChatTextColor.System);
+                else
+                    timeLine += "Game Time: " + ChatManager.GetColorString("0", ChatTextColor.System);
+                var dt = System.DateTime.Now;
+                timeLine += ", System: " + ChatManager.GetColorString(GetTimeString(dt.Hour) + ":" + GetTimeString(dt.Minute) + ":" + GetTimeString(dt.Second), ChatTextColor.System);
+            }
+            if (SettingsManager.GraphicsSettings.ShowFPS.Value)
+                fpsLine += "FPS:" + UIManager.GetFPS().ToString();
+            if (!PhotonNetwork.offlineMode && SettingsManager.UISettings.ShowPing.Value)
+            {
+                if (fpsLine != "")
+                    fpsLine += ", ";
+                fpsLine += "Ping:" + PhotonNetwork.GetPing().ToString();
+            }
+            if (SettingsManager.UISettings.ShowKDR.Value)
+            {
+                string kills = PhotonNetwork.player.GetIntProperty(PlayerProperty.Kills).ToString();
+                string deaths = PhotonNetwork.player.GetIntProperty(PlayerProperty.Deaths).ToString();
+                string max = PhotonNetwork.player.GetIntProperty(PlayerProperty.HighestDamage).ToString();
+                string total = PhotonNetwork.player.GetIntProperty(PlayerProperty.TotalDamage).ToString();
+                kdrLine += "KDR: " + string.Join(" / ", new string[] { kills, deaths, max, total }) + "\n";
+            }
+            string final = timeLine;
+            if (timeLine != "")
+                final += "\n";
+            final += fpsLine;
+            if (fpsLine != "")
+                final += "\n";
+            final += kdrLine;
+            return final;
+        }
+
+        private string GetTimeString(int time)
+        {
+            string str = time.ToString();
+            if (str.Length == 1)
+                str = "0" + str;
             return str;
         }
 

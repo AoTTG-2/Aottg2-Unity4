@@ -10,6 +10,8 @@ namespace Characters
             Neck = Transform.Find("Armature_FemT/Core/Controller_Body/hip/spine/chest/neck");
             Core = Transform.Find("Armature_FemT/Core");
             Hip = Transform.Find("Armature_FemT/Core/Controller_Body/hip");
+            LoadAudio("ShifterSounds", Neck);
+            LoadAudio("TitanSounds", Neck);
         }
     }
 }

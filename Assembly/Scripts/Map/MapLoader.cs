@@ -100,6 +100,8 @@ namespace Map
             {
                 mapObject.GameObject.SetActive(false);
             }
+            if (!editor && scriptObject.Asset.StartsWith("Interact/Supply"))
+                MinimapHandler.CreateMinimapIcon(mapObject.GameObject.transform, "Supply");
             return mapObject;
         }
 

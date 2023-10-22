@@ -34,7 +34,7 @@ namespace UI
             string sub = "Preview";
             HumanCustomSet set = (HumanCustomSet)settings.CustomSets.GetSelectedSet();
             ElementFactory.CreateDropdownSetting(SinglePanel, style, _menu.Weapon, UIManager.GetLocale(cat, sub, "Weapon"), 
-                new string[] { "Blade", "AHSS", "APG", "Thunderspear" }, elementWidth: dropdownWidth, onDropdownOptionSelect: () => _menu.ResetCharacter(true));
+                new string[] { "Blade", "AHSS", "ThunderSpear", "APG" }, elementWidth: dropdownWidth, onDropdownOptionSelect: () => _menu.ResetCharacter(true));
             string[] emotes = new string[] { "Salute", "Dance", "Flip", "Wave1", "Wave2", "Eat" };
             ElementFactory.CreateDropdownSetting(SinglePanel, style, _emote, UIManager.GetLocale(cat, sub, "Emote"), emotes,
                 elementWidth: dropdownWidth, onDropdownOptionSelect: () => OnEmote());

@@ -11,6 +11,7 @@ using Xft;
 using UI;
 using Utility;
 using CustomLogic;
+using Cameras;
 
 namespace Projectiles
 {
@@ -80,7 +81,7 @@ namespace Projectiles
 
         void CheckHurtboxes()
         {
-            var radius = GetComponent<SphereCollider>().radius * transform.lossyScale.x;
+            var radius = GetComponent<SphereCollider>().radius * transform.lossyScale.x * 1.25f;
             var colliders = Physics.OverlapSphere(transform.position, radius, PhysicsLayer.GetMask(PhysicsLayer.Hurtbox, PhysicsLayer.Human));
             foreach (var collider in colliders)
             {
@@ -104,7 +105,10 @@ namespace Projectiles
                         if (!CheckTitanNapeAngle(position, titan.BaseTitanCache.Head))
                             continue;
                         if (_owner != null && _owner is Human)
+                        {
                             ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                            ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(titan.BaseTitanCache.Neck.position, damage);
+                        }
                         transform.Find("BladeHitNape").GetComponent<AudioSource>().Play();
                     }
                     if (titan.BaseTitanCache.Hurtboxes.Contains(collider))
@@ -127,6 +131,7 @@ namespace Projectiles
                     {
                         ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
                         character.GetHit(_owner, damage, "BladeThrow", collider.name);
+                        ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(character.Cache.Transform.position, damage);
                     }
                     else
                         character.GetHit("Blade", 100, "BladeThrow", collider.name);

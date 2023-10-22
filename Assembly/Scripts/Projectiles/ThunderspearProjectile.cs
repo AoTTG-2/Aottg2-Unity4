@@ -10,6 +10,7 @@ using GameManagers;
 using UI;
 using Utility;
 using CustomLogic;
+using Cameras;
 
 namespace Projectiles
 {
@@ -122,6 +123,7 @@ namespace Projectiles
                         {
                             var damage = CalculateDamage();
                             ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                            ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(titan.BaseTitanCache.Neck.position, damage);
                             titan.GetHit(_owner, damage, "Thunderspear", collider.name);
                         }
                     }
@@ -142,7 +144,12 @@ namespace Projectiles
                     if (_owner == null || !(_owner is Human))
                         human.GetHit("", 100, "Thunderspear", "");
                     else
-                        human.GetHit(_owner, CalculateDamage(), "Thunderspear", "");
+                    {
+                        var damage = CalculateDamage();
+                        human.GetHit(_owner, damage, "Thunderspear", "");
+                        ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(human.Cache.Transform.position, damage);
+                    }
                 }
             }
         }

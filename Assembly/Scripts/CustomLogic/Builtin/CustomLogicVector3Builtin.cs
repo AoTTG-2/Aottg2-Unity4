@@ -46,6 +46,12 @@ namespace CustomLogic
                 var b = (CustomLogicVector3Builtin)parameters[1];
                 return Vector3.Distance(a.Value, b.Value);
             }
+            else if (methodName == "Project")
+            {
+                var a = (CustomLogicVector3Builtin)parameters[0];
+                var b = (CustomLogicVector3Builtin)parameters[1];
+                return new CustomLogicVector3Builtin(Vector3.Project(a.Value, b.Value));
+            }
             return null;
         }
       

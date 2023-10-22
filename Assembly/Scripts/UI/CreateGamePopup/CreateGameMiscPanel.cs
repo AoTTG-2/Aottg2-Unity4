@@ -29,6 +29,7 @@ namespace UI
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.Horses, UIManager.GetLocale(cat, sub, "Horses"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.ThunderspearPVP, UIManager.GetLocale(cat, sub, "ThunderspearPVP"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.GunsAirReload, UIManager.GetLocale(cat, sub, "GunsAirReload"));
+            ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.AllowStock, UIManager.GetLocale(cat, sub, "AllowStock"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowBlades, UIManager.GetLocale(cat, sub, "AllowBlades"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowAHSS, UIManager.GetLocale(cat, sub, "AllowAHSS"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.AllowThunderspears, UIManager.GetLocale(cat, sub, "AllowThunderspears"));

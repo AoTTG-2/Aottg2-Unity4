@@ -20,6 +20,7 @@ namespace GameManagers
         public CustomLogicEvaluator LogicEvaluator;
         public HashSet<MapObject> SelectedObjects = new HashSet<MapObject>();
         public BaseGizmo CurrentGizmo;
+        public bool Snap;
         private List<BaseCommand> _undoCommands = new List<BaseCommand>();
         private List<BaseCommand> _redoCommands = new List<BaseCommand>();
         private string _clipboard = string.Empty;
@@ -294,6 +295,8 @@ namespace GameManagers
             }
             else if (_input.ChangeGizmo.GetKeyDown())
                 _menu._topPanel.NextGizmo();
+            else if (_input.ToggleSnap.GetKeyDown())
+                _menu._topPanel.ToggleSnap();
             else if (_input.Select.GetKeyDown() && !_menu.IsMouseUI)
             {
                 _isDrag = true;

@@ -90,7 +90,7 @@ namespace CustomSkins
             return false;
         }
 
-        public static IEnumerator DownloadTexture(BaseCustomSkinLoader obj, string url, bool mipmap, int maxSize)
+        public static IEnumerator DownloadTexture(MonoBehaviour obj, string url, bool mipmap, int maxSize)
         {
             // return a blank texture if an error is encountered
             Texture2D blankTexture = CreateBlankTexture(mipmap);
@@ -171,7 +171,7 @@ namespace CustomSkins
             return texture;
         }
 
-        private static IEnumerator CreateTextureFromData(BaseCustomSkinLoader obj, WWW www, bool mipmap)
+        private static IEnumerator CreateTextureFromData(MonoBehaviour obj, WWW www, bool mipmap)
         {
             int resizedSize = 0;
             Texture2D texture = DecodeTexture(www, mipmap);

@@ -55,6 +55,8 @@ namespace ApplicationManagers
                 CurrentGameManager = Util.CreateObj<CharacterEditorGameManager>();
             else if (SceneName == SceneName.MapEditor)
                 CurrentGameManager = Util.CreateObj<MapEditorGameManager>();
+            else if (SceneName == SceneName.SnapshotViewer || SceneName == SceneName.Gallery)
+                CurrentGameManager = Util.CreateObj<BaseGameManager>();
         }
 
         private static void CreateCamera()
@@ -76,6 +78,10 @@ namespace ApplicationManagers
             {
                 CurrentCamera = go.AddComponent<StaticCamera>();
                 CurrentCamera.Camera.nearClipPlane = 0.3f;
+                if (SceneName == SceneName.SnapshotViewer)
+                    CurrentCamera.GetComponent<StaticCamera>().SetSkybox(true);
+                else
+                    CurrentCamera.GetComponent<StaticCamera>().SetSkybox(false);
             }
         }
 
@@ -101,6 +107,8 @@ namespace ApplicationManagers
         InGame,
         MapEditor,
         CharacterEditor,
+        SnapshotViewer,
+        Gallery,
         Test
     }
 }

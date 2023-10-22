@@ -14,6 +14,20 @@ namespace CustomLogic
         {
         }
 
+        public override object GetField(string name)
+        {
+            var camera = (InGameCamera)SceneLoader.CurrentCamera;
+            if (name == "IsManuel")
+                return CustomLogicManager.ManualCamera;
+            if (name == "Position")
+                return new CustomLogicVector3Builtin(camera.Cache.Transform.position);
+            if (name == "Rotation")
+                return new CustomLogicVector3Builtin(camera.Cache.Transform.rotation.eulerAngles);
+            if (name == "Velocity")
+                return new CustomLogicVector3Builtin(CustomLogicManager.CameraVelocity);
+            return null;
+        }
+
         public override object CallMethod(string name, List<object> parameters)
         {
             var camera = (InGameCamera)SceneLoader.CurrentCamera;

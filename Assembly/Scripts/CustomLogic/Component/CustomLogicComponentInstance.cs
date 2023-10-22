@@ -63,6 +63,11 @@ namespace CustomLogic
             CustomLogicManager.Evaluator.EvaluateMethod(this, "OnGetHit", new List<object>() { character, name, damage, type });
         }
 
+        public void OnGetHooked(CustomLogicHumanBuiltin human, CustomLogicVector3Builtin position, bool left)
+        {
+            CustomLogicManager.Evaluator.EvaluateMethod(this, "OnGetHooked", new List<object>() { human, position, left });
+        }
+
         public static object DeserializeValue(object obj, string value)
         {
             if (value == "null")

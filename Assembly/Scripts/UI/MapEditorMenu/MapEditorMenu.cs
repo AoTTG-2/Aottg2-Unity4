@@ -69,8 +69,9 @@ namespace UI
                 float y1 = Mathf.Min(start.y, end.y);
                 float x2 = Mathf.Max(start.x, end.x);
                 float y2 = Mathf.Max(start.y, end.y);
-                start = new Vector2(x1, y1);
-                end = new Vector2(x2, y2);
+                float scale = UIManager.CurrentMenu.GetComponent<Canvas>().scaleFactor;
+                start = new Vector2(x1, y1) / scale;
+                end = new Vector2(x2, y2) / scale;
                 DragImage.rectTransform.anchoredPosition = start;
                 DragImage.rectTransform.sizeDelta = end - start;
             }

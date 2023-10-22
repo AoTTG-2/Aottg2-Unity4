@@ -86,6 +86,12 @@ namespace CustomLogic
                     return list;
                 }
             }
+            else if (name == "SpawnTitansAsync")
+            {
+                string type = (string)parameters[0];
+                if (PhotonNetwork.isMasterClient)
+                    gameManager.SpawnAITitansAsync(type, (int)parameters[1]);
+            }
             else if (name == "SpawnTitansAt")
             {
                 string type = (string)parameters[0];
@@ -100,6 +106,13 @@ namespace CustomLogic
                     }
                     return list;
                 }
+            }
+            else if (name == "SpawnTitansAtAsync")
+            {
+                string type = (string)parameters[0];
+                Vector3 position = ((CustomLogicVector3Builtin)parameters[2]).Value;
+                if (PhotonNetwork.isMasterClient)
+                    gameManager.SpawnAITitansAtAsync(type, (int)parameters[1], position);
             }
             else if (name == "SpawnShifter")
             {

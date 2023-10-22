@@ -1,4 +1,5 @@
 ﻿using ApplicationManagers;
+using Cameras;
 using Controllers;
 using CustomLogic;
 using CustomSkins;
@@ -42,6 +43,7 @@ namespace Characters
         public Transform GrabHand;
         public MapObject MountedMapObject;
         public Transform MountedTransform;
+        public Rigidbody MountedRigidbody;
         public Vector3 MountedPositionOffset;
         public Vector3 MountedRotationOffset;
         public int AccelerationStat;
@@ -57,7 +59,6 @@ namespace Characters
         public float TargetMagnitude = 0f;
         public bool IsWalk;
         private const float MaxVelocityChange = 10f;
-        protected float StunTime = 1f;
         public float RunSpeed;
         private float _originalDashSpeed;
         public Quaternion _targetRotation;
@@ -71,6 +72,7 @@ namespace Characters
         private bool _almostSingleHook;
         private bool _leanLeft;
         private bool _interpolate;
+        private bool _isTrigger;
         public override LayerMask GroundMask => PhysicsLayer.GetMask(PhysicsLayer.TitanPushbox, PhysicsLayer.MapObjectEntities,
             PhysicsLayer.MapObjectAll);
 
@@ -86,10 +88,13 @@ namespace Characters
         private bool _cancelGasDisable;
         private bool _animationStopped;
         private bool _needFinishReload;
+        private float _reloadTimeLeft;
+        private float _reloadCooldownLeft;
         private string _reloadAnimation;
         private float _dashCooldownLeft = 0f;
         private Human _hookHuman;
         private bool _hookHumanLeft;
+        private float _hookHumanConstantTimeLeft;
         private Dictionary<BaseTitan, float> _lastNapeHitTimes = new Dictionary<BaseTitan, float>();
 
         [RPC]
@@ -146,22 +151,28 @@ namespace Characters
 
         public void Mount(Transform transform, Vector3 positionOffset, Vector3 rotationOffset)
         {
+            Mount(transform, positionOffset, rotationOffset, transform.gameObject.GetComponent<Rigidbody>());
+        }
+
+        public void Mount(MapObject mapObject, Vector3 positionOffset, Vector3 rotationOffset)
+        {
+            Mount(mapObject.GameObject.transform, positionOffset, rotationOffset, mapObject.GameObject.GetComponent<Rigidbody>());
+            MountedMapObject = mapObject;
+        }
+
+        public void Mount(Transform transform, Vector3 positionOffset, Vector3 rotationOffset, Rigidbody rigidbody)
+        {
             if (MountedTransform != transform)
             {
                 Unmount(true);
                 SetInterpolation(false);
-                GetComponent<CapsuleCollider>().isTrigger = true;
+                SetTriggerCollider(true);
             }
             MountState = HumanMountState.MapObject;
             MountedTransform = transform;
             MountedPositionOffset = positionOffset;
             MountedRotationOffset = rotationOffset;
-        }
-
-        public void Mount(MapObject mapObject, Vector3 positionOffset, Vector3 rotationOffset)
-        {
-            Mount(mapObject.GameObject.transform, positionOffset, rotationOffset);
-            MountedMapObject = mapObject;
+            MountedRigidbody = rigidbody;
         }
 
         public void Unmount(bool immediate)
@@ -177,10 +188,11 @@ namespace Characters
             {
                 MountState = HumanMountState.None;
                 Idle();
-                GetComponent<CapsuleCollider>().isTrigger = false;
+                SetTriggerCollider(false);
             }
             MountedTransform = null;
             MountedMapObject = null;
+            MountedRigidbody = null;
         }
 
         public void MountHorse()
@@ -255,7 +267,7 @@ namespace Characters
             UnhookHuman(false);
             State = HumanState.Grab;
             grabber.Cache.PhotonView.RPC("GrabRPC", grabber.Cache.PhotonView.owner, new object[] { Cache.PhotonView.viewID });
-            GetComponent<CapsuleCollider>().isTrigger = true;
+            SetTriggerCollider(true);
             FalseAttack();
             Grabber = grabber;
             GrabHand = hand;
@@ -269,7 +281,7 @@ namespace Characters
             if (notifyTitan && Grabber != null)
                 Grabber.Cache.PhotonView.RPC("UngrabRPC", Grabber.Cache.PhotonView.owner, new object[0]);
             Grabber = null;
-            GetComponent<CapsuleCollider>().isTrigger = false;
+            SetTriggerCollider(false);
             if (idle)
                 Idle();
         }
@@ -322,6 +334,8 @@ namespace Characters
         {
             if ((Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG) && !SettingsManager.InGameCurrent.Misc.GunsAirReload.Value && !Grounded)
                 return;
+            if (_needFinishReload || _reloadCooldownLeft > 0f)
+                return;
             if (Weapon is AmmoWeapon)
             {
                 if (((AmmoWeapon)Weapon).AmmoLeft <= 0)
@@ -369,6 +383,8 @@ namespace Characters
             State = HumanState.Reload;
             _stateTimeLeft = Cache.Animation[_reloadAnimation].length / Cache.Animation[_reloadAnimation].speed;
             _needFinishReload = true;
+            _reloadTimeLeft = _stateTimeLeft;
+            _reloadCooldownLeft = _reloadTimeLeft + 0.5f;
             ((InGameMenu)UIManager.CurrentMenu).HUDBottomHandler.Reload();
         }
 
@@ -538,6 +554,7 @@ namespace Characters
             if (IsMine())
             {
                 Cache.PhotonView.RPC("SetInterpolationRPC", player, new object[] { _interpolate });
+                Cache.PhotonView.RPC("SetTriggerColliderRPC", player, new object[] { _isTrigger });
             }
         }
 
@@ -620,9 +637,10 @@ namespace Characters
                         if (type == "APG" && !CheckTitanNapeAngle(hitbox.transform.position, titan.BaseTitanCache.Head.transform,
                             CharacterData.HumanWeaponInfo["APG"]["RestrictAngle"].AsFloat))
                             return;
-                        if (_lastNapeHitTimes.ContainsKey(titan) && (_lastNapeHitTimes[titan] + 0.2f) > Time.time)
+                        if (type != "APG" && _lastNapeHitTimes.ContainsKey(titan) && (_lastNapeHitTimes[titan] + 0.2f) > Time.time)
                             return;
                         ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                        ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(titan.BaseTitanCache.Neck.position, damage);
                         if (type == "Blade" && SettingsManager.GraphicsSettings.BloodSplatterEnabled.Value)
                             ((InGameMenu)UIManager.CurrentMenu).ShowBlood();
                         if (type == "Blade")
@@ -640,7 +658,11 @@ namespace Characters
                     }
                 }
                 else
+                {
+                    ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
+                    ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(victimChar.Cache.Transform.position, damage);
                     victimChar.GetHit(this, damage, type, collider.name);
+                }
             }
         }
 
@@ -656,7 +678,24 @@ namespace Characters
             {
                 _stateTimeLeft -= Time.deltaTime;
                 _dashCooldownLeft -= Time.deltaTime;
+                _reloadCooldownLeft -= Time.deltaTime;
                 UpdateBladeTrails();
+                if (_needFinishReload)
+                {
+                    _reloadTimeLeft -= Time.deltaTime;
+                    if (Weapon is BladeWeapon)
+                    {
+                        if (Grounded && (Cache.Animation[_reloadAnimation].normalizedTime > 0.5f || _reloadTimeLeft <= 0f))
+                            FinishReload();
+                        else if (!Grounded && (Cache.Animation[_reloadAnimation].normalizedTime > 0.56f || _reloadTimeLeft <= 0f))
+                            FinishReload();
+                    }
+                    else
+                    {
+                        if (Cache.Animation[_reloadAnimation].normalizedTime > 0.62f || _reloadTimeLeft <= 0f)
+                            FinishReload();
+                    }
+                }
                 if (State == HumanState.Grab)
                 {
                     if (Grabber == null || Grabber.Dead)
@@ -673,7 +712,7 @@ namespace Characters
                         Unmount(true);
                     else
                     {
-                        Cache.Transform.position = MountedTransform.position + MountedPositionOffset;
+                        Cache.Transform.position = MountedTransform.TransformPoint(MountedPositionOffset);
                         Cache.Transform.rotation = Quaternion.Euler(MountedTransform.rotation.eulerAngles + MountedRotationOffset);
                     }
                 }
@@ -774,18 +813,6 @@ namespace Characters
                 }
                 else if (State == HumanState.Reload)
                 {
-                    if (Weapon is BladeWeapon)
-                    {
-                        if (Grounded && Cache.Animation[_reloadAnimation].normalizedTime > 0.5f)
-                            FinishReload();
-                        else if (!Grounded && Cache.Animation[_reloadAnimation].normalizedTime > 0.56f)
-                            FinishReload();
-                    }
-                    else
-                    {
-                        if (Cache.Animation[_reloadAnimation].normalizedTime > 0.62f)
-                            FinishReload();
-                    }
                     if (_stateTimeLeft <= 0f)
                         Idle();
                 }
@@ -826,7 +853,10 @@ namespace Characters
                 }
                 if (MountState == HumanMountState.MapObject)
                 {
-                    Cache.Rigidbody.velocity = Vector3.zero;
+                    if (MountedRigidbody != null)
+                        Cache.Rigidbody.velocity = MountedRigidbody.velocity;
+                    else
+                        Cache.Rigidbody.velocity = Vector3.zero;
                     ToggleSparks(false);
                     if (State != HumanState.Idle)
                     {
@@ -834,12 +864,18 @@ namespace Characters
                     }
                     return;
                 }
-                if (_hookHuman != null)
+                if (_hookHuman != null && !_hookHuman.Dead)
                 {
                     Vector3 vector2 = _hookHuman.Cache.Transform.position - Cache.Transform.position;
                     float magnitude = vector2.magnitude;
                     if (magnitude > 2f)
                         Cache.Rigidbody.AddForce((vector2.normalized * Mathf.Pow(magnitude, 0.15f) * 30f) - (Cache.Rigidbody.velocity * 0.95f), ForceMode.VelocityChange);
+                    _hookHumanConstantTimeLeft -= Time.fixedDeltaTime;
+                    if (_hookHumanConstantTimeLeft <= 0f)
+                    {
+                        _hookHumanConstantTimeLeft = 1f;
+                        _hookHuman.Cache.PhotonView.RPC("OnStillHookedByHuman", _hookHuman.Cache.PhotonView.owner, new object[] { Cache.PhotonView.viewID });
+                    }
                 }
                 Vector3 currentVelocity = Cache.Rigidbody.velocity;
                 float currentSpeed = Cache.Rigidbody.velocity.magnitude;
@@ -855,7 +891,15 @@ namespace Characters
                     if (State == HumanState.Attack)
                     {
                         if (Cache.Animation.IsPlaying("attack1") || Cache.Animation.IsPlaying("attack2"))
+                        {
                             Cache.Rigidbody.AddForce(Cache.Transform.forward * 200f);
+                            if (!SettingsManager.InGameCurrent.Misc.AllowStock.Value)
+                            {
+                                Vector3 velocity = Cache.Rigidbody.velocity;
+                                Cache.Rigidbody.velocity = velocity.normalized * Mathf.Min(velocity.magnitude, 20f);
+                            }
+                        }
+                        ToggleSparks(false);
                     }
                     if (JustGrounded)
                     {
@@ -1277,7 +1321,7 @@ namespace Characters
                 {
                     Vector3 left = Cache.Transform.position - HookLeft.GetHookPosition();
                     Vector3 right = Cache.Transform.position - HookRight.GetHookPosition();
-                    if (Vector3.Angle(direction, left) < 30f && Vector3.Angle(direction, right) < 30f)
+                    if (Vector3.Angle(-direction, left) < 30f && Vector3.Angle(-direction, right) < 30f)
                     {
                         _almostSingleHook = true;
                         TargetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
@@ -1649,8 +1693,8 @@ namespace Characters
                     HumanCustomSkinSet set = (HumanCustomSkinSet)SettingsManager.CustomSkinSettings.Human.GetSelectedSet();
                     string url = string.Join(",", new string[] { set.Horse.Value, set.Hair.Value, set.Eye.Value, set.Glass.Value, set.Face.Value,
                 set.Skin.Value, set.Costume.Value, set.Logo.Value, set.GearL.Value, set.GearR.Value, set.Gas.Value, set.Hoodie.Value,
-                    set.WeaponTrail.Value, set.ThunderspearL.Value, set.ThunderspearR.Value, set.HookL.Value, set.HookLTiling.Value.ToString(),
-                set.HookR.Value, set.HookRTiling.Value.ToString()});
+                    set.WeaponTrail.Value, set.ThunderspearL.Value, set.ThunderspearR.Value, set.HookLTiling.Value.ToString(), set.HookL.Value,
+                    set.HookRTiling.Value.ToString(), set.HookR.Value });
                     int viewID = -1;
                     if (Horse != null)
                     {
@@ -1804,6 +1848,7 @@ namespace Characters
                 if (Grounded)
                     Cache.Rigidbody.AddForce(Vector3.up * Mathf.Min(launchForce.magnitude * 0.2f, (10f)), ForceMode.Impulse);
                 Cache.Rigidbody.AddForce(launchForce * num * 0.1f, ForceMode.Impulse);
+                _hookHumanConstantTimeLeft = 1f;
             }
         }
 
@@ -1821,14 +1866,15 @@ namespace Characters
                 State != HumanState.Grab && MountState == HumanMountState.None && human != this)
             {
                 Vector3 direction = human.Cache.Transform.position - Cache.Transform.position;
-                Cache.Rigidbody.AddForce(-Cache.Rigidbody.velocity * 0.9f, ForceMode.VelocityChange);
+                float loss = CharacterData.HumanWeaponInfo["Hook"]["InitialVelocityLoss"].AsFloat;
+                Cache.Rigidbody.AddForce(-Cache.Rigidbody.velocity * loss, ForceMode.VelocityChange);
                 float num = Mathf.Pow(direction.magnitude, 0.1f);
                 if (Grounded)
                     Cache.Rigidbody.AddForce(Vector3.up * Mathf.Min(direction.magnitude * 0.2f, 10f), ForceMode.Impulse);
-                Cache.Rigidbody.AddForce(direction * num * 0.1f, ForceMode.Impulse);
+                Cache.Rigidbody.AddForce(direction * num * CharacterData.HumanWeaponInfo["Hook"]["InitialPullForce"].AsFloat, ForceMode.Impulse);
                 CrossFade("dash", 0.05f, 0.1f / Cache.Animation["dash"].length);
                 State = HumanState.Stun;
-                _stateTimeLeft = StunTime;
+                _stateTimeLeft = CharacterData.HumanWeaponInfo["Hook"]["StunTime"].AsFloat;
                 FalseAttack();
                 float facingDirection = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
                 Quaternion quaternion = Quaternion.Euler(0f, facingDirection, 0f);
@@ -1836,6 +1882,25 @@ namespace Characters
                 Cache.Transform.rotation = quaternion;
                 _targetRotation = quaternion;
                 TargetAngle = facingDirection;
+            }
+        }
+
+        [RPC]
+        public void OnStillHookedByHuman(int viewId, PhotonMessageInfo info)
+        {
+            var human = Util.FindCharacterByViewId(viewId);
+            if (IsMine() && human != null && !Dead && human.Cache.PhotonView.owner == info.sender &&
+                State != HumanState.Grab && MountState == HumanMountState.None && human != this)
+            {
+                float loss = CharacterData.HumanWeaponInfo["Hook"]["ConstantVelocityLoss"].AsFloat;
+                Cache.Rigidbody.AddForce(-Cache.Rigidbody.velocity * loss, ForceMode.VelocityChange);
+                float constantPullForce = CharacterData.HumanWeaponInfo["Hook"]["ConstantPullForce"].AsFloat;
+                if (constantPullForce > 0f)
+                {
+                    Vector3 direction = human.Cache.Transform.position - Cache.Transform.position;
+                    float num = Mathf.Pow(direction.magnitude, 0.1f);
+                    Cache.Rigidbody.AddForce(direction * num * constantPullForce, ForceMode.Impulse);
+                }
             }
         }
 
@@ -1887,6 +1952,23 @@ namespace Characters
                 else
                     Cache.Rigidbody.interpolation = RigidbodyInterpolation.None;
             }
+        }
+
+        private void SetTriggerCollider(bool trigger)
+        {
+            if (IsMine())
+            {
+                _isTrigger = trigger;
+                Cache.PhotonView.RPC("SetTriggerColliderRPC", PhotonTargets.All, new object[] { trigger });
+            }
+        }
+
+        [RPC]
+        public void SetTriggerColliderRPC(bool trigger, PhotonMessageInfo info)
+        {
+            if (info.sender != Cache.PhotonView.owner)
+                return;
+            GetComponent<CapsuleCollider>().isTrigger = trigger;
         }
 
         private float GetReelAxis()

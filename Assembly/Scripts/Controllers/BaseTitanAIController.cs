@@ -19,7 +19,6 @@ namespace Controllers
         public float ReactionTime;
         public float AttackWaitMin;
         public float AttackWaitMax;
-        public float TurnChance = 1f;
         public float ChaseAngleTimeMin;
         public float ChaseAngleTimeMax;
         public float ChaseAngleMinRange;
@@ -44,6 +43,7 @@ namespace Controllers
         protected AICharacterDetection _detection;
         protected string _attack;
         protected float _attackCooldownLeft;
+        protected float _waitAttackTime;
 
         protected override void Awake()
         {
@@ -222,7 +222,7 @@ namespace Controllers
                         {
                             if (GetValidAttacks().Count > 0)
                                 Attack();
-                            else if (GetEnemyAngle(_enemy) > TurnAngle && RandomGen.Roll(TurnChance))
+                            else if (GetEnemyAngle(_enemy) > TurnAngle)
                             {
                                 _moveAngle = 0f;
                                 _titan.TargetAngle = GetChaseAngle(_enemy.Cache.Transform.position);
@@ -253,16 +253,25 @@ namespace Controllers
                 }
                 if (_stateTimeLeft <= 0f)
                 {
+                    _waitAttackTime += Time.deltaTime;
                     bool inRange = Util.DistanceIgnoreY(_character.Cache.Transform.position, _enemy.Cache.Transform.position) <= _attackRange;
+                    _titan.HasDirection = false;
                     if (!inRange)
                         MoveToEnemy();
                     else if (GetValidAttacks().Count > 0)
                         Attack();
-                    else if (GetEnemyAngle(_enemy) > TurnAngle && RandomGen.Roll(TurnChance))
+                    else if (GetEnemyAngle(_enemy) > TurnAngle)
                     {
                         _moveAngle = 0f;
                         _titan.TargetAngle = GetChaseAngle(_enemy.Cache.Transform.position);
                         _titan.Turn(_titan.GetTargetDirection());
+                    }
+                    else if (_waitAttackTime > 2f)
+                    {
+                        _titan.HasDirection = true;
+                        _titan.IsWalk = !IsRun;
+                        _moveAngle = 0f;
+                        _titan.TargetAngle = GetChaseAngle(_enemy.Cache.Transform.position);
                     }
                 }
             }
@@ -275,8 +284,9 @@ namespace Controllers
 
         protected float GetEnemyAngle(BaseCharacter enemy)
         {
-            Vector3 direction = (enemy.Cache.Transform.position - _character.Cache.Transform.position).normalized;
-            return Mathf.Abs(Vector3.Angle(_character.Cache.Transform.forward, direction));
+            Vector3 direction = (enemy.Cache.Transform.position - _character.Cache.Transform.position);
+            direction.y = 0f;
+            return Mathf.Abs(Vector3.Angle(_character.Cache.Transform.forward, direction.normalized));
         }
 
         protected float GetChaseAngle(Vector3 position)
@@ -371,6 +381,7 @@ namespace Controllers
             AIState = TitanAIState.WaitAttack;
             _titan.HasDirection = false;
             _stateTimeLeft = Random.Range(AttackWaitMin, AttackWaitMax);
+            _waitAttackTime = 0f;
         }
 
         protected BaseCharacter FindNearestEnemy()

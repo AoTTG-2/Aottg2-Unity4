@@ -51,8 +51,8 @@ class Main
             return;
         }
         amount = self.AddTitansPerWave * (self._currentWave - 1) + self.StartTitans;
-        titans = Game.SpawnTitans("Default", amount);
-        for (titan in titans)
+        Game.SpawnTitansAsync("Default", amount);
+        for (titan in Game.Titans)
         {
             titan.DetectRange = 2000;
         }

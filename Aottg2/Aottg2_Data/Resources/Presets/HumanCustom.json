@@ -179,10 +179,10 @@
                     65,
                     255
                 ],
-                "Speed" : 100,
-                "Gas" : 115,
-                "Blade" : 115,
-                "Acceleration" : 120,
+                "Speed" : 140,
+                "Gas" : 100,
+                "Blade" : 100,
+                "Acceleration" : 110,
                 "Name" : "Sasha",
                 "Preset" : true
             },
@@ -241,7 +241,7 @@
                 "Skin" : 0,
                 "Costume" : 9,
                 "Cape" : 1,
-                "Logo" : 1,
+                "Logo" : 2,
                 "HairColor" : [
                     255,
                     255,
@@ -483,10 +483,10 @@
                     65,
                     255
                 ],
-                "Speed" : 100,
-                "Gas" : 115,
-                "Blade" : 115,
-                "Acceleration" : 120,
+                "Speed" : 140,
+                "Gas" : 100,
+                "Blade" : 100,
+                "Acceleration" : 110,
                 "Name" : "Sasha",
                 "Preset" : true
             },
@@ -545,7 +545,7 @@
                 "Skin" : 0,
                 "Costume" : 9,
                 "Cape" : 0,
-                "Logo" : 1,
+                "Logo" : 2,
                 "HairColor" : [
                     255,
                     255,
@@ -787,10 +787,10 @@
                     65,
                     255
                 ],
-                "Speed" : 100,
-                "Gas" : 115,
-                "Blade" : 115,
-                "Acceleration" : 120,
+                "Speed" : 140,
+                "Gas" : 100,
+                "Blade" : 100,
+                "Acceleration" : 110,
                 "Name" : "Sasha",
                 "Preset" : true
             },
@@ -849,7 +849,7 @@
                 "Skin" : 0,
                 "Costume" : 10,
                 "Cape" : 0,
-                "Logo" : 1,
+                "Logo" : 2,
                 "HairColor" : [
                     255,
                     255,

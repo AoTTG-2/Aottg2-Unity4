@@ -32,8 +32,8 @@
 			"PressedColor": [30, 140, 195, 255]
 		},
 		"TextButton": {
-			"NormalColor": [0, 175, 222, 255],
-			"HighlightedColor": [180, 180, 180, 255],
+			"NormalColor": [30, 140, 195, 255],
+			"HighlightedColor": [133, 133, 133, 255],
 			"PressedColor": [120, 120, 120, 255]
 		},
 		"DefaultLabel": {
@@ -41,26 +41,26 @@
 		},
 		"DefaultSetting": {
 			"TextColor": [83, 101, 125, 255],
-			"IconNormalColor": [83, 101, 125, 255],
-			"IconHighlightedColor": [100, 127, 161, 255],
-			"IconPressedColor": [83, 101, 125, 255],
+			"IconNormalColor": [100, 127, 161, 255],
+			"IconHighlightedColor": [85, 108, 137, 255],
+			"IconPressedColor": [70, 89, 112, 255],
 			"TooltipBackgroundColor": [208, 224, 244, 255],
 			"TooltipTextColor": [83, 101, 125, 255],
 			"ToggleNormalColor": [255, 255, 255, 255],
 			"ToggleHighlightedColor": [245, 245, 245, 255],
 			"TogglePressedColor": [200, 200, 200, 255],
-			"ToggleFilledColor": [70, 90, 115, 255],
+			"ToggleFilledColor": [100, 127, 161, 255],
 			"InputTextColor": [50, 50, 50, 255],
 			"InputNormalColor": [255, 255, 255, 255],
 			"InputHighlightedColor": [240, 240, 240, 255],
 			"InputPressedColor": [240, 240, 240, 255],
 			"InputSelectionColor": [168, 206, 255, 192],
 			"DropdownTextColor": [255, 255, 255, 255],
-			"DropdownNormalColor": [78, 95, 112, 255],
-			"DropdownHighlightedColor": [59, 71, 84, 255],
-			"DropdownPressedColor": [40, 48, 57, 255],
+			"DropdownNormalColor": [100, 127, 161, 255],
+			"DropdownHighlightedColor": [85, 108, 137, 255],
+			"DropdownPressedColor": [70, 89, 112, 255],
 			"DropdownBorderColor": [0, 0, 0, 255],
-			"DropdownScrollbarBackgroundColor": [36, 45, 56, 255],
+			"DropdownScrollbarBackgroundColor":[83, 101, 125, 255],
 			"DropdownScrollbarNormalColor": [225, 225, 225, 255],
 			"DropdownScrollbarHighlightedColor": [193, 199, 199, 255],
 			"DropdownScrollbarPressedColor": [146, 146, 146, 255],
@@ -104,13 +104,13 @@
 	},
 	"SelectListPopup": {
 		"MainBody": {
-			"BackgroundColor": [44, 54, 66, 255]
+			"BackgroundColor": [255, 255, 255, 255],
 		},
 		"ItemButton": {
 			"NormalColor": [255, 255, 255, 0],
 			"HighlightedColor": [137, 144, 154, 86],
 			"PressedColor": [88, 93, 99, 86],
-			"TextColor": [255, 255, 255, 255]
+			"TextColor": [83, 101, 125, 255]
 		},
 		"DeleteButton": {
 			"NormalColor": [238, 75, 43, 255],
@@ -154,11 +154,11 @@
 	},
 	"CutsceneDialoguePanel": {
 		"MainBody": {
-			"BackgroundColor": [48, 53, 60, 200],
-			"TopBarColor": [48, 53, 60, 200],
-			"BottomBarColor": [48, 53, 60, 200],
-			"HorizontalLineColor": [77, 83, 93, 255],
-			"BorderColor": [70, 76, 86, 255]
+			"BackgroundColor": [255, 255, 255, 200],
+			"TopBarColor": [255, 255, 255, 255],
+			"BottomBarColor": [255, 255, 255, 255],
+			"HorizontalLineColor": [78, 95, 112, 255],
+			"BorderColor": [255, 255, 255, 255]
 		}
 	},
 	"ChatPanel": {
@@ -180,20 +180,20 @@
 	},
 	"ScoreboardPopup": {
 		"Icon": {
-			"SpectateColor": [255, 255, 255, 255],
+			"SpectateColor": [100, 127, 161, 255],
 			"DeadColor": [255, 0, 0, 255],
-			"LoadoutHuman": [255, 255, 255, 255],
-			"LoadoutTitan": [255, 255, 255, 255],
-			"LoadoutShifter": [255, 255, 255, 255]
+			"LoadoutHuman": [100, 127, 161, 255],
+			"LoadoutTitan": [100, 127, 161, 255],
+			"LoadoutShifter": [100, 127, 161, 255]
 		},
 		"IconButton": {
-			"NormalColor": [255, 255, 255, 255],
-			"HighlightedColor": [200, 200, 200, 255],
-			"PressedColor": [180, 180, 180, 255],
+			"NormalColor": [100, 127, 161, 255],
+			"HighlightedColor": [85, 108, 137, 255],
+			"PressedColor": [70, 89, 112, 255],
 			"TextColor": [255, 255, 255, 255]
 		},
 		"TextColor": {
-			"Default": [255, 255, 255, 255]
+			"Default": [83, 101, 125, 255]
 		}
 	}
 }

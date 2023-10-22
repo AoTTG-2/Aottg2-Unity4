@@ -10,18 +10,19 @@ namespace UI
         public override void ApplyScale()
         {
             base.ApplyScale();
-            float scale = SettingsManager.UISettings.CrosshairScale.Value;
+            float mainScale = SettingsManager.UISettings.CrosshairScale.Value;
             RectTransform rect = GetComponent<RectTransform>();
             Vector3 currentScale = rect.localScale;
-            rect.localScale = new Vector2(currentScale.x * scale, currentScale.y * scale);
+            rect.localScale = new Vector2(currentScale.x * mainScale, currentScale.y * mainScale);
             int fontSize = 16;
-            if (scale > 1f)
+            float textScale = SettingsManager.UISettings.CrosshairTextScale.Value;
+            if (textScale > 1f)
             {
-                fontSize = (int)(16 * scale);
+                fontSize = (int)(16 * textScale);
             }
-            scale = 16f / fontSize;
+            textScale = textScale / mainScale;
             transform.Find("DefaultLabel").GetComponent<Text>().fontSize = fontSize;
-            transform.Find("DefaultLabel").GetComponent<RectTransform>().localScale = new Vector2(scale, scale);
+            transform.Find("DefaultLabel").GetComponent<RectTransform>().localScale = new Vector2(textScale, textScale);
         }
     }
 }

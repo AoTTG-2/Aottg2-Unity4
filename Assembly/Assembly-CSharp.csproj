@@ -262,6 +262,7 @@
     <Compile Include="Scripts\ApplicationManagers\MiscInfo.cs" />
     <Compile Include="Scripts\ApplicationManagers\PastebinLoader.cs" />
     <Compile Include="Scripts\ApplicationManagers\SceneLoader.cs" />
+    <Compile Include="Scripts\Cameras\SnapshotHandler.cs" />
     <Compile Include="Scripts\Cameras\TestCamera.cs" />
     <Compile Include="Scripts\Cameras\CharacterEditorCamera.cs" />
     <Compile Include="Scripts\Cameras\BaseCamera.cs" />
@@ -498,12 +499,18 @@
     <Compile Include="Scripts\UI\BaseMenu\Vector3Popup.cs" />
     <Compile Include="Scripts\UI\BaseMenu\SimplePanel.cs" />
     <Compile Include="Scripts\UI\BaseMenu\NewImportPopup.cs" />
+    <Compile Include="Scripts\UI\Elements\Scalers\MinimapScaler.cs" />
+    <Compile Include="Scripts\UI\Elements\Scalers\StylebarScaler.cs" />
     <Compile Include="Scripts\UI\Elements\Scalers\HUDScaler.cs" />
+    <Compile Include="Scripts\UI\Elements\SettingElements\ButtonSettingElement.cs" />
     <Compile Include="Scripts\UI\Elements\SettingElements\Vector3SettingElement.cs" />
     <Compile Include="Scripts\UI\Elements\SettingElements\DropdownSelectElement.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CharacterInfoPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CharacterInfoHandler.cs" />
+    <Compile Include="Scripts\UI\InGameMenu\StylebarHandler.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CustomPopup.cs" />
+    <Compile Include="Scripts\UI\InGameMenu\StylebarPopup.cs" />
+    <Compile Include="Scripts\UI\InGameMenu\SnapshotPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\FeedPanel.cs" />
     <Compile Include="Scripts\UI\InGameMenu\KillFeedSmallPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\HUDBottomHandler.cs" />
@@ -522,6 +529,7 @@
     <Compile Include="Scripts\UI\MainMenu\AboutHelpPanel.cs" />
     <Compile Include="Scripts\UI\MainMenu\MainMenuPopup.cs" />
     <Compile Include="Scripts\UI\MainMenu\MainBackgroundPanel.cs" />
+    <Compile Include="Scripts\UI\MainMenu\ProfileIconPickPopup.cs" />
     <Compile Include="Scripts\UI\MainMenu\TipPanel.cs" />
     <Compile Include="Scripts\UI\MainMenu\MainBackgroundMenu.cs" />
     <Compile Include="Scripts\UI\MapEditorMenu\MapEditorCameraPopup.cs" />
@@ -544,6 +552,10 @@
     <Compile Include="Scripts\UI\MapEditorMenu\MapEditorSettingsKeybindsPanel.cs" />
     <Compile Include="Scripts\UI\MapEditorMenu\MapEditorSettingsPopup.cs" />
     <Compile Include="Scripts\UI\MapEditorMenu\MapEditorSelectComponentMenu.cs" />
+    <Compile Include="Scripts\UI\GalleryMenu\GalleryMainPanel.cs" />
+    <Compile Include="Scripts\UI\GalleryMenu\GalleryMenu.cs" />
+    <Compile Include="Scripts\UI\SnapshotViewerMenu\SnapshotViewerMainPanel.cs" />
+    <Compile Include="Scripts\UI\SnapshotViewerMenu\SnapshotViewerMenu.cs" />
     <Compile Include="Scripts\Utility\FolderPaths.cs" />
     <Compile Include="Scripts\Utility\Color255.cs" />
     <Compile Include="Scripts\Utility\PhysicsLayer.cs" />

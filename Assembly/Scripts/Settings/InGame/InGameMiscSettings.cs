@@ -17,6 +17,7 @@
         public BoolSetting Horses = new BoolSetting(false);
         public FloatSetting HorseSpeed = new FloatSetting(50f, minValue: 1f);
         public BoolSetting GunsAirReload = new BoolSetting(true);
+        public BoolSetting AllowStock = new BoolSetting(true);
         public BoolSetting ClearKDROnRestart = new BoolSetting(false);
         public BoolSetting GlobalMinimapDisable = new BoolSetting(false);
         public StringSetting Motd = new StringSetting(string.Empty, maxLength: 1000);

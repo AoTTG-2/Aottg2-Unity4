@@ -14,10 +14,8 @@ namespace CustomSkins
     {
         protected override string RendererIdPrefix { get { return "human"; } }
         private int _horseViewId;
-        public HookCustomSkinPart HookL;
-        public HookCustomSkinPart HookR;
-        public float HookLTiling = 1f;
-        public float HookRTiling = 1f;
+        private float _hookLTiling;
+        private float _hookRTiling;
 
         public override IEnumerator LoadSkinsFromRPC(object[] data)
         {
@@ -31,14 +29,14 @@ namespace CustomSkins
                     continue;
                 else if (partId == (int)HumanCustomSkinPartId.Gas && !SettingsManager.CustomSkinSettings.Human.GasEnabled.Value)
                     continue;
-                else if (partId == (int)HumanCustomSkinPartId.HookLTiling && skinUrls.Length > partId)
+                else if (partId == (int)HumanCustomSkinPartId.HookLTiling)
                 {
-                    float.TryParse(skinUrls[partId], out HookLTiling);
+                    float.TryParse(skinUrls[partId], out _hookLTiling);
                     continue;
                 }
-                else if (partId == (int)HumanCustomSkinPartId.HookRTiling && skinUrls.Length > partId)
+                else if (partId == (int)HumanCustomSkinPartId.HookRTiling)
                 {
-                    float.TryParse(skinUrls[partId], out HookRTiling);
+                    float.TryParse(skinUrls[partId], out _hookRTiling);
                     continue;
                 }
                 else if (partId == (int)HumanCustomSkinPartId.HookL && !SettingsManager.CustomSkinSettings.Human.HookEnabled.Value)
@@ -47,13 +45,7 @@ namespace CustomSkins
                     continue;
                 BaseCustomSkinPart part = GetCustomSkinPart(partId);
                 if (skinUrls.Length > partId && !part.LoadCache(skinUrls[partId]))
-                {
                     yield return StartCoroutine(part.LoadSkin(skinUrls[partId]));
-                }
-                if (partId == (int)HumanCustomSkinPartId.HookL)
-                    HookL = (HookCustomSkinPart)part;
-                else if (partId == (int)HumanCustomSkinPartId.HookR)
-                    HookR = (HookCustomSkinPart)part;
             }
         }
 
@@ -135,8 +127,9 @@ namespace CustomSkins
                         AddRendererIfExists(renderers, human.Setup.ThunderspearRModel);
                     return new BaseCustomSkinPart(this, renderers, GetRendererId(partId), MaxSizeMedium);
                 case HumanCustomSkinPartId.HookL:
+                    return new HookCustomSkinPart(this, human.HookLeft.GetRenderers(), GetRendererId(partId), MaxSizeSmall, _hookLTiling);
                 case HumanCustomSkinPartId.HookR:
-                    return new HookCustomSkinPart(this, GetRendererId(partId), MaxSizeSmall);
+                    return new HookCustomSkinPart(this, human.HookRight.GetRenderers(), GetRendererId(partId), MaxSizeSmall, _hookRTiling);
                 default:
                     return null;
             }
@@ -160,9 +153,9 @@ namespace CustomSkins
         WeaponTrail,
         ThunderspearL,
         ThunderspearR,
-        HookL,
         HookLTiling,
-        HookR,
-        HookRTiling
+        HookL,
+        HookRTiling,
+        HookR
     }
 }

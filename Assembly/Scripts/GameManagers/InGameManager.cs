@@ -189,9 +189,6 @@ namespace GameManagers
             if (PhotonNetwork.isMasterClient)
             {
                 RPCManager.PhotonView.RPC("GameSettingsRPC", player, new object[] { StringCompression.Compress(SettingsManager.InGameCurrent.SerializeToJsonString()) });
-                string motd = SettingsManager.InGameCurrent.Misc.Motd.Value;
-                if (motd != string.Empty)
-                    ChatManager.SendChat("MOTD: " + motd, player, ChatTextColor.System);
             }
         }
 
@@ -231,6 +228,7 @@ namespace GameManagers
         {
             if (!info.sender.isMasterClient)
                 return;
+            string original = SettingsManager.InGameCurrent.Misc.Motd.Value;
             SettingsManager.InGameCurrent.DeserializeFromJsonString(StringCompression.Decompress(data));
             ((InGameManager)SceneLoader.CurrentGameManager)._gameSettingsLoaded = true;
             if (SettingsManager.InGameCurrent.Misc.EndlessRespawnEnabled.Value)
@@ -238,6 +236,7 @@ namespace GameManagers
                 var gameManager = (InGameManager)SceneLoader.CurrentGameManager;
                 gameManager.StartCoroutine(gameManager.RespawnForever(SettingsManager.InGameCurrent.Misc.EndlessRespawnTime.Value));
             }
+            PrintMOTD(original);
         }
 
         public void SpawnPlayer(bool force)
@@ -324,12 +323,24 @@ namespace GameManagers
                 var titan = (BasicTitan)CharacterSpawner.Spawn(prefab, position, Quaternion.identity);
                 titan.Init(false, GetPlayerTeam(true), null, combo[1]);
                 SetupTitan(titan);
+                float smallSize = 1f;
+                float mediumSize = 2f;
+                float largeSize = 3f;
+                if (SettingsManager.InGameCurrent.Titan.TitanSizeEnabled.Value)
+                {
+                    float minSize = SettingsManager.InGameCurrent.Titan.TitanSizeMin.Value;
+                    float maxSize = SettingsManager.InGameCurrent.Titan.TitanSizeMax.Value;
+                    minSize = Mathf.Min(minSize, maxSize);
+                    smallSize = minSize;
+                    mediumSize = 0.5f * (minSize + maxSize);
+                    largeSize = maxSize;
+                }
                 if (settings.Loadout.Value == "Small")
-                    titan.SetSize(1f);
+                    titan.SetSize(smallSize);
                 else if (settings.Loadout.Value == "Medium")
-                    titan.SetSize(2f);
+                    titan.SetSize(mediumSize);
                 else if (settings.Loadout.Value == "Large")
-                    titan.SetSize(3f);
+                    titan.SetSize(largeSize);
                 CurrentCharacter = titan;
             }
             HasSpawned = true;
@@ -386,6 +397,40 @@ namespace GameManagers
             for (int i = 0; i < count; i++)
                 titans.Add(SpawnAITitanAt(type, positions[i]));
             return titans;
+        }
+
+        public void SpawnAITitansAsync(string type, int count)
+        {
+            List<Vector3> randomPositions = MapManager.GetRandomTagPositions(MapTags.TitanSpawnPoint, Vector3.zero, count);
+            if (count <= 0)
+                return;
+            SpawnAITitanAt(type, randomPositions[0]);
+            List<Vector3> positions = new List<Vector3>();
+            for (int i = 1; i < count; i++)
+                positions.Add(randomPositions[i]);
+            if (positions.Count > 0)
+                StartCoroutine(SpawnAITitansCoroutine(type, count - 1, positions));
+        }
+
+        public void SpawnAITitansAtAsync(string type, int count, Vector3 position)
+        {
+            List<Vector3> positions = new List<Vector3>();
+            if (count <= 0)
+                return;
+            SpawnAITitanAt(type, position);
+            for (int i = 1; i < count; i++)
+                positions.Add(position);
+            StartCoroutine(SpawnAITitansCoroutine(type, count - 1, positions));
+        }
+
+        private IEnumerator SpawnAITitansCoroutine(string type, int count, List<Vector3> positions)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var position = positions[i];
+                SpawnAITitanAt(type, position);
+                yield return new WaitForSeconds(0.1f);
+            }
         }
 
         public BasicTitan SpawnAITitanAt(string type, Vector3 position)
@@ -599,6 +644,14 @@ namespace GameManagers
             MyPlayerInfo = myPlayerInfo;
         }
 
+        private static void PrintMOTD(string original)
+        {
+            if (original != SettingsManager.InGameCurrent.Misc.Motd.Value)
+            {
+                ChatManager.AddLine("MOTD: " + SettingsManager.InGameCurrent.Misc.Motd.Value, ChatTextColor.System);
+            }
+        }
+
         protected override void Awake()
         {
             _skyboxCustomSkinLoader = gameObject.AddComponent<SkyboxCustomSkinLoader>();
@@ -606,7 +659,9 @@ namespace GameManagers
             ResetRoundPlayerProperties();
             if (PhotonNetwork.isMasterClient)
             {
+                string original = SettingsManager.InGameCurrent.Misc.Motd.Value;
                 SettingsManager.InGameCurrent.Copy(SettingsManager.InGameUI);
+                PrintMOTD(original);
                 PhotonNetwork.Instantiate("RCAsset/RPCManagerPrefab", Vector3.zero, Quaternion.identity, 0);
             }
             base.Awake();
@@ -687,7 +742,7 @@ namespace GameManagers
                 SettingsManager.InGameCharacterSettings.ChooseStatus.Value = (int)ChooseCharacterStatus.Choosing;
                 _inGameMenu.SetCharacterMenu(true);
             }
-            if (_generalInputSettings.RestartGame.GetKeyDown() && PhotonNetwork.isMasterClient)
+            if (_generalInputSettings.RestartGame.GetKeyDown() && PhotonNetwork.isMasterClient && !_inGameMenu.IsPauseMenuActive())
                 RestartGame();
             if (_generalInputSettings.TapScoreboard.Value)
             {
@@ -724,6 +779,7 @@ namespace GameManagers
     {
         Loading,
         Playing,
-        Paused
+        Paused,
+        Unpausing
     }
 }

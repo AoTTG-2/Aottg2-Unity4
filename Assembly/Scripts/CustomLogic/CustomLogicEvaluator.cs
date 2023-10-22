@@ -274,6 +274,7 @@ namespace CustomLogic
         {
             if (obj.ScriptObject is MapScriptSceneObject)
             {
+                var photonView = SetupNetworking(obj);
                 List<MapScriptComponent> components = ((MapScriptSceneObject)obj.ScriptObject).Components;
                 foreach (var component in components)
                 {
@@ -287,6 +288,8 @@ namespace CustomLogic
                         }
                     }
                 }
+                if (photonView != null)
+                    photonView.Init(obj.ScriptObject.Id);
             }
         }
 
@@ -332,19 +335,7 @@ namespace CustomLogic
            
             CustomLogicNetworkViewBuiltin networkView = null;
             if (obj.ScriptObject.Networked)
-            {
-                if (!IdToNetworkView.ContainsKey(obj.ScriptObject.Id))
-                {
-                    IdToNetworkView.Add(obj.ScriptObject.Id, new CustomLogicNetworkViewBuiltin(obj));
-                    if (PhotonNetwork.isMasterClient)
-                    {
-                        var go = PhotonNetwork.Instantiate("RCAsset/CustomLogicPhotonSyncPrefab", Vector3.zero, Quaternion.identity, 0);
-                        var photonView = go.GetComponent<CustomLogicPhotonSync>();
-                        photonView.Init(obj.ScriptObject.Id);
-                    }
-                }
                 networkView = IdToNetworkView[obj.ScriptObject.Id];
-            }
             var classInstance = new CustomLogicComponentInstance(className, obj, script, networkView);
             if (networkView != null)
                 networkView.RegisterComponentInstance(classInstance);
@@ -362,6 +353,24 @@ namespace CustomLogic
                 }
             }
             return classInstance;
+        }
+
+        public CustomLogicPhotonSync SetupNetworking(MapObject obj)
+        {
+            if (obj.ScriptObject.Networked)
+            {
+                if (!IdToNetworkView.ContainsKey(obj.ScriptObject.Id))
+                {
+                    IdToNetworkView.Add(obj.ScriptObject.Id, new CustomLogicNetworkViewBuiltin(obj));
+                    if (PhotonNetwork.isMasterClient)
+                    {
+                        var go = PhotonNetwork.Instantiate("RCAsset/CustomLogicPhotonSyncPrefab", Vector3.zero, Quaternion.identity, 0);
+                        var photonView = go.GetComponent<CustomLogicPhotonSync>();
+                        return photonView;
+                    }
+                }
+            }
+            return null;
         }
 
         public CustomLogicClassInstance CreateClassInstance(string className, List<object> parameterValues, bool init = true)
@@ -490,7 +499,10 @@ namespace CustomLogic
                     }
                     else if ((int)conditional.Token.Value == (int)CustomLogicSymbol.ElseIf)
                     {
-                        if ((conditionalState == ConditionalEvalState.FailedIf || conditionalState == ConditionalEvalState.FailedElseIf) &&
+                        if (conditionalState == ConditionalEvalState.PassedIf || conditionalState == ConditionalEvalState.PassedElseIf)
+                        {
+                        }
+                        else if ((conditionalState == ConditionalEvalState.FailedIf || conditionalState == ConditionalEvalState.FailedElseIf) &&
                             (bool)EvaluateExpression(classInstance, localVariables, conditional.Condition))
                         {
                             yield return CustomLogicManager._instance.StartCoroutine(EvaluateBlockCoroutine(classInstance, localVariables, conditional.Statements));
@@ -598,7 +610,10 @@ namespace CustomLogic
                     }
                     else if ((int)conditional.Token.Value == (int)CustomLogicSymbol.ElseIf)
                     {
-                        if ((conditionalState == ConditionalEvalState.FailedIf || conditionalState == ConditionalEvalState.FailedElseIf) &&
+                        if (conditionalState == ConditionalEvalState.PassedIf || conditionalState == ConditionalEvalState.PassedElseIf)
+                        {
+                        }
+                        else if ((conditionalState == ConditionalEvalState.FailedIf || conditionalState == ConditionalEvalState.FailedElseIf) &&
                             (bool)EvaluateExpression(classInstance, localVariables, conditional.Condition))
                         {
                             object[] nextResult = EvaluateBlock(classInstance, localVariables, conditional.Statements);

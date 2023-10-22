@@ -88,7 +88,7 @@ namespace Settings
                 TextureQuality.Value = (int)TextureQualityLevel.High;
                 ShadowQuality.Value = (int)ShadowQualityLevel.Medium;
                 AntiAliasing.Value = (int)AntiAliasingLevel.Medium;
-                AnisotropicFiltering.Value = (int)AnisotropicLevel.Low;
+                AnisotropicFiltering.Value = (int)AnisotropicLevel.High;
                 WeatherEffects.Value = (int)WeatherEffectLevel.High;
                 ShadowDistance.Value = 1000;
             }
@@ -97,7 +97,7 @@ namespace Settings
                 TextureQuality.Value = (int)TextureQualityLevel.High;
                 ShadowQuality.Value = (int)ShadowQualityLevel.High;
                 AntiAliasing.Value = (int)AntiAliasingLevel.High;
-                AnisotropicFiltering.Value = (int)AnisotropicLevel.Low;
+                AnisotropicFiltering.Value = (int)AnisotropicLevel.High;
                 WeatherEffects.Value = (int)WeatherEffectLevel.High;
                 ShadowDistance.Value = 1000;
             }

@@ -11,7 +11,7 @@ namespace UI
     {
         protected override string Title => UIManager.GetLocale("MainMenu", "ToolsPopup", "Title");
         protected override float Width => 280f;
-        protected override float Height => 355f;
+        protected override float Height => 420f;
         protected override float VerticalSpacing => 20f;
         protected override int VerticalPadding => 20;
         public override void Setup(BasePanel parent = null)
@@ -28,6 +28,8 @@ namespace UI
                 elementWidth: elementWidth);
             ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "SnapshotViewerButton"), onClick: () => OnButtonClick("SnapshotViewer"),
                 elementWidth: elementWidth);
+            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "GalleryButton"), onClick: () => OnButtonClick("Gallery"),
+                elementWidth: elementWidth);
         }
 
         protected void OnButtonClick(string name)
@@ -37,8 +39,9 @@ namespace UI
             else if (name == "CharacterEditor")
                 SceneLoader.LoadScene(SceneName.CharacterEditor);
             else if (name == "SnapshotViewer")
-            {
-            }
+                SceneLoader.LoadScene(SceneName.SnapshotViewer);
+            else if (name == "Gallery")
+                SceneLoader.LoadScene(SceneName.Gallery);
             else if (name == "Back")
                 Hide();
         }

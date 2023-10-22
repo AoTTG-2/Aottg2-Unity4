@@ -226,8 +226,14 @@ namespace Controllers
                 {
                     if (_human.Weapon is AHSSWeapon)
                     {
-                        if (attackInput.GetKeyUp())
+                        bool isClick = attackInput.Contains(KeyCode.Mouse0);
+                        if (isClick && _inGameMenu.SkipAHSSInput)
+                            _inGameMenu.SkipAHSSInput = false;
+                        else if (attackInput.GetKeyUp())
+                        {
                             _human.Weapon.SetInput(true);
+                            _inGameMenu.SkipAHSSInput = false;
+                        }
                         else
                             _human.Weapon.SetInput(false);
                         _human._gunArmAim = attackInput.GetKey();
@@ -277,6 +283,8 @@ namespace Controllers
             {
                 if (_humanInput.HorseMount.GetKeyDown())
                     _human.Unmount(false);
+                else if (_humanInput.HorseJump.GetKeyDown())
+                    _human.Horse.Jump();
             }
         }
 

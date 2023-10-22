@@ -213,7 +213,8 @@
 				"AllowAHSS": false,
 				"AllowAPG": false,
 				"AllowPlayerTitans": false,
-				"AllowShifterSpecials": false
+				"AllowShifterSpecials": false,
+				"AllowStock": false
 			}
 		},
 		{
@@ -224,7 +225,20 @@
 				"AllowBlades": false,
 				"AllowPlayerTitans": false,
 				"AllowShifterSpecials": false,
-				"AllowAPG": false
+				"AllowAPG": false,
+				"AllowStock": false
+			}
+		},
+		{
+			"Name": "Titan Explode",
+			"MiscSettings": {
+				"AllowThunderspears": false
+			}
+		},
+		{
+			"Name": "Cranked",
+			"MiscSettings": {
+				"AllowPlayerTitans": false
 			}
 		},
 		{

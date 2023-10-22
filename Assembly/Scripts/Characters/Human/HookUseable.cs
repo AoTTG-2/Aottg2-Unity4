@@ -19,6 +19,14 @@ namespace Characters
                 Hooks.Add(Hook.CreateHook((Human)owner, left, i, gun));
         }
 
+        public List<Renderer> GetRenderers()
+        {
+            List<Renderer> renderers = new List<Renderer>();
+            foreach (var hook in Hooks)
+                renderers.Add(hook._renderer);
+            return renderers;
+        }
+
         public bool IsHooked()
         {
             return _activeHook != null && _activeHook.State == HookState.Hooked;

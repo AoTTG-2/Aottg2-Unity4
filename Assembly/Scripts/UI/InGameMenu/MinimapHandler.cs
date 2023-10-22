@@ -36,6 +36,24 @@ namespace UI
             CameraTransform.gameObject.SetActive(false);
         }
 
+        public static void CreateMinimapIcon(Transform transform, string type)
+        {
+            if (!CameraTransform.gameObject.activeSelf)
+                return;
+            string texture = "MinimapSupplyIcon";
+            var go = AssetBundleManager.InstantiateAsset<GameObject>("MinimapIcon", true);
+            if (!_cache.ContainsKey(texture))
+            {
+                go.renderer.material.SetTexture("_MainTex", (Texture2D)AssetBundleManager.LoadAsset(texture, true));
+                go.renderer.material.SetColor("_Color", Color.white);
+                _cache.Add(texture, go.renderer.material);
+            }
+            else
+                go.renderer.material = _cache[texture];
+            var follow = go.AddComponent<MinimapIconFollow>();
+            follow.Init(CameraTransform, transform);
+        }
+
         public static void CreateMinimapIcon(BaseCharacter character)
         {
             if (!CameraTransform.gameObject.activeSelf)

@@ -13,13 +13,18 @@ namespace UI
 {
     class HUDBottomHandler : MonoBehaviour
     {
-        private Color FillLowColor = new Color(0.5f, 0f, 0f);
-        private Color BackgroundLowColor = new Color(1f, 0.5f, 0.5f);
-        private Color FillNormalColor = new Color(0.7f, 0.7f, 0.7f);
+        private Color FillLowColor = new Color(1f, 0.5f, 0f, 0.5f);
+        private Color BackgroundLowColor = new Color(1f, 0.75f, 0.5f);
+        private Color FillVeryLowColor = new Color(1f, 0f, 0f, 0.5f);
+        private Color BackgroundVeryLowColor = new Color(1f, 0.5f, 0.5f);
+        private Color FillNormalColor = new Color(1f, 1f, 1f, 0.5f);
+        private Color BladeFillNormalColor = new Color(1f, 1f, 1f, 0.75f);
         private Color BackgroundNormalColor = Color.white;
+        private Color BackgroundEmptyColor = new Color(1f, 0.25f, 0.25f);
         private GameObject _hudBottom;
         private Image _specialFill;
-        private Image _specialIcon;
+        private Image _specialIconBackground;
+        private Image _specialIconFill;
         private Image _gasFillLeft;
         private Image _gasFillRight;
         private Image _gasBackground;
@@ -81,7 +86,7 @@ namespace UI
                 _gunAmmoBackground = _hudBottom.transform.Find("GunAmmoBackground").GetComponent<Image>();
                 _ammoLabelLeft = _hudBottom.transform.Find("GunAmmoLabelLeft").GetComponent<Text>();
                 _ammoLabelRight = _hudBottom.transform.Find("GunAmmoLabelRight").GetComponent<Text>();
-                _gunReload.color = BackgroundLowColor;
+                _gunReload.color = BackgroundVeryLowColor;
             }
             else if (_human.Setup.Weapon == HumanWeapon.Thunderspear)
             {
@@ -97,7 +102,7 @@ namespace UI
                 _tsShoot = _hudBottom.transform.Find("TSShoot").GetComponent<Image>();
                 _ammoLabelLeft = _hudBottom.transform.Find("AmmoLabelLeft").GetComponent<Text>();
                 _ammoLabelRight = _hudBottom.transform.Find("AmmoLabelRight").GetComponent<Text>();
-                _tsReload.color = BackgroundLowColor;
+                _tsReload.color = BackgroundVeryLowColor;
                 if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value)
                 {
                     _tsBackground.gameObject.SetActive(false);
@@ -128,7 +133,8 @@ namespace UI
             _hudBottom.AddComponent<HUDScaler>();
             ElementFactory.SetAnchor(_hudBottom, TextAnchor.LowerCenter, TextAnchor.LowerCenter, Vector3.up * 10f);
             _specialFill = _hudBottom.transform.Find("SpecialFill").GetComponent<Image>();
-            _specialIcon = _hudBottom.transform.Find("SpecialIcon").GetComponent<Image>();
+            _specialIconBackground = _hudBottom.transform.Find("SpecialIconBackground").GetComponent<Image>();
+            _specialIconFill = _hudBottom.transform.Find("SpecialIconFill").GetComponent<Image>();
             _gasFillLeft = _hudBottom.transform.Find("GasFillLeft").GetComponent<Image>();
             _gasFillRight = _hudBottom.transform.Find("GasFillRight").GetComponent<Image>();
             _gasBackground = _hudBottom.transform.Find("GasBackground").GetComponent<Image>();
@@ -254,11 +260,13 @@ namespace UI
             if (_human.Special == null)
             {
                 _specialFill.fillAmount = 0f;
+                _specialIconFill.fillAmount = 0f;
             }
             else
             {
                 var ratio = _human.Special.GetCooldownRatio();
                 _specialFill.fillAmount = ratio;
+                _specialIconFill.fillAmount = ratio;
                 if (_currentSpecialIcon != _newSpecialIcon)
                 {
                     _currentSpecialIcon = _newSpecialIcon;
@@ -266,11 +274,13 @@ namespace UI
                     {
                         var icon = (Texture2D)AssetBundleManager.LoadAsset(_currentSpecialIcon, true);
                         var sprite = UnityEngine.Sprite.Create(icon, new Rect(0f, 0f, 32f, 32f), new Vector2(0.5f, 0.5f));
-                        _specialIcon.sprite = sprite;
+                        _specialIconBackground.sprite = sprite;
+                        _specialIconFill.sprite = sprite;
                     }
                 }
             }
-            _specialIcon.gameObject.SetActive(_human.Special != null && _currentSpecialIcon != "");
+            _specialIconBackground.gameObject.SetActive(_human.Special != null && _currentSpecialIcon != "");
+            _specialIconFill.gameObject.SetActive(_human.Special != null && _currentSpecialIcon != "");
         }
 
         private void UpdateGas()
@@ -282,26 +292,39 @@ namespace UI
                 gasRatio = _human.CurrentGas / _human.MaxGas;
             _gasFillLeft.fillAmount = gasRatio;
             _gasFillRight.fillAmount = gasRatio;
-            if (gasRatio <= 0.2f)
+            bool animate = false;
+            if (gasRatio <= 0f)
+                _gasBackground.color = BackgroundEmptyColor;
+            else if (gasRatio <= 0.15f)
+            {
+                _gasFillLeft.color = FillVeryLowColor;
+                _gasFillRight.color = FillVeryLowColor;
+                _gasBackground.color = BackgroundVeryLowColor;
+                animate = true;
+            }
+            else if (gasRatio <= 0.3f)
             {
                 _gasFillLeft.color = FillLowColor;
                 _gasFillRight.color = FillLowColor;
                 _gasBackground.color = BackgroundLowColor;
-                StartAnimator(_gasBackground);
-                StartAnimator(_gasFillLeft);
-                StartAnimator(_gasFillRight);
             }
             else
             {
                 _gasFillLeft.color = FillNormalColor;
                 _gasFillRight.color = FillNormalColor;
                 _gasBackground.color = BackgroundNormalColor;
-                if (_gasAnimationTimeLeft <= 0f)
-                {
-                    StopAnimator(_gasBackground);
-                    StopAnimator(_gasFillLeft);
-                    StopAnimator(_gasFillRight);
-                }
+            }
+            if (animate)
+            {
+                StartAnimator(_gasBackground);
+                StartAnimator(_gasFillLeft);
+                StartAnimator(_gasFillRight);
+            }
+            else if (_gasAnimationTimeLeft <= 0f)
+            {
+                StopAnimator(_gasBackground);
+                StopAnimator(_gasFillLeft);
+                StopAnimator(_gasFillRight);
             }
         }
 
@@ -312,16 +335,16 @@ namespace UI
             if (_bladeFillLeft.gameObject.activeSelf)
             {
                 _bladeFillLeft.fillAmount = _bladeFillRight.fillAmount = ratio;
-                if (ratio <= 0.2f)
+                if (ratio <= 0.25f)
                 {
-                    _bladeFillLeft.color = FillLowColor;
-                    _bladeFillRight.color = FillLowColor;
-                    _bladeBackground.color = BackgroundLowColor;
+                    _bladeFillLeft.color = FillVeryLowColor;
+                    _bladeFillRight.color = FillVeryLowColor;
+                    _bladeBackground.color = BackgroundVeryLowColor;
                 }
                 else
                 {
-                    _bladeFillLeft.color = FillNormalColor;
-                    _bladeFillRight.color = FillNormalColor;
+                    _bladeFillLeft.color = BladeFillNormalColor;
+                    _bladeFillRight.color = BladeFillNormalColor;
                     _bladeBackground.color = BackgroundNormalColor;
                 }
             }
@@ -374,7 +397,13 @@ namespace UI
             else if (weapon.RoundLeft == -1)
                 ratio = 1f;
             _ammoFillLeft.fillAmount = _ammoFillRight.fillAmount = ratio;
-            if (weapon.RoundLeft == 0)
+            if (ratio <= 0f)
+            {
+                _gunBackground.color = BackgroundVeryLowColor;
+                _gunAmmoBackground.color = BackgroundVeryLowColor;
+                _gunShoot.color = BackgroundVeryLowColor;
+            }
+            else if (ratio <= 0.5f)
             {
                 _gunBackground.color = BackgroundLowColor;
                 _gunAmmoBackground.color = BackgroundLowColor;
@@ -442,7 +471,12 @@ namespace UI
                 else if (weapon.RoundLeft == -1)
                     ratio = 1f;
                 _ammoFillLeft.fillAmount = _ammoFillRight.fillAmount = ratio;
-                if (weapon.RoundLeft == 0)
+                if (ratio <= 0f)
+                {
+                    _tsBackground.color = BackgroundVeryLowColor;
+                    _tsShoot.color = BackgroundVeryLowColor;
+                }
+                else if (ratio <= 0.5f)
                 {
                     _tsBackground.color = BackgroundLowColor;
                     _tsShoot.color = BackgroundLowColor;

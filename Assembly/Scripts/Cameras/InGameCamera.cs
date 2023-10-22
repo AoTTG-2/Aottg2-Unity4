@@ -29,6 +29,7 @@ namespace Cameras
         private const float DistanceMultiplier = 10f;
         private bool _napeLock;
         private BaseTitan _napeLockTitan;
+        private SnapshotHandler _snapshotHandler;
 
         public void ApplyGraphicsSettings()
         {
@@ -90,6 +91,15 @@ namespace Cameras
             base.Awake();
             ApplyGraphicsSettings();
             ApplyGeneralSettings();
+            if (SettingsManager.GeneralSettings.SnapshotsEnabled.Value)
+                _snapshotHandler = gameObject.AddComponent<SnapshotHandler>();
+        }
+
+        public void TakeSnapshot(Vector3 position, int damage)
+        {
+            if (_snapshotHandler == null)
+                return;
+            _snapshotHandler.TakeSnapshot(position, damage);
         }
 
         protected void Start()
@@ -181,7 +191,7 @@ namespace Cameras
 
             float offset = _cameraDistance * (200f - Camera.fieldOfView) / 150f;
             Cache.Transform.position = _follow.GetCameraAnchor().position;
-            Cache.Transform.position += Vector3.up * _heightDistance;
+            Cache.Transform.position += Vector3.up * _heightDistance * SettingsManager.GeneralSettings.CameraHeight.Value;
             float height = _cameraDistance == 0f ? 0.8f : _cameraDistance;
             Cache.Transform.position -= Vector3.up * (0.6f - height) * 2f;
             float sensitivity = SettingsManager.GeneralSettings.MouseSpeed.Value;
@@ -241,7 +251,7 @@ namespace Cameras
             Cache.Transform.rotation = Quaternion.Lerp(Cache.Transform.rotation, _follow.GetComponent<BaseMovementSync>()._correctCamera,
                 Time.deltaTime * 10f);
             Cache.Transform.position = _follow.GetCameraAnchor().position;
-            Cache.Transform.position += Vector3.up * _heightDistance;
+            Cache.Transform.position += Vector3.up * _heightDistance * SettingsManager.GeneralSettings.CameraHeight.Value;
             Cache.Transform.position -= Vector3.up * (0.6f - _cameraDistance) * 2f;
             Cache.Transform.position -= Cache.Transform.forward * DistanceMultiplier * _anchorDistance * offset;
             if (_inGameManager.Humans.Count > 0 && !InGameMenu.InMenu() && !ChatManager.IsChatActive())

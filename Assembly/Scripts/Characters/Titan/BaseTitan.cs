@@ -620,7 +620,19 @@ namespace Characters
             base.Start();
             if (IsMine())
             {
+                StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));
                 Idle();
+            }
+        }
+
+        protected IEnumerator HandleSpawnCollisionCoroutine(float time, float maxSpeed)
+        {
+            while (time > 0f)
+            {
+                if (Cache.Rigidbody.velocity.magnitude > maxSpeed)
+                    Cache.Rigidbody.velocity = Cache.Rigidbody.velocity.normalized * maxSpeed;
+                time -= Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
         }
 

@@ -2,21 +2,30 @@ component SupplyStation
 {
     UnlimitedRefills = true;
     MaxRefills = 0;
-    _lastHuman = null;
+    _currentHuman = null;
 
     function Init()
     {
         self._refillsLeft = self.MaxRefills;
-        self.MapObject.AddBoxCollider("Region", "Characters", Vector3(0,-2,0), Vector3(14,4,14));
+        self.MapObject.AddBoxCollider("Region", "Characters", Vector3(0,-2,0), Vector3(14,8,14));
     }
 
     function OnCollisionStay(other)
     {
-        if (other.Type == "Human" && other.IsMine && other != self._lastHuman && (self.UnlimitedRefills || self._refillsLeft > 0))
+        if (other.Type == "Human" && other.IsMine && (self.UnlimitedRefills || self._refillsLeft > 0))
         {
-            if (other.Refill(true))
+            self._currentHuman = other;
+            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to refill.", 0.1);
+        }
+    }
+
+    function OnFrame()
+    {
+        if (self._currentHuman != null)
+        {
+            if (Input.GetKeyDown("Interaction/Interact") && self._currentHuman.Refill(true))
             {
-                self._lastHuman = other;
+                self._currentHuman = null;
                 self._refillsLeft = self._refillsLeft - 1;
             }
         }
@@ -26,7 +35,7 @@ component SupplyStation
     {
         if (other.Type == "Human" && other.IsMine)
         {
-            self._lastHuman = null;
+            self._currentHuman = null;
         }
     }
 }
@@ -58,7 +67,7 @@ component PointLight
 component Rigidbody
 {
     Mass = 1.0;
-    Gravity = Vector3(0.0, -9.81, 0.0);
+    Gravity = Vector3(0.0, -20.0, 0.0);
     FreezeRotation = false;
 
     function Init()
@@ -345,10 +354,13 @@ component Wagon
     MaxMoveSpeed = 50.0;
     RotateSpeed = 3.0;
     _inUse = false;
+    _riding = false;
     _horse = null;
     _human = null;
     _collidingHuman = null;
-    _lastHuman = null;
+    _collidingDrive = false;
+    _collidingRide = false;
+    _collidingGas = false;
     _rigidbody = null;
 
     function Init()
@@ -378,7 +390,7 @@ component Wagon
             human = Network.MyPlayer.Character;
             if (human != null && human.Type == "Human")
             {
-                human.MountTransform(self._horse, Vector3(0, 1.68, 0), Vector3.Zero);
+                human.MountTransformWithRigidbody(self._horse, Vector3(0, 1.68, 0), Vector3.Zero, self._rigidbody);
                 self._human = human;
             }
         }
@@ -386,31 +398,46 @@ component Wagon
 
     function OnCollisionStay(other)
     {
-        if (other.Type == "Human" && other.IsMine && !self._inUse)
-        {
-            UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to use wagon.", 0.1);
-            self._collidingHuman = other;
-        }
-        if (other.Type == "Human" && other.IsMine && other != self._lastHuman)
-        {
-            if (other.Refill(true))
-            {
-                self._lastHuman = other;
-            }
-        }
-    }
-
-    function OnCollisionExit(other)
-    {
         if (other.Type == "Human" && other.IsMine)
         {
-            self._lastHuman = null;
+            diff = (other.Position - self.MapObject.Position);
+            project = Vector3.Project(diff, self.MapObject.Forward);
+            if (project.Magnitude > 3 * self.MapObject.Scale.Z && project.Normalized == self.MapObject.Forward)
+            {
+                if (!self._inUse && !self._riding)
+                {
+                    UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to drive wagon.", 0.1);
+                    self._collidingHuman = other;
+                    self._collidingDrive = true;
+                }
+            }
+            elif (project.Magnitude > 4 * self.MapObject.Scale.Z && project.Normalized == self.MapObject.Forward * -1.0)
+            {
+                if (!self._riding)
+                {
+                    UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to ride wagon.", 0.1);
+                    self._collidingHuman = other;
+                    self._collidingRide = true;
+                }
+            }
+            else
+            {
+                if (!self._inUse && !self._riding)
+                {
+                    UI.SetLabelForTime("MiddleCenter", "Press " + Input.GetKeyName("Interaction/Interact") + " to refill.", 0.1);
+                    self._collidingHuman = other;
+                    self._collidingGas = true;
+                }
+            }
         }
     }
 
     function OnTick()
     {
         self._collidingHuman = null;
+        self._collidingDrive = false;
+        self._collidingRide = false;
+        self._collidingGas = false;
     }
 
     function OnFrame()
@@ -436,6 +463,14 @@ component Wagon
                     self._rigidbody.AddForce(-0.5 * velocity.Normalized * velocity.Magnitude);
                 }
             }
+            if (self._rigidbody.GetVelocity().Magnitude > 1)
+            {
+                self._human.PlayAnimation("horse_run");
+            }
+            else
+            {
+                self._human.PlayAnimation("horse_idle");
+            }
             if (Input.GetKeyDown("Interaction/Interact"))
             {
                 self._human.Unmount();
@@ -452,19 +487,51 @@ component Wagon
                 return;
             }
         }
-        if (!self._inUse && self._collidingHuman != null)
+        if (self._riding)
         {
-            if (Input.GetKeyDown("Interaction/Interact")) 
+            if (self._human == null || self._human.MountedMapObject != self.MapObject)
             {
-                if (self.NetworkView.Owner == Network.MyPlayer) 
+                self._riding = false;
+                return;
+            }
+            if (Input.GetKeyDown("Interaction/Interact"))
+            {
+                self._human.Unmount();
+                self._riding = false;
+            }
+            else
+            {
+                self._human.PlayAnimation("horse_idle");
+            }
+        }
+        if (self._collidingHuman != null)
+        {
+            if (Input.GetKeyDown("Interaction/Interact"))
+            {
+                if (self._collidingDrive && !self._inUse)
                 {
-                    self._inUse = true;
-                    self._collidingHuman.MountTransform(self._horse, Vector3(0, 1.68, 0), Vector3.Zero);
-                    self._human = self._collidingHuman;
+                    if (self.NetworkView.Owner == Network.MyPlayer) 
+                    {
+                        self._inUse = true;
+                        self._collidingHuman.MountTransformWithRigidbody(self._horse, Vector3(0, 1.68, 0), Vector3.Zero, self._rigidbody);
+                        self._human = self._collidingHuman;
+                    }
+                    else
+                    {
+                        self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
+                    }
                 }
-                else
+                elif (self._collidingGas && !self._inUse)
                 {
-                    self.NetworkView.SendMessage(self.NetworkView.Owner, "request");
+                    self._collidingHuman.Refill(true);
+                }
+                elif (self._collidingRide && !self._riding)
+                {
+                    self._riding = true;
+                    self._human = self._collidingHuman;
+                    posA = Vector3(-1.0, 1.5, -3.5);
+                    posB = Vector3(1.0, 1.5, 1.0);
+                    self._human.MountMapObject(self.MapObject, Random.RandomVector3(posA, posB), Vector3(0, 0, 0));
                 }
             }
         }

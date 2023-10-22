@@ -30,6 +30,7 @@ namespace UI
         private StringSetting _currentMap;
         private List<DropdownSelectElement> _dropdowns = new List<DropdownSelectElement>();
         private GameObject _gizmoButton;
+        private GameObject _snapButton;
         protected override string ThemePanel => "MapEditor";
 
         public override void Setup(BasePanel parent = null)
@@ -67,7 +68,7 @@ namespace UI
             // options dropdown
             dropdownWidth = 130f;
             options = new List<string>();
-            foreach (string option in new string[] { "MapInfo", "CustomLogic", "Editor" })
+            foreach (string option in new string[] { "Editor", "MapInfo", "CustomLogic" })
             {
                 options.Add(UIManager.GetLocale(cat, "Top", option));
             }
@@ -78,7 +79,7 @@ namespace UI
             // gizmos
             ElementFactory.CreateDefaultButton(group, style, UIManager.GetLocale("MapEditorSettings", "Keybinds", "AddObject"), onClick: () => OnButtonClick("AddObject"));
             _gizmoButton = ElementFactory.CreateDefaultButton(group, style, "Gizmo: Position", onClick: () => OnButtonClick("Gizmo"));
-            // ElementFactory.CreateDefaultButton(group, style, "Snap: Off", onClick: () => OnButtonClick("Snap"));
+            _snapButton = ElementFactory.CreateDefaultButton(group, style, "Snap: Off", onClick: () => OnButtonClick("Snap"));
             ElementFactory.CreateDefaultButton(group, style, "Camera", onClick: () => OnButtonClick("Camera"));
         }
 
@@ -178,11 +179,11 @@ namespace UI
         protected void OnOptionsClick()
         {
             int index = _dropdownSelection.Value;
-            if (index == 0) // map info
+            if (index == 1) // map info
                 _menu.InfoPopup.Show();
-            else if (index == 1) // custom logic
+            else if (index == 2) // custom logic
                 _menu.CustomLogicPopup.Show();
-            else if (index == 2) // editor options
+            else if (index == 0) // editor options
                 _menu.SettingsPopup.Show();
         }
 
@@ -194,6 +195,23 @@ namespace UI
                 _menu.CameraPopup.Show();
             else if (name == "Gizmo")
                 NextGizmo();
+            else if (name == "Snap")
+                ToggleSnap();
+        }
+
+        public void ToggleSnap()
+        {
+            var text = _snapButton.transform.Find("Text").GetComponent<Text>();
+            if (_gameManager.Snap)
+            {
+                _gameManager.Snap = false;
+                text.text = "Snap: Off";
+            }
+            else
+            {
+                _gameManager.Snap = true;
+                text.text = "Snap: On";
+            }
         }
 
         public void NextGizmo()

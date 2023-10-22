@@ -22,7 +22,7 @@ namespace UI
     {
         public static CursorState State;
         private static CursorManager _instance;
-        private static Texture2D _cursorPointer;
+        // private static Texture2D _cursorPointer;
         private static Dictionary<CrosshairStyle, Texture2D> _crosshairs = new Dictionary<CrosshairStyle, Texture2D>();
         private bool _ready;
         private bool _crosshairWhite = true;
@@ -45,7 +45,7 @@ namespace UI
 
         public static void OnFinishInit()
         {
-            _cursorPointer = (Texture2D)AssetBundleManager.MainAssetBundle.Load("CursorPointer");
+            // _cursorPointer = (Texture2D)AssetBundleManager.MainAssetBundle.Load("CursorPointer");
             foreach (CrosshairStyle style in Enum.GetValues(typeof(CrosshairStyle)))
             {
                 Texture2D crosshair = (Texture2D)AssetBundleManager.MainAssetBundle.Load("Cursor" + style.ToString());
@@ -57,7 +57,8 @@ namespace UI
 
         private void Update()
         {
-            if (SceneLoader.SceneName == SceneName.Startup || SceneLoader.SceneName == SceneName.MainMenu || SceneLoader.SceneName == SceneName.CharacterEditor)
+            if (SceneLoader.SceneName == SceneName.Startup || SceneLoader.SceneName == SceneName.MainMenu || 
+                SceneLoader.SceneName == SceneName.CharacterEditor || SceneLoader.SceneName == SceneName.SnapshotViewer)
                 SetPointer();
             else
             {
@@ -208,12 +209,16 @@ namespace UI
                     _instance._forceNextCrosshairUpdate = true;
                     return;
                 }
-                CrosshairStyle style = (CrosshairStyle)SettingsManager.UISettings.CrosshairStyle.Value;
-                if (_instance._lastCrosshairStyle != style || force || _instance._forceNextCrosshairUpdate)
+                bool skin = SettingsManager.UISettings.CrosshairSkin.Value != "";
+                if (!skin)
                 {
-                    crosshairImageWhite.texture = _crosshairs[style];
-                    crosshairImageRed.texture = _crosshairs[style];
-                    _instance._lastCrosshairStyle = style;
+                    CrosshairStyle style = (CrosshairStyle)SettingsManager.UISettings.CrosshairStyle.Value;
+                    if (_instance._lastCrosshairStyle != style || force || _instance._forceNextCrosshairUpdate)
+                    {
+                        crosshairImageWhite.texture = _crosshairs[style];
+                        crosshairImageRed.texture = _crosshairs[style];
+                        _instance._lastCrosshairStyle = style;
+                    }
                 }
                 if (_instance._crosshairWhite != _instance._lastCrosshairWhite || force || _instance._forceNextCrosshairUpdate)
                 {

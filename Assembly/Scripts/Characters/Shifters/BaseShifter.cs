@@ -11,6 +11,7 @@ using UI;
 using Settings;
 using System.Collections;
 using CustomLogic;
+using CustomSkins;
 
 namespace Characters
 {
@@ -27,6 +28,7 @@ namespace Characters
         public bool TransformingToHuman;
         public float PreviousHumanGas;
         public BaseUseable PreviousHumanWeapon;
+        protected BaseCustomSkinLoader _customSkinLoader;
 
         protected override void Start()
         {
@@ -36,6 +38,7 @@ namespace Characters
             {
                 EffectSpawner.Spawn(EffectPrefabs.ShifterThunder, BaseTitanCache.Neck.position, Quaternion.identity, Size);
                 PlaySound(ShifterSounds.Thunder);
+                LoadSkin();
             }
         }
 
@@ -84,6 +87,7 @@ namespace Characters
         protected override void Awake()
         {
             base.Awake();
+            _customSkinLoader = CreateCustomSkinLoader();
         }
 
         [RPC]
@@ -167,6 +171,44 @@ namespace Characters
                     Emote("Roar");
                     _needRoar = false;
                 }
+            }
+        }
+
+        protected void LoadSkin()
+        {
+            if (IsMine())
+            {
+                if (SettingsManager.CustomSkinSettings.Shifter.SkinsEnabled.Value)
+                {
+                    BaseCustomSkinSettings<ShifterCustomSkinSet> settings = SettingsManager.CustomSkinSettings.Shifter;
+                    string url = GetSkinURL((ShifterCustomSkinSet)settings.GetSelectedSet());
+                    Cache.PhotonView.RPC("LoadSkinRPC", PhotonTargets.AllBuffered, new object[] { url });
+                }
+            }
+        }
+
+        protected virtual string GetSkinURL(ShifterCustomSkinSet set)
+        {
+            return "";
+        }
+
+        protected virtual BaseCustomSkinLoader CreateCustomSkinLoader()
+        {
+            return null;
+        }
+
+
+        [RPC]
+        public void LoadSkinRPC(string url, PhotonMessageInfo info)
+        {
+            if (info.sender != photonView.owner)
+                return;
+            if (_customSkinLoader == null)
+                return;
+            BaseCustomSkinSettings<ShifterCustomSkinSet> settings = SettingsManager.CustomSkinSettings.Shifter;
+            if (settings.SkinsEnabled.Value && (!settings.SkinsLocal.Value || photonView.isMine))
+            {
+                StartCoroutine(_customSkinLoader.LoadSkinsFromRPC(new object[] { url }));
             }
         }
     }

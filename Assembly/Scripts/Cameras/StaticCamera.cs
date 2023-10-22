@@ -18,5 +18,13 @@ namespace Cameras
             base.Awake();
             Camera.backgroundColor = Color.black;
         }
+
+        public void SetSkybox(bool skybox)
+        {
+            if (skybox)
+                Camera.clearFlags = CameraClearFlags.Skybox;
+            else
+                Camera.clearFlags = CameraClearFlags.SolidColor;
+        }
     }
 }

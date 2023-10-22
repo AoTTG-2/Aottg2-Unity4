@@ -285,6 +285,15 @@ namespace UI
             return colorSetting;
         }
 
+        public static GameObject CreateButtonSetting(Transform parent, ElementStyle style, BaseSetting setting, string title,
+            string tooltip = "", float elementWidth = 0f, float elementHeight = 0f, UnityAction onClick = null)
+        {
+            GameObject buttonSetting = InstantiateAndBind(parent, "ButtonSetting");
+            ButtonSettingElement element = buttonSetting.AddComponent<ButtonSettingElement>();
+            element.Setup(setting, style, title, tooltip, elementWidth, elementHeight, onClick);
+            return buttonSetting;
+        }
+
         public static GameObject CreateVector3Setting(Transform parent, ElementStyle style, BaseSetting setting, string title, Vector3Popup vector3Popup,
             string tooltip = "", float elementWidth = 90f, float elementHeight = 30f, UnityAction onChangeVector = null)
         {

@@ -22,7 +22,6 @@ namespace Utility
             return Random.Range(0f, 1f) < probability;
         }
 
-
         public static Vector3 GetRandomDirection(bool flat = false)
         {
             Vector3 v = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));

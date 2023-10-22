@@ -18,7 +18,6 @@ namespace MapEditor
         private Color CircleXColor = Color.red;
         private Color CircleYColor = Color.yellow;
         private Color CircleZColor = Color.blue;
-        private Vector3 _totalDelta;
         private Transform _activeCircle;
         private Vector3 _previousMousePoint;
 
@@ -73,7 +72,6 @@ namespace MapEditor
                     ResetColors();
                     SetCircleColor(_activeCircle, SelectedColor);
                     _previousMousePoint = hit.point;
-                    _totalDelta = Vector3.zero;
                 }
             }
             else
@@ -98,7 +96,6 @@ namespace MapEditor
                     _gameManager.NewCommand(new TransformPositionRotationCommand(new List<MapObject>(_gameManager.SelectedObjects)));
                     ResetColors();
                     _activeCircle = null;
-                    _totalDelta = Vector3.zero;
                 }
                 _gameManager.IgnoreNextSelect = true;
             }

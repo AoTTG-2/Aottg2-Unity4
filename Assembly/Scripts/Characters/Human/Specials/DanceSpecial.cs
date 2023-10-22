@@ -12,7 +12,7 @@ namespace Characters
 
         public DanceSpecial(BaseCharacter owner): base(owner)
         {
-            Cooldown = 10f;
+            Cooldown = 5f;
         }
 
         protected override void Activate()
