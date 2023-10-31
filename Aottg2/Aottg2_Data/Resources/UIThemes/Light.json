@@ -2,98 +2,97 @@
 	"Name": "Light",
 	"DefaultPanel": {
 		"MainBody": {
-			"BackgroundColor": [255, 255, 255, 255],
-			"BorderColor": [206, 212, 218, 255],
-			"TitleColor": [83, 101, 125, 255],
-			"VerticalLineColor": [78, 95, 112, 255],
-			"HorizontalLineColor": [78, 95, 112, 255],
-			"TopBarColor": [235, 239, 243, 255],
-			"BottomBarColor": [235, 239, 243, 255],
-			"ScrollbarBackgroundColor": [83, 101, 125, 255],
-			"ScrollbarNormalColor": [225, 225, 225, 255],
-			"ScrollbarHighlightedColor": [193, 199, 199, 255],
-			"ScrollbarPressedColor": [146, 146, 146, 255]
+			"BackgroundColor": [250, 250, 250, 255],
+			"BackgroundTexture": "Light1",
+			"BorderColor": [220, 220, 220, 200],
+			"TitleColor": [60, 60, 60, 255],
+			"HeaderColor": [230, 230, 230, 255],
+			"HeaderTexture": "Light1",
+			"LineColor": [164, 164, 164, 255],
+			"ScrollbarBackgroundColor": [120, 120, 120, 255],
+			"ScrollbarNormalColor": [180, 180, 180, 255],
+			"ScrollbarHighlightedColor": [160, 160, 160, 255],
+			"ScrollbarPressedColor": [140, 140, 140, 255]
 		},
 		"DefaultButton": {
-			"NormalColor": [100, 127, 161, 255],
-			"HighlightedColor": [85, 108, 137, 255],
-			"PressedColor": [70, 89, 112, 255],
-			"TextColor": [255, 255, 255, 255]
+			"NormalColor": [170, 170, 170, 255],
+			"HighlightedColor": [150, 150, 150, 255],
+			"PressedColor": [130, 130, 130, 255],
+			"TextColor": [60, 60, 60, 255]
 		},
 		"IconButton": {
-			"NormalColor": [100, 127, 161, 255],
-			"HighlightedColor": [85, 108, 137, 255],
-			"PressedColor": [70, 89, 112, 255],
-			"TextColor": [255, 255, 255, 255]
+			"NormalColor": [170, 170, 170, 255],
+			"HighlightedColor": [150, 150, 150, 255],
+			"PressedColor": [130, 130, 130, 255],
+			"TextColor": [60, 60, 60, 255]
 		},
 		"CategoryButton": {
-			"NormalColor": [83, 101, 125, 255],
-			"HighlightedColor": [133, 133, 133, 255],
-			"PressedColor": [30, 140, 195, 255]
+			"NormalColor": [60, 60, 60, 255],
+			"HighlightedColor": [90, 90, 90, 255],
+			"PressedColor": [120, 120, 120, 255]
 		},
 		"TextButton": {
-			"NormalColor": [30, 140, 195, 255],
-			"HighlightedColor": [133, 133, 133, 255],
+			"NormalColor": [60, 60, 60, 255],
+			"HighlightedColor": [90, 90, 90, 255],
+			"PressedColor": [120, 120, 120, 255]
+		},
+		"LinkButton": {
+			"NormalColor": [0, 175, 222, 255],
+			"HighlightedColor": [180, 180, 180, 255],
 			"PressedColor": [120, 120, 120, 255]
 		},
 		"DefaultLabel": {
-			"TextColor": [83, 101, 125, 255]
+			"TextColor": [70, 70, 70, 255]
 		},
 		"DefaultSetting": {
-			"TextColor": [83, 101, 125, 255],
-			"IconNormalColor": [100, 127, 161, 255],
-			"IconHighlightedColor": [85, 108, 137, 255],
-			"IconPressedColor": [70, 89, 112, 255],
-			"TooltipBackgroundColor": [208, 224, 244, 255],
-			"TooltipTextColor": [83, 101, 125, 255],
-			"ToggleNormalColor": [255, 255, 255, 255],
-			"ToggleHighlightedColor": [245, 245, 245, 255],
-			"TogglePressedColor": [200, 200, 200, 255],
-			"ToggleFilledColor": [100, 127, 161, 255],
-			"InputTextColor": [50, 50, 50, 255],
-			"InputNormalColor": [255, 255, 255, 255],
-			"InputHighlightedColor": [240, 240, 240, 255],
-			"InputPressedColor": [240, 240, 240, 255],
-			"InputSelectionColor": [168, 206, 255, 192],
-			"DropdownTextColor": [255, 255, 255, 255],
-			"DropdownNormalColor": [100, 127, 161, 255],
-			"DropdownHighlightedColor": [85, 108, 137, 255],
-			"DropdownPressedColor": [70, 89, 112, 255],
+			"TextColor": [70, 70, 70, 255],
+			"IconNormalColor": [120, 120, 120, 255],
+			"IconHighlightedColor": [90, 90, 90, 255],
+			"IconPressedColor": [60, 60, 60, 255],
+			"TooltipBackgroundColor": [170, 170, 170, 255],
+			"TooltipTextColor": [70, 70, 70, 255],
+			"ToggleNormalColor": [170, 170, 170, 255],
+			"ToggleHighlightedColor": [150, 150, 150, 255],
+			"TogglePressedColor": [130, 130, 130, 255],
+			"ToggleFilledColor": [70, 70, 70, 255],
+			"InputTextColor": [60, 60, 60, 255],
+			"InputNormalColor": [180, 180, 180, 255],
+			"InputHighlightedColor": [160, 160, 160, 255],
+			"InputPressedColor": [140, 140, 140, 255],
+			"InputSelectionColor": [220, 220, 220, 192],
+			"DropdownTextColor": [60, 60, 60, 255],
+			"DropdownNormalColor": [170, 170, 170, 255],
+			"DropdownHighlightedColor": [150, 150, 150, 255],
+			"DropdownPressedColor": [130, 130, 130, 255],
 			"DropdownBorderColor": [0, 0, 0, 255],
-			"DropdownScrollbarBackgroundColor":[83, 101, 125, 255],
-			"DropdownScrollbarNormalColor": [225, 225, 225, 255],
-			"DropdownScrollbarHighlightedColor": [193, 199, 199, 255],
-			"DropdownScrollbarPressedColor": [146, 146, 146, 255],
-			"KeybindTextColor": [50, 50, 50, 255],
-			"KeybindNormalColor": [83, 101, 125, 255],
-			"KeybindHighlightedColor": [118, 151, 193, 255],
-			"KeybindPressedColor": [91, 117, 148, 255],
-			"SliderBackgroundColor": [140, 160, 180, 255],
-			"SliderFillColor": [71, 119, 167, 255],
-			"SliderHandleColor": [156, 87, 0, 255]
+			"DropdownScrollbarBackgroundColor":[120, 120, 120, 255],
+			"DropdownScrollbarNormalColor": [180, 180, 180, 255],
+			"DropdownScrollbarHighlightedColor": [160, 160, 160, 255],
+			"DropdownScrollbarPressedColor": [140, 140, 140, 255],
+			"KeybindTextColor": [60, 60, 60, 255],
+			"KeybindNormalColor": [120, 120, 120, 255],
+			"KeybindHighlightedColor": [150, 150, 150, 255],
+			"KeybindPressedColor": [180, 180, 180, 255],
+			"SliderBackgroundColor": [170, 170, 170, 255],
+			"SliderFillColor": [100, 100, 100, 255],
+			"SliderHandleColor": [110, 110, 110, 255]
 		},
 	},
 	"MultiplayerMapPopup": {
 		"MainBody": {
-			"BackgroundColor": [64, 75, 88, 255],
-			"MapColor": [114, 114, 114, 255]
+			"BackgroundColor": [250, 250, 250, 255],
+			"MapColor": [164, 164, 164, 255]
 		},
 		"DefaultButton": {
-			"NormalColor": [100, 127, 161, 255],
-			"HighlightedColor": [158, 172, 189, 255],
-			"PressedColor": [138, 152, 169, 255],
-			"TextColor": [255, 255, 255, 255]
+			"NormalColor": [80, 80, 80, 255],
+			"HighlightedColor": [120, 120, 120, 255],
+			"PressedColor": [160, 160, 160, 255],
+			"TextColor": [240, 240, 240, 255]
 		}
 	},
 	"MultiplayerRoomListPopup": {
 		"MainBody": {
-			"BackgroundColor": [64, 75, 88, 255]
-		},
-		"DefaultButton": {
-			"NormalColor": [100, 127, 161, 255],
-			"HighlightedColor": [158, 172, 189, 255],
-			"PressedColor": [138, 152, 169, 255],
-			"TextColor": [255, 255, 255, 255]
+			"BackgroundColor": [128, 128, 128, 255]
 		},
 		"RoomButton": {
 			"NormalColor": [255, 255, 255, 0],
@@ -104,13 +103,13 @@
 	},
 	"SelectListPopup": {
 		"MainBody": {
-			"BackgroundColor": [255, 255, 255, 255],
+			"BackgroundColor": [220, 220, 220, 255],
 		},
 		"ItemButton": {
 			"NormalColor": [255, 255, 255, 0],
 			"HighlightedColor": [137, 144, 154, 86],
 			"PressedColor": [88, 93, 99, 86],
-			"TextColor": [83, 101, 125, 255]
+			"TextColor": [70, 70, 70, 255]
 		},
 		"DeleteButton": {
 			"NormalColor": [238, 75, 43, 255],
@@ -120,45 +119,44 @@
 	},
 	"QuestPopup": {
 		"QuestHeader": {
-			"ResetTextColor": [83, 101, 125, 255]
+			"ResetTextColor": [70, 70, 70, 255]
 		},
 		"QuestItem": {
-			"BackgroundColor": [255, 255, 255, 255],
-			"BorderColor": [206, 212, 218, 255],
+			"BackgroundColor": [190, 190, 190, 255],
+			"BorderColor": [150, 150, 150, 255],
 			"IconColor": [0, 125, 176, 255],
 			"CheckColor": [0, 125, 176, 255],
-			"TextColor": [83, 101, 125, 255],
-			"ProgressBarBackgroundColor": [140, 160, 180, 255],
-			"ProgressBarFillColor": [0, 125, 176, 255]
+			"TextColor": [60, 60, 60, 255],
+			"ProgressBarBackgroundColor": [150, 150, 150, 255],
+			"ProgressBarFillColor": [110, 110, 110, 255]
 		},
 		"Trophy": {
 			"TextColor": [83, 101, 125, 255],
 			"BronzeColor": [176, 141, 87, 255],
-			"SilverColor": [211, 211, 211, 255],
+			"SilverColor": [180, 180, 180, 255],
 			"GoldColor": [255, 215, 0, 255]
 		}
 	},
 	"LeaderboardPopup": {
 		"Rank": {
 			"Trophy1Color": [255, 215, 0, 255],
-			"Trophy2Color": [211, 211, 211, 255],
+			"Trophy2Color": [180, 180, 180, 255],
 			"Trophy3Color": [176, 141, 87, 255],
 			"BadgeColor": [30, 144, 250, 255]
 		}
 	},
 	"LoadingPanel": {
 		"ProgressBar": {
-			"ProgressBarBackgroundColor": [140, 160, 180, 255],
-			"ProgressBarFillColor": [0, 125, 176, 255]
+			"ProgressBarBackgroundColor": [150, 150, 150, 255],
+			"ProgressBarFillColor": [110, 110, 110, 255]
 		}
 	},
 	"CutsceneDialoguePanel": {
 		"MainBody": {
-			"BackgroundColor": [255, 255, 255, 200],
-			"TopBarColor": [255, 255, 255, 255],
-			"BottomBarColor": [255, 255, 255, 255],
-			"HorizontalLineColor": [78, 95, 112, 255],
-			"BorderColor": [255, 255, 255, 255]
+			"BackgroundColor": [240, 240, 240, 180],
+			"HeaderColor": [220, 220, 220, 180],
+			"LineColor": [100, 100, 100, 255],
+			"BorderColor": [128, 128, 128, 96]
 		}
 	},
 	"ChatPanel": {
@@ -180,20 +178,20 @@
 	},
 	"ScoreboardPopup": {
 		"Icon": {
-			"SpectateColor": [100, 127, 161, 255],
+			"SpectateColor": [70, 70, 70, 255],
 			"DeadColor": [255, 0, 0, 255],
-			"LoadoutHuman": [100, 127, 161, 255],
-			"LoadoutTitan": [100, 127, 161, 255],
-			"LoadoutShifter": [100, 127, 161, 255]
+			"LoadoutHuman": [70, 70, 70, 255],
+			"LoadoutTitan": [70, 70, 70, 255],
+			"LoadoutShifter": [70, 70, 70, 255]
 		},
 		"IconButton": {
-			"NormalColor": [100, 127, 161, 255],
-			"HighlightedColor": [85, 108, 137, 255],
-			"PressedColor": [70, 89, 112, 255],
-			"TextColor": [255, 255, 255, 255]
+			"NormalColor": [70, 70, 70, 255],
+			"HighlightedColor": [100, 100, 100, 255],
+			"PressedColor": [130, 130, 130, 255],
+			"TextColor": [70, 70, 70, 255]
 		},
 		"TextColor": {
-			"Default": [83, 101, 125, 255]
+			"Default": [70, 70, 70, 255]
 		}
 	}
 }

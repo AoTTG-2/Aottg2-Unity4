@@ -188,8 +188,25 @@ namespace Controllers
             }
             _human.HookLeft.HookBoth = hookBoth && !hookLeft;
             _human.HookRight.HookBoth = hookBoth && !hookRight;
-            _human.HookLeft.SetInput(canHook && hookLeft || (hookBoth && (_human.HookLeft.IsHooked() || !hasHook)));
-            _human.HookRight.SetInput(canHook && hookRight || (hookBoth && (_human.HookRight.IsHooked() || !hasHook)));
+            _human.HookLeft.SetInput(canHook && (hookLeft || (hookBoth && (_human.HookLeft.IsHooked() || !hasHook))));
+            _human.HookRight.SetInput(canHook && (hookRight || (hookBoth && (_human.HookRight.IsHooked() || !hasHook))));
+            if (_human.CurrentGas <= 0f && (hookLeft || hookRight || hookBoth))
+            {
+                if (_humanInput.HookLeft.GetKeyDown() || _humanInput.HookRight.GetKeyDown() || _humanInput.HookBoth.GetKeyDown())
+                _human.PlaySoundRPC(HumanSounds.NoGas, null);
+            }
+
+            return;
+            if (_humanInput.HookLeft.GetKeyDown())
+            {
+                _inGameMenu.ShowKillFeed("test", "test", 800);
+                _inGameMenu.ShowKillScore(800);
+            }
+            if (_humanInput.HookRight.GetKeyDown())
+            {
+                _inGameMenu.ShowKillFeed("test", "test", 3000);
+                _inGameMenu.ShowKillScore(3000);
+            }
         }
 
         protected override void UpdateActionInput(bool inMenu)
@@ -208,7 +225,7 @@ namespace Controllers
             bool canWeapon = _human.MountState == HumanMountState.None && !states.Contains(_human.State) && !inMenu && !_human.Dead;
             var attackInput = _humanInput.AttackDefault;
             var specialInput = _humanInput.AttackSpecial;
-            if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value && SettingsManager.AbilitySettings.SwapAttackSpecial.Value)
+            if (_human.Weapon is ThunderspearWeapon && SettingsManager.InputSettings.Human.SwapTSAttackSpecial.Value)
             {
                 attackInput = _humanInput.AttackSpecial;
                 specialInput = _humanInput.AttackDefault;

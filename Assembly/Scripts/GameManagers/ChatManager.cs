@@ -225,6 +225,16 @@ namespace GameManagers
             }
             else if (args[0] == "nextsong")
                 MusicManager.NextSong();
+            else if (args[0] == "pause")
+            {
+                if (CheckMC())
+                    ((InGameManager)SceneLoader.CurrentGameManager).PauseGame();
+            }
+            else if (args[0] == "unpause")
+            {
+                if (CheckMC())
+                    ((InGameManager)SceneLoader.CurrentGameManager).StartUnpauseGame();
+            }
             else if (args[0] == "help")
             {
                 string help = "----Command list----" + "\n";
@@ -237,7 +247,9 @@ namespace GameManagers
                 help += "/mute [ID]: Mute player with ID\n";
                 help += "/unmute[ID]: Unmute player with ID\n";
                 help += "/maxplayers [num]: Sets max players\n";
-                help += "/nextsong: Play next song in playlist";
+                help += "/nextsong: Play next song in playlist\n";
+                help += "/pause: Pause the multiplayer game\n";
+                help += "/unpause: Unpause the multiplayer game";
                 AddLine(help, ChatTextColor.System);
             }
         }

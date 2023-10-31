@@ -18,8 +18,8 @@ namespace UI
         protected override float Width => 330f;
         protected override float Height => 410f;
         protected override float VerticalSpacing => 20f;
-        protected override int HorizontalPadding => 20;
-        protected override int VerticalPadding => 20;
+        protected override int HorizontalPadding => 25;
+        protected override int VerticalPadding => 25;
         private Text _pointsLeftLabel;
 
         public override void Setup(BasePanel parent = null)

@@ -39,6 +39,9 @@ namespace Characters
                 EffectSpawner.Spawn(EffectPrefabs.ShifterThunder, BaseTitanCache.Neck.position, Quaternion.identity, Size);
                 PlaySound(ShifterSounds.Thunder);
                 LoadSkin();
+                CheckGround();
+                if (!Grounded && BaseTitanAnimations.Jump != "")
+                    StateActionWithTime(TitanState.Jump, BaseTitanAnimations.Jump, 0.2f);
             }
         }
 
@@ -142,6 +145,7 @@ namespace Characters
                 if (firstHit)
                 {
                     EffectSpawner.Spawn(EffectPrefabs.PunchHit, hitbox.transform.position, Quaternion.identity);
+                    PlaySound(TitanSounds.HitSound);
                     if (!victimChar.Dead)
                     {
                         if (IsMainCharacter())
@@ -172,6 +176,19 @@ namespace Characters
                     _needRoar = false;
                 }
             }
+        }
+
+        public override void Land()
+        {
+            if (_needRoar)
+            {
+                Emote("Roar");
+                _needRoar = false;
+            }
+            else
+                StateAction(TitanState.Land, BaseTitanAnimations.Land);
+            EffectSpawner.Spawn(EffectPrefabs.Boom2, Cache.Transform.position + Vector3.down * _currentGroundDistance,
+                Quaternion.Euler(270f, 0f, 0f), Size * SizeMultiplier);
         }
 
         protected void LoadSkin()

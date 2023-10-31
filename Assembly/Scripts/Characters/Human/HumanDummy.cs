@@ -40,27 +40,32 @@ namespace Characters
         public void Idle()
         {
             State = HumanState.Idle;
-            string animation = HumanAnimations.StandFemale;
+            bool male = Setup.CustomSet.Sex.Value == (int)HumanSex.Male;
+            string animation;
             if (Setup.Weapon == HumanWeapon.AHSS || Setup.Weapon == HumanWeapon.APG)
-                animation = HumanAnimations.StandGun;
-            else if (Setup.CustomSet.Sex.Value == (int)HumanSex.Male)
-                animation = HumanAnimations.StandMale;
+                animation = male ? HumanAnimations.IdleAHSSM : HumanAnimations.IdleAHSSF;
+            else if (Setup.Weapon == HumanWeapon.Thunderspear)
+                animation = male ? HumanAnimations.IdleTSM : HumanAnimations.IdleTSF;
+            else
+                animation = male ? HumanAnimations.IdleM : HumanAnimations.IdleF;
             Cache.Animation.CrossFade(animation, 0.1f);
         }
 
         public void EmoteAction(string emote)
         {
-            string animation = HumanAnimations.Salute;
+            string animation = HumanAnimations.EmoteSalute;
             if (emote == "Salute")
-                animation = HumanAnimations.Salute;
+                animation = HumanAnimations.EmoteSalute;
             else if (emote == "Dance")
                 animation = HumanAnimations.SpecialArmin;
             else if (emote == "Flip")
                 animation = HumanAnimations.Dodge;
-            else if (emote == "Wave1")
-                animation = HumanAnimations.SpecialMarco0;
-            else if (emote == "Wave2")
-                animation = HumanAnimations.SpecialMarco1;
+            else if (emote == "Wave")
+                animation = HumanAnimations.EmoteWave;
+            else if (emote == "Nod")
+                animation = HumanAnimations.EmoteYes;
+            else if (emote == "Shake")
+                animation = HumanAnimations.EmoteNo;
             else if (emote == "Eat")
                 animation = HumanAnimations.SpecialSasha;
             State = HumanState.EmoteAction;

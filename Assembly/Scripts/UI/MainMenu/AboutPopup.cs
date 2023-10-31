@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace UI
 {
-    class AboutPopup: MainMenuPopup
+    class AboutPopup: BasePopup
     {
         protected override string Title => string.Empty;
         protected override float Width => 730f;
@@ -17,6 +17,7 @@ namespace UI
         protected override bool CategoryPanel => true;
         protected override bool CategoryButtons => true;
         protected override string DefaultCategoryPanel => "Help";
+        protected override bool UseSound => true;
 
         public override void Setup(BasePanel parent = null)
         {
@@ -48,7 +49,7 @@ namespace UI
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             foreach (string buttonName in new string[] { "Back" })
             {
-                GameObject obj = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
+                GameObject obj = ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
                     onClick: () => OnBottomBarButtonClick(buttonName));
             }
         }

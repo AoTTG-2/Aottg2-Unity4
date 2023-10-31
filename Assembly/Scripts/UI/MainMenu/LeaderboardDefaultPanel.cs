@@ -95,7 +95,7 @@ namespace UI
                         if (sortedPlayers[i].HasKey("Link"))
                         {
                             string link = sortedPlayers[i]["Link"].Value;
-                            ElementFactory.CreateTextButton(row, style, "Link",
+                            ElementFactory.CreateLinkButton(row, style, "Link",
                                 onClick: () => UIManager.CurrentMenu.ExternalLinkPopup.Show(link));
                         }
                         else

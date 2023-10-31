@@ -111,6 +111,7 @@ namespace UI
             optionButton.GetComponent<LayoutElement>().preferredWidth = width;
             optionButton.GetComponent<LayoutElement>().preferredHeight = height;
             optionButton.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(themePanel, "DefaultSetting", "Dropdown");
+            optionButton.transform.Find("Label").GetComponent<Text>().color = UIManager.GetThemeColor(themePanel, "DefaultSetting", "DropdownTextColor");
         }
 
         protected void OnDropdownSelectedButtonClick()

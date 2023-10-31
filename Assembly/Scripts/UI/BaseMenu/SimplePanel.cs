@@ -10,10 +10,5 @@ namespace UI
 {
     class SimplePanel : BasePanel
     {
-        public override void Setup(BasePanel parent = null)
-        {
-            transform.Find("Background").GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BackgroundColor");
-            base.Setup(parent);
-        }
     }
 }

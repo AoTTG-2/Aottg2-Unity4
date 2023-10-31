@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UI
 {
-    class LeaderboardPopup: MainMenuPopup
+    class LeaderboardPopup: BasePopup
     {
         protected override string Title => UIManager.GetLocale("MainMenu", "LeaderboardPopup", "Title");
         protected override float Width => 800f;
@@ -18,6 +18,7 @@ namespace UI
         protected override string DefaultCategoryPanel => "Default";
         public StringSetting CurrentCategory = new StringSetting(string.Empty);
         public StringSetting CurrentSubcategory = new StringSetting(string.Empty);
+        protected override bool UseSound => true;
 
         public override void Setup(BasePanel parent = null)
         {
@@ -26,7 +27,7 @@ namespace UI
             string sub = "LeaderboardPopup";
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle style = new ElementStyle(themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
                 onClick: () => OnButtonClick("Back"));
         }
 

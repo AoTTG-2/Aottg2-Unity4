@@ -9,24 +9,23 @@ namespace UI
 {
     class PausePopup: BasePopup
     {
-        protected override string Title => string.Empty;
-        protected override float Width => 230f;
-        protected override float Height => 290f;
+        protected override string Title => UIManager.GetLocale("SettingsPopup", "Keybinds.General", "Pause");
+        protected override float Width => 220f;
+        protected override float Height => 280f;
         protected override float VerticalSpacing => 20f;
         protected override int VerticalPadding => 20;
+
         public override void Setup(BasePanel parent = null)
         {
             base.Setup(parent);
             string cat = "InGameMenu";
             string sub = "PausePopup";
-            float elementWidth = 160f;
+            float width = 160f;
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Quit"), onClick: () => OnButtonClick("Quit"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
-            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocaleCommon("Settings"), onClick: () => OnButtonClick("Settings"),
-                elementWidth: elementWidth);
-            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocaleCommon("Game"), onClick: () => OnButtonClick("Game"), 
-                elementWidth: elementWidth);
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Quit"), onClick: () => OnButtonClick("Quit"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocaleCommon("Settings"), width, onClick: () => OnButtonClick("Settings"));
+            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocaleCommon("Game"), width, onClick: () => OnButtonClick("Game"));
         }
 
         protected void OnButtonClick(string name)

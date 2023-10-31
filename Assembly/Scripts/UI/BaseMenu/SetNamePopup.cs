@@ -10,7 +10,7 @@ namespace UI
     {
         protected override string Title => string.Empty;
         protected override float Width => 320f;
-        protected override float Height => 240f;
+        protected override float Height => 230f;
         protected override int VerticalPadding => 40;
         private UnityAction _onSave;
         private InputSettingElement _element;
@@ -21,9 +21,9 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 100f, fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
-            _element = ElementFactory.CreateInputSetting(SinglePanel, style, NameSetting, UIManager.GetLocaleCommon("SetName"), elementWidth: 120f).
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            _element = ElementFactory.CreateInputSetting(SinglePanel, style, NameSetting, UIManager.GetLocaleCommon("SetName"), elementWidth: 140f).
                 GetComponent<InputSettingElement>();
         }
 

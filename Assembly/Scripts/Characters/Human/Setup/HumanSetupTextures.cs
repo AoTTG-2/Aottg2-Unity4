@@ -22,7 +22,7 @@ namespace Characters
 
         public string GetFaceTexture()
         {
-            return "aottg_hero_eyes";
+            return "HumanFace";
         }
 
         public string GetBrandTexture()
@@ -43,7 +43,12 @@ namespace Characters
 
         public string GetSkinTexture()
         {
-            return "aottg_hero_skin_" + (_setup.CustomSet.Skin.Value + 1).ToString();
+            string end = (_setup.CustomSet.Skin.Value + 1).ToString();
+            if (_setup.Weapon == HumanWeapon.Thunderspear)
+                return "skin_TS" + end;
+            else if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
+                return "skin_AHSS" + end;
+            return "skin_blades" + end;
         }
 
         public string GetHairTexture()

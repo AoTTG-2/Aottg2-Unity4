@@ -12,10 +12,10 @@ namespace UI
         protected virtual string Title => "Default";
         protected virtual float TopBarHeight => 65f;
         protected virtual float BottomBarHeight => 65f;
-        protected override float BorderVerticalPadding => 5f;
-        protected override float BorderHorizontalPadding => 5f;
-        protected override int VerticalPadding => 25;
-        protected override int HorizontalPadding => 35;
+        protected virtual float BottomBarSpacing => 20f;
+        protected virtual int BottomBarPadding => 20;
+        protected override int VerticalPadding => 20;
+        protected override int HorizontalPadding => 30;
         protected virtual int TitleFontSize => 30;
         protected virtual int ButtonFontSize => 28;
         protected virtual bool CategoryButtons => false;
@@ -27,12 +27,10 @@ namespace UI
         {
             TopBar = transform.Find("Background/TopBar");
             BottomBar = transform.Find("Background/BottomBar");
-            Transform topBarLine = transform.Find("Background/TopBarLine");
-            Transform bottomBarLine = transform.Find("Background/BottomBarLine");
             TopBar.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, TopBarHeight);
             BottomBar.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, BottomBarHeight);
-            topBarLine.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -TopBarHeight);
-            bottomBarLine.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, BottomBarHeight);
+            BottomBar.GetComponent<HorizontalLayoutGroup>().spacing = BottomBarSpacing;
+            BottomBar.GetComponent<HorizontalLayoutGroup>().padding = new RectOffset(BottomBarPadding, BottomBarPadding, 0, 0);
             if (TopBar.Find("Label") != null)
             {
                 if (CategoryButtons)
@@ -46,12 +44,11 @@ namespace UI
                     SetTitle(Title);
                 }
             }
-            TopBar.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "TopBarColor");
-            BottomBar.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BottomBarColor");
-            topBarLine.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BorderColor");
-            bottomBarLine.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BorderColor");
+            TopBar.GetComponent<RawImage>().texture = UIManager.GetThemeTexture(ThemePanel, "MainBody", "HeaderTexture");
+            TopBar.GetComponent<RawImage>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "HeaderColor");
+            BottomBar.GetComponent<RawImage>().texture = UIManager.GetThemeTexture(ThemePanel, "MainBody", "HeaderTexture");
+            BottomBar.GetComponent<RawImage>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "HeaderColor");
             transform.Find("Border").GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BorderColor");
-            transform.Find("Background").GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BackgroundColor");
             if (CategoryButtons)
             {
                 SetupTopButtons();
@@ -93,7 +90,7 @@ namespace UI
         {
             float topBarHeight = Mathf.Max(TopBar.GetComponent<RectTransform>().sizeDelta.y, BorderVerticalPadding);
             float bottomBarHeight = Mathf.Max(BottomBar.GetComponent<RectTransform>().sizeDelta.y, BorderVerticalPadding);
-            return GetHeight() - topBarHeight - bottomBarHeight - BorderVerticalPadding * 2f;
+            return GetHeight() - topBarHeight - bottomBarHeight;
         }
     }
 }

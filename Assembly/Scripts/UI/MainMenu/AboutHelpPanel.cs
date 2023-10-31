@@ -31,7 +31,7 @@ namespace UI
         {
             Transform group = ElementFactory.CreateHorizontalGroup(SinglePanel, 5f).transform;
             ElementFactory.CreateDefaultLabel(group, style, " " + title + ":");
-            ElementFactory.CreateTextButton(group, style, link,
+            ElementFactory.CreateLinkButton(group, style, link,
                 onClick: () => UIManager.CurrentMenu.ExternalLinkPopup.Show(link));
         }
     }

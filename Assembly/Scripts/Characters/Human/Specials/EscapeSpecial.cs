@@ -20,7 +20,7 @@ namespace Characters
 
         protected override void Activate()
         {
-            ((Human)_owner).CrossFade("grabbed_jean", 0.1f);
+            ((Human)_owner).CrossFade(HumanAnimations.SpecialJean, 0.1f);
         }
 
         protected override void Deactivate()

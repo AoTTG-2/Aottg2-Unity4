@@ -22,14 +22,16 @@ namespace Settings
             { MultiplayerRegion.EU, "app-eu-legacy.exitgames.com" },
             { MultiplayerRegion.US, "app-us-legacy.exitgames.com" },
             { MultiplayerRegion.SA, "app-sa-legacy.exitgames.com" },
-            { MultiplayerRegion.ASIA, "app-asia-legacy.exitgames.com" }
+            { MultiplayerRegion.ASIA, "app-asia-legacy.exitgames.com" },
+            { MultiplayerRegion.CN, "app-asia-legacy.exitgames.com" }
         };
         public readonly Dictionary<MultiplayerRegion, string> PublicAddresses = new Dictionary<MultiplayerRegion, string>()
         {
             { MultiplayerRegion.EU, "135.125.239.180" },
             { MultiplayerRegion.US, "142.44.242.29" },
-            { MultiplayerRegion.SA, "172.107.193.233" },
+            { MultiplayerRegion.SA, "108.181.69.221" },
             { MultiplayerRegion.ASIA, "51.79.164.137" },
+            { MultiplayerRegion.CN, "47.116.117.128" }
         };
         public readonly int DefaultPort = 5055;
 
@@ -39,12 +41,12 @@ namespace Settings
             string address;
             if (AppIdMode.Value == (int)AppIdModeType.Public)
             {
-                //address = PublicAddresses[region];
-                //CurrentMultiplayerServerType = MultiplayerServerType.Public;
-                //PhotonNetwork.ConnectToMaster(address, DefaultPort, string.Empty, GetCurrentLobby());
-                address = CloudAddresses[region];
-                CurrentMultiplayerServerType = MultiplayerServerType.Cloud;
-                PhotonNetwork.ConnectToMaster(address, DefaultPort, PublicAppId, GetCurrentLobby());
+                address = PublicAddresses[region];
+                CurrentMultiplayerServerType = MultiplayerServerType.Public;
+                PhotonNetwork.ConnectToMaster(address, DefaultPort, string.Empty, GetCurrentLobby());
+                // address = CloudAddresses[region];
+                // CurrentMultiplayerServerType = MultiplayerServerType.Cloud;
+                // PhotonNetwork.ConnectToMaster(address, DefaultPort, PublicAppId, GetCurrentLobby());
             }
             else
             {
@@ -92,7 +94,8 @@ namespace Settings
         EU,
         US,
         SA,
-        ASIA
+        ASIA,
+        CN
     }
 
     public enum LobbyModeType

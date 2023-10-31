@@ -30,32 +30,31 @@ namespace Characters
         
         public HumanComponentCache(GameObject owner): base(owner)
         {
-            Head = Transform.Find("Amarture/Controller_Body/hip/spine/chest/neck/head");
-            Neck = Transform.Find("Amarture/Controller_Body/hip/spine/chest/neck");
-            HandL = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_L/upper_arm_L/forearm_L/hand_L");
-            HandR = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_R/upper_arm_R/forearm_R/hand_R");
-            ForearmL = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_L/upper_arm_L/forearm_L");
-            ForearmR = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_R/upper_arm_R/forearm_R");
-            UpperarmL = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_L/upper_arm_L");
-            UpperarmR = Transform.Find("Amarture/Controller_Body/hip/spine/chest/shoulder_R/upper_arm_R");
+            var chest = Transform.Find("Armature/Core/Controller_Body/hip/spine/chest");
+            Neck = chest.Find("neck");
+            Head = Neck.Find("head");
+            UpperarmL = chest.Find("shoulder_L/upper_arm_L");
+            UpperarmR = chest.Find("shoulder_R/upper_arm_R");
+            ForearmL = UpperarmL.Find("forearm_L");
+            ForearmR = UpperarmR.Find("forearm_R");
+            HandL = ForearmL.Find("hand_L");
+            HandR = ForearmR.Find("hand_R");
             Sparks = Transform.Find("slideSparks").GetComponent<ParticleSystem>();
             Smoke = Transform.Find("3dmg_smoke").GetComponent<ParticleSystem>();
             Smoke.enableEmission = false;
             Sparks.enableEmission = false;
             Wind = Transform.Find("speedFX").GetComponentInChildren<ParticleSystem>();
             WindTransform = Transform.Find("speedFX");
-            Wind.enableEmission = false;
-            HERO hero = owner.GetComponent<HERO>();
-            HookLeftAnchorDefault = hero.hookRefL1.transform;
-            HookRightAnchorDefault = hero.hookRefR1.transform;
-            HookLeftAnchorGun = hero.hookRefL2.transform;
-            HookRightAnchorGun = hero.hookRefR2.transform;
+            HookLeftAnchorDefault = chest.Find("hookRefL1");
+            HookRightAnchorDefault = chest.Find("hookRefR1");
+            HookLeftAnchorGun = HandL.Find("hookRef");
+            HookRightAnchorGun = HandR.Find("hookRef");
             var human = owner.GetComponent<BaseCharacter>();
             if (human != null)
             {
-                BladeHitLeft = BaseHitbox.Create(human, hero.checkBoxLeft);
+                BladeHitLeft = BaseHitbox.Create(human, HandL.Find("checkBox").gameObject);
                 BladeHitLeft.OnEnter = false;
-                BladeHitRight = BaseHitbox.Create(human, hero.checkBoxRight);
+                BladeHitRight = BaseHitbox.Create(human, HandR.Find("checkBox").gameObject);
                 BladeHitRight.OnEnter = false;
                 CreateAHSSHitbox(human);
                 CreateAPGHitbox(human);

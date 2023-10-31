@@ -31,11 +31,12 @@ class Main
         }
     }
 
-    function OnPlayerSpawn(player, character)
+    function OnCharacterSpawn(character)
     {
-        if (self.InfiniteGas && player == Network.MyPlayer && character.Type == "Human")
+        if (character.IsMainCharacter && character.Type == "Human" && self.InfiniteGas)
         {
             character.MaxGas = 100000;
+            character.CurrentGas = 100000;
         }
     }
 

@@ -53,7 +53,7 @@ namespace UI
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             foreach (string buttonName in new string[] { "Default", "Save", "Back" })
             {
-                GameObject obj = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
+                GameObject obj = ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
                     onClick: () => OnBottomBarButtonClick(buttonName));
             }
         }

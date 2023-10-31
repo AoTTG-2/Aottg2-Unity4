@@ -28,7 +28,7 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(fontSize: 24, themePanel: ThemePanel, titleWidth: 70f);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
                     onClick: () => OnBottomBarButtonClick("Back"));
             var rows = Util.GroupItems(UIManager.AvailableProfileIcons, Columns);
             foreach (var row in rows)

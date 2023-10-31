@@ -23,6 +23,8 @@ namespace UI
         protected override string DefaultCategoryPanel => "General";
         public string LocaleCategory = "CreateGamePopup";
         public bool IsMultiplayer = false;
+        protected override bool UseSound => true;
+
 
         public override void Setup(BasePanel parent = null)
         {
@@ -90,7 +92,7 @@ namespace UI
             foreach (string buttonName in new string[] { "LoadPreset", "SavePreset", start, "Back" })
             {
                 string locale = UIManager.GetLocaleCommon(buttonName);
-                GameObject obj = ElementFactory.CreateDefaultButton(BottomBar, style, locale,
+                GameObject obj = ElementFactory.CreateTextButton(BottomBar, style, locale,
                     onClick: () => OnBottomBarButtonClick(buttonName));
             }
         }
@@ -100,7 +102,6 @@ namespace UI
             if (gameObject.activeSelf && SceneLoader.SceneName == SceneName.MainMenu)
             {
                 PhotonNetwork.Disconnect();
-                ((MainMenu)UIManager.CurrentMenu).PlaySound("Back");
             }
             base.Hide();
         }
@@ -169,7 +170,13 @@ namespace UI
                 { RoomProperty.Password, password }
             };
             string[] lobbyProperties = new string[] { RoomProperty.Name, RoomProperty.Map, RoomProperty.GameMode, RoomProperty.Password };
-            PhotonNetwork.CreateRoom(roomId, true, true, maxPlayers, properties, lobbyProperties);
+            var roomOptions = new RoomOptions();
+            roomOptions.customRoomProperties = properties;
+            roomOptions.customRoomPropertiesForLobby = lobbyProperties;
+            roomOptions.isVisible = true;
+            roomOptions.isOpen = true;
+            roomOptions.maxPlayers = maxPlayers;
+            PhotonNetwork.CreateRoom(roomId, roomOptions, new TypedLobby());
         }
 
         private void OnDeletePreset()

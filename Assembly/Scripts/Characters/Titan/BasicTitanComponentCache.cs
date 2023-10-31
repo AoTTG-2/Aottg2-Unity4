@@ -15,6 +15,7 @@ namespace Characters
         public ParticleSystem ForearmBloodR;
         public ParticleSystem ForearmSmokeL;
         public ParticleSystem ForearmSmokeR;
+        public ParticleSystem NapeBlood;
 
         public BasicTitanComponentCache(GameObject owner): base(owner)
         {
@@ -60,6 +61,11 @@ namespace Characters
             ForearmSmokeR = AssetBundleManager.InstantiateAsset<GameObject>("ArmSmokeParticle", true).GetComponent<ParticleSystem>();
             ForearmSmokeL.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
             ForearmSmokeR.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+            NapeBlood = AssetBundleManager.InstantiateAsset<GameObject>("NapeBloodParticle", true).GetComponent<ParticleSystem>();
+            NapeBlood.transform.SetParent(Neck);
+            NapeBlood.transform.localPosition = new Vector3(0f, 0.02f, -0.1f);
+            NapeBlood.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            NapeBlood.transform.localScale = Vector3.one * 0.01f;
         }
     }
 }

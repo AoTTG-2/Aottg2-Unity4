@@ -31,10 +31,9 @@ namespace UI
         public BasePopup _characterPopup;
         public BasePopup _scoreboardPopup;
         public SnapshotPopup _snapshotPopup;
+        public GlobalPauseGamePopup _globalPauseGamePopup;
         public CutsceneDialoguePanel _cutsceneDialoguePanel;
         public bool SkipAHSSInput;
-        private TipPanel _tipPanel;
-        private LoadingProgressPanel _loadingProgressPanel;
         private InGameBackgroundMenu _backgroundMenu;
         private KillFeedBigPopup _killFeedBigPopup;
         private List<KillFeedSmallPopup> _killFeedSmallPopups = new List<KillFeedSmallPopup>();
@@ -47,6 +46,7 @@ namespace UI
         private Text _bottomRightLabel;
         private Text _bottomCenterLabel;
         private bool _showingBlood;
+        private GameObject _minimapPanel;
         private List<BasePopup> _allPausePopups = new List<BasePopup>();
         private Dictionary<string, float> _labelTimeLeft = new Dictionary<string, float>();
         private Dictionary<string, bool> _labelHasTimeLeft = new Dictionary<string, bool>();
@@ -95,9 +95,10 @@ namespace UI
             gameObject.AddComponent<MinimapHandler>();
             if (SettingsManager.GeneralSettings.MinimapEnabled.Value && !SettingsManager.InGameCurrent.Misc.GlobalMinimapDisable.Value)
             {
-                var minimap = ElementFactory.InstantiateAndBind(transform, "MinimapPanel");
-                ElementFactory.SetAnchor(minimap, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(-10f, -10f));
-                minimap.AddComponent<MinimapScaler>();
+                _minimapPanel = ElementFactory.InstantiateAndBind(transform, "MinimapPanel");
+                ElementFactory.SetAnchor(_minimapPanel, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(-10f, -10f));
+                _minimapPanel.AddComponent<MinimapScaler>();
+                _minimapPanel.SetActive(false);
             }
             else
                 GetComponent<MinimapHandler>().Disable();
@@ -109,14 +110,6 @@ namespace UI
             _snapshotPopup = go.GetComponent<SnapshotPopup>();
             go.transform.localScale = new Vector2(0.8f, 0.8f);
             ElementFactory.SetAnchor(go, TextAnchor.UpperLeft, TextAnchor.UpperLeft, new Vector2(20f, -130f));
-        }
-
-        public void UpdateLoading(float percentage, bool finished = false)
-        {
-            percentage = Mathf.Clamp(percentage, 0f, 1f);
-            _loadingProgressPanel.Show(percentage);
-            if (finished)
-                OnFinishLoading();
         }
 
         private void SetupChat()
@@ -148,13 +141,16 @@ namespace UI
             _bottomRightLabel = ElementFactory.CreateHUDLabel(transform, style, "", FontStyle.Normal, TextAnchor.MiddleRight).GetComponent<Text>();
             ElementFactory.SetAnchor(_bottomRightLabel.gameObject, TextAnchor.LowerRight, TextAnchor.LowerRight, new Vector2(-10f, 10f));
             _killScorePopup = ElementFactory.CreateDefaultPopup<KillScorePopup>(transform);
+            _killScorePopup.gameObject.AddComponent<IgnoreScaler>();
             ElementFactory.SetAnchor(_killScorePopup.gameObject, TextAnchor.MiddleCenter, TextAnchor.MiddleCenter, new Vector2(0f, 100f));
             _killFeedBigPopup = ElementFactory.CreateDefaultPopup<KillFeedBigPopup>(transform);
+            _killFeedBigPopup.gameObject.AddComponent<KillFeedScaler>();
             ElementFactory.SetAnchor(_killFeedBigPopup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, -120f));
             for (int i = 0; i < 4; i++)
             {
                 float y = -162f - i * 35f;
                 var popup = ElementFactory.CreateDefaultPopup<KillFeedSmallPopup>(transform);
+                popup.gameObject.AddComponent<KillFeedScaler>();
                 ElementFactory.SetAnchor(popup.gameObject, TextAnchor.UpperCenter, TextAnchor.MiddleCenter, new Vector2(0f, y));
                 _killFeedSmallPopups.Add(popup);
             }
@@ -165,19 +161,11 @@ namespace UI
             _backgroundMenu = ElementFactory.CreateMenu<InGameBackgroundMenu>("BackgroundMenu");
             _backgroundMenu.Setup();
             _backgroundMenu.transform.SetAsFirstSibling();
-            _loadingProgressPanel = ElementFactory.CreateDefaultPopup<LoadingProgressPanel>(transform);
-            _tipPanel = ElementFactory.CreateTipPanel(transform, enabled: true);
-            _tipPanel.SetRandomTip();
-            ElementFactory.SetAnchor(_tipPanel.gameObject, TextAnchor.LowerRight, TextAnchor.LowerRight, new Vector2(10f, -10f));
-            _loadingProgressPanel.Show(0f);
-            UpdateLoading(0f);
+            _globalPauseGamePopup = ElementFactory.CreateDefaultPopup<GlobalPauseGamePopup>(transform);
         }
 
-        private void OnFinishLoading()
+        public void OnFinishLoading()
         {
-            _tipPanel.gameObject.SetActive(false);
-            _loadingProgressPanel.Hide();
-            _backgroundMenu.HideMainBackground();
             _characterPopup = ElementFactory.CreateDefaultPopup<CharacterPopup>(transform);
             _scoreboardPopup = ElementFactory.CreateDefaultPopup<ScoreboardPopup>(transform);
             _cutsceneDialoguePanel = ElementFactory.CreateDefaultPopup<CutsceneDialoguePanel>(transform);
@@ -185,6 +173,11 @@ namespace UI
             _popups.Add(_characterPopup);
             _popups.Add(_scoreboardPopup);
             _gameManager = (InGameManager)SceneLoader.CurrentGameManager;
+            if (_minimapPanel != null)
+            {
+                _minimapPanel.SetActive(true);
+            }
+
         }
 
         public static bool InMenu()
@@ -345,6 +338,16 @@ namespace UI
         {
             if (_gameManager == null)
                 return;
+            if (_gameManager.GlobalPause)
+            {
+                _globalPauseGamePopup.Show();
+                if (_gameManager.PauseTimeLeft >= 0f)
+                    _globalPauseGamePopup.SetLabel("Unpausing in: " + Util.FormatFloat(_gameManager.PauseTimeLeft, 1));
+                else
+                    _globalPauseGamePopup.SetLabel("Paused by master client.");
+            }
+            else
+                _globalPauseGamePopup.Hide();
             foreach (string label in new List<string>(_labelHasTimeLeft.Keys))
             {
                 if (_labelHasTimeLeft[label])

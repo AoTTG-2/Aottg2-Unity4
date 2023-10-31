@@ -23,8 +23,8 @@ namespace UI
         protected override float TopBarHeight => 0f;
         protected override float BottomBarHeight => 0f;
         protected override float VerticalSpacing => 10f;
-        protected override int HorizontalPadding => 20;
-        protected override int VerticalPadding => 10;
+        protected override int HorizontalPadding => 25;
+        protected override int VerticalPadding => 15;
         protected override bool ScrollBar => true;
         private MapEditorGameManager _gameManager;
         private MapEditorMenu _menu;
@@ -107,7 +107,7 @@ namespace UI
                 new string[] { MapObjectCollideWith.Entities, MapObjectCollideWith.Characters, MapObjectCollideWith.Projectiles,
                     MapObjectCollideWith.MapObjects, MapObjectCollideWith.All}, elementHeight: 30f, onDropdownOptionSelect: () => OnChange());
             ElementFactory.CreateDropdownSetting(SinglePanel, style, _physicsMaterial, "Physics Material",
-                            new string[] { "Default" }, elementHeight: 30f, onDropdownOptionSelect: () => OnChange());
+                            new string[] { MapObjectPhysicsMaterial.Default, MapObjectPhysicsMaterial.Ice }, elementHeight: 30f, onDropdownOptionSelect: () => OnChange());
             CreateHorizontalDivider(SinglePanel);
             ElementFactory.CreateToggleSetting(SinglePanel, style, _visible, "Visible", elementWidth: 25f, elementHeight: 25f, onValueChanged: () => OnChange());
             ElementFactory.CreateDropdownSetting(SinglePanel, style, _shader, "Shader",
@@ -131,8 +131,7 @@ namespace UI
                 group = ElementFactory.CreateHorizontalGroup(SinglePanel, 20f, TextAnchor.MiddleLeft).transform;
                 label = ElementFactory.CreateDefaultLabel(group, style, "Texture", alignment: TextAnchor.MiddleLeft);
                 label.GetComponent<LayoutElement>().preferredWidth = 160f;
-                ElementFactory.CreateDefaultButton(group, style, _texture.Value, elementWidth: 140f, elementHeight: 30f,
-                    onClick: () => OnButtonClick("Texture"));
+                ElementFactory.CreateDefaultButton(group, style, _texture.Value, onClick: () => OnButtonClick("Texture"));
                 ElementFactory.CreateInputSetting(SinglePanel, style, _tilingX, "Tiling X", elementWidth: inputWidth, elementHeight: 35f, onEndEdit: () => OnChange());
                 ElementFactory.CreateInputSetting(SinglePanel, style, _tilingY, "Tiling Y", elementWidth: inputWidth, elementHeight: 35f, onEndEdit: () => OnChange());
                 ElementFactory.CreateInputSetting(SinglePanel, style, _offsetX, "Offset X", elementWidth: inputWidth, elementHeight: 35f, onEndEdit: () => OnChange());
@@ -155,12 +154,10 @@ namespace UI
                         ElementFactory.CreateInputSetting(SinglePanel, style, setting, key, elementWidth: 140f, elementHeight: 35f, onEndEdit: () => OnChange());
                 }
                 string name = "DeleteComponent" + i.ToString();
-                ElementFactory.CreateDefaultButton(SinglePanel, style, "Delete", elementWidth: 115f, elementHeight: 30f,
-                onClick: () => OnButtonClick(name));
+                ElementFactory.CreateDefaultButton(SinglePanel, style, "Delete", onClick: () => OnButtonClick(name));
                 CreateHorizontalDivider(SinglePanel);
             }
-            ElementFactory.CreateDefaultButton(SinglePanel, style, "Add Component", elementWidth: 140f, elementHeight: 30f,
-                onClick: () => OnButtonClick("AddComponent"));
+            ElementFactory.CreateDefaultButton(SinglePanel, style, "Add Component", onClick: () => OnButtonClick("AddComponent"));
             SinglePanel.gameObject.SetActive(false);
             StartCoroutine(WaitAndEnablePanel());
         }
@@ -387,7 +384,7 @@ namespace UI
             else if (setting is BoolSetting)
                 return ((BoolSetting)setting).Value ? "true" : "false";
             else if (setting is StringSetting)
-                return ((StringSetting)setting).Value;
+                return ((StringSetting)setting).Value.Replace(',', ' ').Replace(':', ' ').Replace('|', ' ');
             else if (setting is ColorSetting)
             {
                 var color = ((ColorSetting)setting).Value;

@@ -9,8 +9,6 @@ namespace Settings
     {
         protected override string FileName { get { return "General.json"; } }
         public StringSetting Language = new StringSetting("English");
-        public FloatSetting Volume = new FloatSetting(0.5f, minValue: 0f, maxValue: 1f);
-        public FloatSetting Music = new FloatSetting(0.5f, minValue: 0f, maxValue: 1f);
         public FloatSetting MouseSpeed = new FloatSetting(0.5f, minValue: 0.01f, maxValue: 1f);
         public FloatSetting CameraDistance = new FloatSetting(1f, minValue: 0f, maxValue: 1f);
         public FloatSetting CameraHeight = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
@@ -23,13 +21,15 @@ namespace Settings
         public FloatSetting MinimapHeight = new FloatSetting(500, minValue: 1);
         public IntSetting CameraMode = new IntSetting((int)CameraInputMode.TPS);
         public BoolSetting SkipCutscenes = new BoolSetting(false);
+        public FloatSetting FOVMin = new FloatSetting(50f, minValue: 1f, maxValue: 120f);
+        public FloatSetting FOVMax = new FloatSetting(100f, minValue: 1f, maxValue: 120f);
+        public FloatSetting FPSFOVMin = new FloatSetting(80f, minValue: 1f, maxValue: 120f);
+        public FloatSetting FPSFOVMax = new FloatSetting(100f, minValue: 1f, maxValue: 120f);
 
         public override void Apply()
         {
             if (SceneLoader.CurrentCamera is InGameCamera)
                 ((InGameCamera)SceneLoader.CurrentCamera).ApplyGeneralSettings();
-            AudioListener.volume = Volume.Value;
-            MusicManager.ApplyGeneralSettings();
         }
     }
 

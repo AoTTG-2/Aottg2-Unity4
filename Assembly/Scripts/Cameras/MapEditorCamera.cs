@@ -17,6 +17,7 @@ namespace Cameras
         private MapEditorSettings _settings;
         private MapEditorMenu _menu;
         private Camera _uiCamera;
+        private bool _wasRotating;
 
         protected override void Awake()
         {
@@ -46,9 +47,10 @@ namespace Cameras
 
         protected void Update()
         {
-            if (_menu == null || _menu.IsMouseUI)
+            if (_menu == null)
                 return;
-            UpdateMovement();
+            if (!_menu.IsMouseUI)
+                UpdateMovement();
             UpdateRotation();
         }
 
@@ -79,9 +81,9 @@ namespace Cameras
 
         private void UpdateRotation()
         {
-            float mouseX = Input.mousePosition.x;
-            if (mouseX < _menu.GetMinMouseX() || mouseX > _menu.GetMaxMouseX())
+            if (!_wasRotating && _menu.IsMouseUI)
                 return;
+            _wasRotating = false;
             if (_input.RotateCamera.GetKey())
             {
                 float inputX = Input.GetAxis("Mouse X");
@@ -89,6 +91,7 @@ namespace Cameras
                 float speed = _settings.CameraRotateSpeed.Value;
                 Cache.Transform.RotateAround(Cache.Transform.position, Vector3.up, inputX * Time.deltaTime * speed);
                 Cache.Transform.RotateAround(Cache.Transform.position, Cache.Transform.right, -inputY * Time.deltaTime * speed);
+                _wasRotating = true;
             }
         }
 

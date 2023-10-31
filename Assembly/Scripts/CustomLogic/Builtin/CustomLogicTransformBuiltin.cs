@@ -32,13 +32,29 @@ namespace CustomLogic
             {
                 string anim = (string)parameters[0];
                 var animation = Value.GetComponent<Animation>();
+                float fade = 0.1f;
+                if (parameters.Count > 1)
+                    fade = (float)parameters[1];
                 if (!animation.IsPlaying(anim))
-                    animation.CrossFade(anim, 0.1f);
+                    animation.CrossFade(anim, fade);
+            }
+            else if (methodName == "GetAnimationLength")
+            {
+                string anim = (string)parameters[0];
+                var animation = Value.GetComponent<Animation>();
+                return animation[anim].length;
             }
             else if (methodName == "PlaySound")
             {
                 var sound = Value.GetComponent<AudioSource>();
-                sound.Play();
+                if (!sound.isPlaying)
+                    sound.Play();
+            }
+            else if (methodName == "StopSound")
+            {
+                var sound = Value.GetComponent<AudioSource>();
+                if (sound.isPlaying)
+                    sound.Stop();
             }
             else if (methodName == "ToggleParticle")
             {

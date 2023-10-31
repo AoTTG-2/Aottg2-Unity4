@@ -13,7 +13,7 @@ namespace UI
     {
         protected override string Title => "Custom Logic";
         protected override float Width => 500f;
-        protected override float Height => 600f;
+        protected override float Height => 585f;
         protected override int VerticalPadding => 20;
         protected override float VerticalSpacing => 10f;
         private StringSetting _logic = new StringSetting(string.Empty);
@@ -25,8 +25,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 130f, fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             _logicInput = ElementFactory.CreateInputSetting(SinglePanel, style, _logic, "", elementWidth: 450f, elementHeight: 400f, multiLine: true).
                 GetComponent<InputSettingElement>();
             _error = ElementFactory.CreateDefaultLabel(SinglePanel, style, "").GetComponent<Text>();

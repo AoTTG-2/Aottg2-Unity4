@@ -41,7 +41,7 @@ namespace UI
             base.DoStateTransition(state, instant);
             var menu = ((MainMenu)UIManager.CurrentMenu);
             if (state == SelectionState.Highlighted)
-                menu.PlaySound("Hover");
+                UIManager.PlaySound(UISound.Hover);
             if (state == SelectionState.Pressed || state == SelectionState.Highlighted)
             {
                 _hoverImage.CrossFadeAlpha(1f, _fadeTime, true);

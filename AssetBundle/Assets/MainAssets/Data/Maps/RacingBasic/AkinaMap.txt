@@ -8,7 +8,7 @@ Scene,None,4,0,1,1,1,0,Human SpawnPoint (red),0,5,0,0,0,0,1,1,1,Physical,Entitie
 Scene,Geometry/Cuboid,5,0,1,1,1,0,Kill Region Cuboid,0,-55.90939,975,0,180,0,500,10,50,Region,Characters,Default,Transparent|255/0/0/130|None|1/1|0/0,KillRegion|;
 Scene,Geometry/Cuboid,6,0,1,1,1,0,Cuboid,0,-45.39,0,0,180,0,500,10,150,Physical,Entities,Default,Default|124/141/153/255,;
 Scene,Geometry/Cuboid,7,0,1,1,1,0,Cuboid,0,-45.39,2695.651,0,180,0,500,10,300,Physical,Entities,Default,Default|124/141/153/255,;
-Scene,Geometry/Cuboid,8,0,1,1,0,0,Barrier,0,95.44,2000,0,180,0,395,5,430,Physical,Characters,Default,Default|255/255/255/255,;
+Scene,Geometry/Cuboid,8,0,1,1,0,0,Barrier,0,95.44,2000,0,180,0,395,5,430,Physical,Characters,IceMaterial,Default|255/255/255/255,;
 Scene,Geometry/Cuboid,9,0,1,0,1,0,Racing Start Barrier Cuboid,0,24.52,48.47431,0,180,0,6,10,3.5,Physical,Entities,Default,Transparent|0/97/255/122|None|1/1|0/0,Tag|Name:RacingStartBarrier;
 Scene,Geometry/Cuboid,10,0,1,0,1,0,Racing Start Barrier Cuboid,0,41.634,0,0,180,0,4,3.5,8,Physical,Entities,Default,Transparent|0/97/255/122|None|1/1|0/0,Tag|Name:RacingStartBarrier;
 Scene,Geometry/Cuboid,11,0,1,1,1,0,Racing Finish Region Cuboid,2042.853,24.52,3047.114,0,355.3853,0,3.5,10,10,Region,Characters,Default,Transparent|209/255/0/128|None|1/1|0/0,RacingFinishRegion|;

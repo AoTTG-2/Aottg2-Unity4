@@ -13,7 +13,7 @@ namespace UI
     {
         protected override string ThemePanel => "SelectListPopup";
         protected override int HorizontalPadding => 0;
-        protected override int VerticalPadding => 0;
+        protected override int VerticalPadding => 5;
         protected override float VerticalSpacing => 10f;
         protected override bool DoublePanel => false;
         protected override bool ScrollBar => true;
@@ -41,12 +41,12 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel, titleWidth: 60f);
-            _inputElement = ElementFactory.CreateInputSetting(BottomBar, buttonStyle, FinishSetting, UIManager.GetLocaleCommon("Name"), elementWidth: 180f)
+            _inputElement = ElementFactory.CreateInputSetting(BottomBar, buttonStyle, FinishSetting, UIManager.GetLocaleCommon("Name"), elementWidth: 185f)
                 .GetComponent<InputSettingElement>();
             _saveElements.Add(_inputElement.gameObject);
-            _saveElements.Add(ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"),
+            _saveElements.Add(ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"),
                 onClick: () => OnButtonClick("Save")));
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
                 onClick: () => OnButtonClick("Back"));
             _noItemsLabel = ElementFactory.CreateDefaultLabel(SinglePanel, new ElementStyle(themePanel: ThemePanel), "No items found.");
         }

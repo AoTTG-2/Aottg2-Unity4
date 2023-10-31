@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Settings;
+using System.Collections;
 using UnityEngine;
 
 namespace Characters
@@ -31,13 +32,20 @@ namespace Characters
             if (_stage == 0 && time > AnimationLoopStartTime)
             {
                 _human.ActivateBlades();
-                _human.PlaySound(HumanSounds.BladeSwing);
+                if (SettingsManager.SoundSettings.OldBladeEffect.Value)
+                    _human.PlaySound(HumanSounds.OldBladeSwing);
+                else
+                    _human.PlaySound(HumanSounds.BladeSwing4);
+                _human.PlaySound(HumanSounds.BladeSwing3);
                 _stage += 1;
             }
             else if (_stage < Loops && time > AnimationLoopEndTime)
             {
                 _human.PlayAnimation(HumanAnimations.SpecialPetra, AnimationLoopStartTime);
-                _human.PlaySound(HumanSounds.BladeSwing);
+                if (SettingsManager.SoundSettings.OldBladeEffect.Value)
+                    _human.PlaySound(HumanSounds.OldBladeSwing);
+                else
+                    _human.PlaySound(HumanSounds.BladeSwing3);
                 _stage += 1;
             }
         }

@@ -29,9 +29,9 @@ namespace UI
             _searchInput = ElementFactory.CreateInputSetting(BottomBar, style, Search, "Search", elementWidth: 200f, onEndEdit: () => RebuildCategoryPanel())
                 .GetComponent<InputSettingElement>();
             _searchInput.GetComponent<HorizontalLayoutGroup>().spacing = 5f;
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
                     onClick: () => OnBottomBarButtonClick("Back"));
-            BottomBar.GetComponent<HorizontalLayoutGroup>().spacing = Width - 375f;
+            BottomBar.GetComponent<HorizontalLayoutGroup>().spacing = Width - 365f;
         }
 
         protected virtual string[] GetCategories()

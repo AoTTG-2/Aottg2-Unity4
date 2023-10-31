@@ -44,6 +44,7 @@ namespace UI
                UIManager.GetLocaleArray(cat, sub, "AnisotropicOptions"), elementWidth: 200f);
             ElementFactory.CreateDropdownSetting(DoublePanelRight, style, settings.WeatherEffects, UIManager.GetLocale(cat, sub, "WeatherEffects"),
                UIManager.GetLocaleArray(cat, sub, "WeatherEffectsOptions"), elementWidth: 200f);
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.NapeBloodEnabled, UIManager.GetLocale(cat, sub, "NapeBloodEnabled"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.WeaponTrailEnabled, UIManager.GetLocale(cat, sub, "WeaponTrailEnabled"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.WindEffectEnabled, UIManager.GetLocale(cat, sub, "WindEffectEnabled"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.BloodSplatterEnabled, UIManager.GetLocale(cat, sub, "BloodSplatterEnabled"));

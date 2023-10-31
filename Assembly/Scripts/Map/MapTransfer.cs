@@ -93,7 +93,7 @@ namespace Map
         {
             if (!info.sender.isMasterClient)
                 return;
-            ((InGameMenu)UIManager.CurrentMenu).UpdateLoading(0.9f * ((float)msgNumber / (float)msgTotal));
+            UIManager.LoadingMenu.UpdateLoading(0.9f * ((float)msgNumber / (float)msgTotal));
             byte msgType = byteArr[0][0];
             if (msgType == MsgMapStart)
             {

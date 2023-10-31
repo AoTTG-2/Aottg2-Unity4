@@ -12,7 +12,7 @@
 			"IsCrawler": false,
 			"DetectRange": 1000,
 			"FocusRange": 1000,
-			"ReactionTime": 1,
+			"FocusTime": 0.5,
 			"TurnAngle": 110,
 			"TurnSpeed": 1.0,
 			"TurnPause": 0.2,
@@ -40,7 +40,6 @@
 			}
 		},
 		"Training": {
-			"ReactionTime": 1000,
 			"DetectRange": 0,
 			"FocusRange": 0
 		},

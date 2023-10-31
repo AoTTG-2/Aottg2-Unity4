@@ -16,8 +16,9 @@ namespace UI
         protected virtual float MaxFadeAlpha => 1f;
         protected virtual float AnimationTime => 0.1f;
         protected virtual bool ShowOnTop => true;
+        protected virtual bool UseSound => false;
         protected virtual PopupAnimation PopupAnimationType => PopupAnimation.Tween;
-        protected float _currentAnimationValue;
+        public float _currentAnimationValue;
         // transforms that should ignore animations
         protected HashSet<Transform> _staticTransforms = new HashSet<Transform>();
         public bool IsActive;
@@ -27,6 +28,8 @@ namespace UI
             if (IsActive)
                 return;
             IsActive = true;
+            if (UseSound)
+                UIManager.PlaySound(UISound.Forward);
             base.Show();
             if (ShowOnTop)
                 transform.SetAsLastSibling();
@@ -42,6 +45,8 @@ namespace UI
             if (IsActive)
                 return;
             IsActive = true;
+            if (UseSound)
+                UIManager.PlaySound(UISound.Forward);
             base.Show();
             if (ShowOnTop)
                 transform.SetAsLastSibling();
@@ -63,6 +68,8 @@ namespace UI
             if (!IsActive)
                 return;
             IsActive = false;
+            if (UseSound)
+                UIManager.PlaySound(UISound.Back);
             HideAllPopups();
             StopAllCoroutines();
             if (PopupAnimationType == PopupAnimation.Tween)
@@ -145,11 +152,15 @@ namespace UI
 
         protected void SetTransformScale(float scale)
         {
-            transform.localScale = GetVectorFromScale(scale);
+            IgnoreScaler scaler = transform.GetComponent<IgnoreScaler>();
+            if (scaler != null)
+                transform.localScale = GetVectorFromScale(scale * scaler.Scale);
+            else
+                transform.localScale = GetVectorFromScale(scale);
             foreach (Transform transform in _staticTransforms)
             {
                 float nativeScale = 1f;
-                IgnoreScaler scaler = transform.GetComponent<IgnoreScaler>();
+                scaler = transform.GetComponent<IgnoreScaler>();
                 if (scaler != null)
                     nativeScale = scaler.Scale;
                 transform.localScale = GetVectorFromScale(nativeScale / Mathf.Max(scale, 0.1f));

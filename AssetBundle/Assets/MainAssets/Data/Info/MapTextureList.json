@@ -18,30 +18,41 @@
 		{"Name": "Brick1", "TilingX": 2, "TilingY": 2},
 		{"Name": "Brick2", "TilingX": 6, "TilingY": 6},
 		{"Name": "Brick3", "TilingX": 5, "TilingY": 5},
-		{"Name": "Brick4", "TilingX": 3, "TilingY": 3}
+		{"Name": "Brick4", "TilingX": 3, "TilingY": 3},
+		{"Name": "Brick5", "TilingX": 3, "TilingY": 3},
+		{"Name": "Brick6", "TilingX": 3, "TilingY": 3},
+		{"Name": "Brick7", "TilingX": 3, "TilingY": 3},
+		{"Name": "Brick8", "TilingX": 3, "TilingY": 3}
 	],
 	"Metal": [
 		{"Name": "Metal1", "TilingX": 5, "TilingY": 5},
 		{"Name": "Metal2", "TilingX": 5, "TilingY": 5},
 		{"Name": "Metal3", "TilingX": 6, "TilingY": 6},
-		{"Name": "Metal4", "TilingX": 20, "TilingY": 20}
+		{"Name": "Metal4", "TilingX": 20, "TilingY": 20},
+		{"Name": "Metal5", "TilingX": 5, "TilingY": 5},
+		{"Name": "Metal6", "TilingX": 5, "TilingY": 5}
 	],
 	"Wood": [
 		{"Name": "Wood1", "TilingX": 5, "TilingY": 5},
 		{"Name": "Wood2", "TilingX": 5, "TilingY": 5},
 		{"Name": "Wood3", "TilingX": 5, "TilingY": 5},
 		{"Name": "Wood4", "TilingX": 5, "TilingY": 5},
-		{"Name": "Wood5", "TilingX": 5, "TilingY": 5}
+		{"Name": "Wood5", "TilingX": 5, "TilingY": 5},
+		{"Name": "Wood6", "TilingX": 5, "TilingY": 5},
+		{"Name": "Wood7", "TilingX": 5, "TilingY": 5},
+		{"Name": "Wood8", "TilingX": 5, "TilingY": 5}
 	],
 	"Stone": [
 		{"Name": "Earth1", "TilingX": 5, "TilingY": 5},
 		{"Name": "Earth2", "TilingX": 3, "TilingY": 3},
 		{"Name": "Earth3", "TilingX": 3, "TilingY": 3},
+		{"Name": "Earth4", "TilingX": 1, "TilingY": 1},
 		{"Name": "Rock1", "TilingX": 3, "TilingY": 3},
 		{"Name": "Rock2", "TilingX": 3, "TilingY": 3},
 		{"Name": "Rock3", "TilingX": 3, "TilingY": 3},
 		{"Name": "Rock4", "TilingX": 3, "TilingY": 3},
 		{"Name": "Rock5", "TilingX": 3, "TilingY": 3},
+		{"Name": "Rock6", "TilingX": 1, "TilingY": 1},
 		{"Name": "Stone1", "TilingX": 3, "TilingY": 3},
 		{"Name": "Stone2", "TilingX": 3, "TilingY": 3},
 		{"Name": "Stone3", "TilingX": 3, "TilingY": 3},
@@ -55,16 +66,30 @@
 		{"Name": "Stone11", "TilingX": 5, "TilingY": 5},
 		{"Name": "Stone12", "TilingX": 5, "TilingY": 5},
 		{"Name": "Stone13", "TilingX": 3, "TilingY": 3},
-		{"Name": "Stone14", "TilingX": 1, "TilingY": 1},
-		{"Name": "Stone15", "TilingX": 1, "TilingY": 1},
-		{"Name": "Stone16", "TilingX": 1, "TilingY": 1}
+		{"Name": "Stone14", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone15", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone16", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone17", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone18", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone19", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone20", "TilingX": 3, "TilingY": 3},
+		{"Name": "Stone21", "TilingX": 3, "TilingY": 3}
 	],
 	"Misc": [
 		{"Name": "None", "TilingX": 1, "TilingY": 1},
 		{"Name": "Crystal1", "TilingX": 5, "TilingY": 5},
 		{"Name": "Crystal2", "TilingX": 5, "TilingY": 5},
+		{"Name": "Diamond1", "TilingX": 3, "TilingY": 3},
+		{"Name": "Honey1", "TilingX": 3, "TilingY": 3},
 		{"Name": "Ice1", "TilingX": 3, "TilingY": 3},
-		{"Name": "Lava1", "TilingX": 3, "TilingY": 3}
+		{"Name": "Ice2", "TilingX": 3, "TilingY": 3},
+		{"Name": "Lava1", "TilingX": 3, "TilingY": 3},
+		{"Name": "Lava2", "TilingX": 3, "TilingY": 3},
+		{"Name": "Lava3", "TilingX": 3, "TilingY": 3},
+		{"Name": "Rust1", "TilingX": 3, "TilingY": 3},
+		{"Name": "Sand1", "TilingX": 3, "TilingY": 3},
+		{"Name": "Sand2", "TilingX": 3, "TilingY": 3},
+		{"Name": "Straw1", "TilingX": 3, "TilingY": 3}
 	],
 	"Legacy": [
 		{"Name": "WallMat", "Texture": "Buildings/Textures/Wall1Tex1"},

@@ -48,6 +48,8 @@ namespace UI
                     (showHealthMode == ShowMode.Others && !character.IsMainCharacter()));
                 bool toggleName = showName && !character.AI && !(character is BasicTitan);
                 bool toggleHealth = showHealth && character.MaxHealth > 1 && character.CurrentHealth < character.MaxHealth;
+                if (_inGameManager.Restarting)
+                    toggleName = toggleHealth = false;
                 if ((!toggleName && !toggleHealth) || inMenu)
                 {
                     popup.HideImmediate();

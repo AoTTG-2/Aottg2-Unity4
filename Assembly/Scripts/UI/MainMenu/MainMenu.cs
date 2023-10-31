@@ -27,10 +27,9 @@ namespace UI
         public ProfileIconPickPopup _profileIconPickPopup;
         public MainBackgroundMenu _backgroundMenu;
         public TipPanel _tipPanel;
-        protected Dictionary<string, AudioSource> _sounds = new Dictionary<string, AudioSource>();
         protected Text _multiplayerStatusLabel;
         protected string _lastButtonClicked;
-        protected CanvasGroup _introPanelCanvasGroup;
+        protected Image _introPanelBackground;
         public static JSONNode MainBackgroundInfo = null;
         protected const float ChangeBackgroundTime = 20f;
 
@@ -39,17 +38,9 @@ namespace UI
             base.Setup();
             if (MainBackgroundInfo == null)
                 MainBackgroundInfo = JSON.Parse(AssetBundleManager.LoadText("MainBackgroundInfo"));
-            var go = AssetBundleManager.InstantiateAsset<GameObject>("MainMenuSounds");
-            foreach (var source in go.GetComponentsInChildren<AudioSource>())
-                _sounds.Add(source.name, source);
             SetupMainBackground();
             SetupIntroPanel();
             SetupLabels();
-        }
-
-        public void PlaySound(string sound)
-        {
-            _sounds[sound].Play();
         }
 
         private void SetupMainBackground()
@@ -130,7 +121,7 @@ namespace UI
                 };
                 button.colors = block;
             }
-            _introPanelCanvasGroup = introPanel.GetComponent<CanvasGroup>();
+            _introPanelBackground = introPanel.transform.Find("Background").GetComponent<Image>();
         }
 
         private void SetupLabels()
@@ -170,7 +161,7 @@ namespace UI
                 string label = "";
                 if (SettingsManager.GraphicsSettings.ShowFPS.Value)
                     label = "FPS:" + UIManager.GetFPS().ToString() + "\n";
-                if (_multiplayerMapPopup.IsActive || _multiplayerRoomListPopup.IsActive)
+                if (_multiplayerMapPopup.IsActive || _multiplayerRoomListPopup.IsActive || (_createGamePopup.IsActive && PhotonNetwork.connected))
                 {
                     label += PhotonNetwork.connectionStateDetailed.ToString();
                     if (PhotonNetwork.connected)
@@ -182,17 +173,19 @@ namespace UI
             {
                 if (HoverIntroPanel())
                 {
-                    if (_introPanelCanvasGroup.alpha < 1f)
-                        _introPanelCanvasGroup.alpha = Mathf.Min(1f, _introPanelCanvasGroup.alpha + Time.deltaTime * 2f);
+                    float alpha = _introPanelBackground.color.a;
+                    if (alpha < 1f)
+                        _introPanelBackground.color = new Color(1f, 1f, 1f, Mathf.Min(1f, alpha + Time.deltaTime * 2f));
                 }
                 else
                 {
-                    if (_introPanelCanvasGroup.alpha > 0.5f)
-                        _introPanelCanvasGroup.alpha = Mathf.Max(0.5f, _introPanelCanvasGroup.alpha - Time.deltaTime * 1f);
+                    float alpha = _introPanelBackground.color.a;
+                    if (alpha > 0f)
+                        _introPanelBackground.color = new Color(1f, 1f, 1f, Mathf.Max(0f, alpha - Time.deltaTime * 1f));
                 }
             }
             else
-                _introPanelCanvasGroup.alpha = 1f;
+                _introPanelBackground.color = Color.white;
         }
 
         private bool IsPopupActive()
@@ -207,7 +200,7 @@ namespace UI
 
         private bool HoverIntroPanel()
         {
-            float x = _introPanelCanvasGroup.GetComponent<RectTransform>().sizeDelta.x * UIManager.CurrentMenu.GetComponent<Canvas>().scaleFactor * 0.25f;
+            float x = _introPanelBackground.GetComponent<RectTransform>().sizeDelta.x * UIManager.CurrentMenu.GetComponent<Canvas>().scaleFactor * 0.25f;
             return Input.mousePosition.x < x;
         }
 
@@ -217,7 +210,6 @@ namespace UI
             HideAllPopups();
             if (isPopupAactive && _lastButtonClicked == name)
                 return;
-            PlaySound("Forward");
             _lastButtonClicked = name;
             switch (name)
             {

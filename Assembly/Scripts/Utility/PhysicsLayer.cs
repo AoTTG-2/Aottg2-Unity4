@@ -39,10 +39,10 @@ namespace Utility
             SetLayerCollisions(CharacterDetection, new int[] { Human, TitanMovebox });
             SetLayerCollisions(NPC, new int[] {TitanPushbox, MapObjectCharacters, MapObjectEntities, MapObjectAll});
             SetLayerCollisions(Hurtbox, new int[] { Hitbox });
-            SetLayerCollisions(MapObjectMapObjects, new int[] { MapObjectAll, MapObjectMapObjects });
-            SetLayerCollisions(MapObjectProjectiles, new int[] { MapObjectAll, Projectile });
-            SetLayerCollisions(MapObjectCharacters, new int[] { MapObjectAll, Human, TitanMovebox, NPC });
-            SetLayerCollisions(MapObjectEntities, new int[] { MapObjectAll, TitanMovebox, Human, Projectile, NPC });
+            SetLayerCollisions(MapObjectMapObjects, new int[] { MapObjectAll, MapObjectMapObjects, MapObjectProjectiles, MapObjectCharacters, MapObjectEntities });
+            SetLayerCollisions(MapObjectProjectiles, new int[] { MapObjectAll, MapObjectMapObjects, Projectile });
+            SetLayerCollisions(MapObjectCharacters, new int[] { MapObjectAll, MapObjectMapObjects, Human, TitanMovebox, NPC });
+            SetLayerCollisions(MapObjectEntities, new int[] { MapObjectAll, MapObjectMapObjects, TitanMovebox, Human, Projectile, NPC });
             SetLayerCollisions(MapObjectAll, new int[] { Human, TitanMovebox, Projectile, MapObjectAll, MapObjectMapObjects, MapObjectEntities, 
                 MapObjectCharacters, MapObjectProjectiles, NPC});
             SetLayerCollisions(MapEditorObject, new int[0]);

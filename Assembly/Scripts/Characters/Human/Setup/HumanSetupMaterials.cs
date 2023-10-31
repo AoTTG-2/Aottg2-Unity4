@@ -20,7 +20,12 @@ namespace Characters
             AddMaterial("aottg_hero_brand_mp");
             AddMaterial("aottg_hero_brand_g");
             AddMaterial("aottg_hero_brand_ts");
-            AddMaterial("aottg_hero_skin_1");
+            AddMaterial("skin_blades1");
+            AddMaterial("skin_blades2");
+            AddMaterial("skin_AHSS1");
+            AddMaterial("skin_AHSS2");
+            AddMaterial("skin_TS1");
+            AddMaterial("skin_TS2");
             AddMaterial("aottg_hero_skin_2");
             AddMaterial("aottg_hero_skin_3");
             AddMaterial("aottg_hero_casual_fa_1");
@@ -30,6 +35,7 @@ namespace Characters
             AddMaterial("aottg_hero_casual_fb_2");
             AddMaterial("aottg_hero_casual_ma_1");
             AddMaterial("aottg_hero_casual_ma_1_ahss");
+            AddMaterial("aottg_hero_casual_fa_1_ahss");
             AddMaterial("aottg_hero_casual_ma_2");
             AddMaterial("aottg_hero_casual_ma_3");
             AddMaterial("aottg_hero_casual_mb_1");
@@ -69,13 +75,13 @@ namespace Characters
             AddMaterial("hair_rico");
             AddMaterial("hair_sasha");
             AddMaterial("hair_mikasa");
-            AddMaterial("aottg_hero_eyes", "MaterialGLASS");
+            AddMaterial("HumanFace", "HumanFace");
         }
 
-        private static void AddMaterial(string tex, string mat = "MaterialCharacter")
+        private static void AddMaterial(string tex, string mat = "HumanCostume")
         {
-            Texture texture = ResourceManager.InstantiateAsset<Texture2D>("NewTexture/" + tex);
-            Material material = ResourceManager.InstantiateAsset<Material>("NewTexture/" + mat);
+            Texture texture = (Texture2D)AssetBundleManager.LoadAsset(tex + "Tex");
+            Material material = AssetBundleManager.InstantiateAsset<Material>(mat + "Mat");
             material.mainTexture = texture;
             Materials.Add(tex, material);
         }

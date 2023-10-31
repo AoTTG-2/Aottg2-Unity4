@@ -13,7 +13,7 @@ namespace UI
         protected override int HorizontalPadding => 20;
         protected override float VerticalSpacing => 20f;
         protected override float Width => 370f;
-        protected override float Height => 250f;
+        protected override float Height => 245f;
         protected override TextAnchor PanelAlignment => TextAnchor.MiddleCenter;
 
         public override void Setup(BasePanel parent = null)
@@ -24,7 +24,7 @@ namespace UI
             string sub = "MultiplayerFilterPopup";
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle style = new ElementStyle(titleWidth: 240f, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
             ElementFactory.CreateToggleSetting(SinglePanel, style, roomListPopup._filterShowFull, UIManager.GetLocale(cat, sub, "ShowFull"));
             ElementFactory.CreateToggleSetting(SinglePanel, style, roomListPopup._filterShowPassword, UIManager.GetLocale(cat, sub, "ShowPassword"));
         }

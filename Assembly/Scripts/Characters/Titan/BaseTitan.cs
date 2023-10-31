@@ -25,9 +25,9 @@ namespace Characters
         public float Size = 1f;
         public virtual float CrippleTime => 8f;
         public float StunTime = 0.3f;
-        public float ActionPause = 0.5f;
-        public float AttackPause = 0.5f;
-        public float TurnPause = 0.5f;
+        public float ActionPause = 0.2f;
+        public float AttackPause = 0.2f;
+        public float TurnPause = 0.2f;
         public BaseCharacter TargetEnemy = null;
         protected BaseTitanAnimations BaseTitanAnimations;
         protected override float GroundDistance => 1f;
@@ -537,6 +537,7 @@ namespace Characters
         {
             float radius = BaseTitanCache.Movebox.transform.lossyScale.x * ((CapsuleCollider)(BaseTitanCache.Movebox)).radius;
             RaycastHit hit;
+            JustGrounded = false;
             if (Physics.SphereCast(Cache.Transform.position + Vector3.up * (radius + 1f), radius, Vector3.down, 
                 out hit, 1f + GroundDistance, GroundMask.value))
             {
@@ -599,7 +600,7 @@ namespace Characters
 
         protected virtual void DamagedGrunt(float chance = 1f)
         {
-            if (RandomGen.Roll(chance))
+            if (SettingsManager.SoundSettings.TitanVocalEffect.Value && RandomGen.Roll(chance))
             {
                 var grunts = new List<string>() { "Grunt3", "Grunt5" };
                 PlaySound(grunts.GetRandomItem());
@@ -608,7 +609,7 @@ namespace Characters
 
         protected virtual void NormalGrunt(float chance = 1f)
         {
-            if (RandomGen.Roll(chance))
+            if (SettingsManager.SoundSettings.TitanVocalEffect.Value && RandomGen.Roll(chance))
             {
                 var grunts = new List<string>() { "Grunt1", "Grunt2", "Grunt4", "Grunt6", "Grunt7", "Grunt8", "Grunt9" };
                 PlaySound(grunts.GetRandomItem());
@@ -620,7 +621,8 @@ namespace Characters
             base.Start();
             if (IsMine())
             {
-                StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));
+                if (!IsMainCharacter() || !(this is BaseShifter))
+                    StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));
                 Idle();
             }
         }

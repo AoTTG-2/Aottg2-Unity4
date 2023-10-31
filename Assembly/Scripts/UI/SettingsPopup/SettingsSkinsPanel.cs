@@ -19,7 +19,7 @@ namespace UI
             ElementStyle toggleStyle = new ElementStyle(titleWidth: 200f, themePanel: ThemePanel);
             ICustomSkinSettings settings = GetCurrentSettings();
             string category = _currentCategoryPanelName.Value;
-            string[] categories = new string[] { "Human", "Shifter" };
+            string[] categories = new string[] { "Human", "Shifter", "Skybox" };
             ElementFactory.CreateDropdownSetting(panelLeft, dropdownStyle, _currentCategoryPanelName, UIManager.GetLocaleCommon("Category"),
                 categories, elementWidth: 260f, onDropdownOptionSelect: () => RebuildCategoryPanel());
             string sub = "Skins.Common";
@@ -132,11 +132,15 @@ namespace UI
             _categoryPanelTypes.Add("Human", typeof(SettingsSkinsHumanPanel));
             // _categoryPanelTypes.Add("Titan", typeof(SettingsSkinsTitanPanel));
             _categoryPanelTypes.Add("Shifter", typeof(SettingsSkinsDefaultPanel));
-            // _categoryPanelTypes.Add("Skybox", typeof(SettingsSkinsDefaultPanel));
+            _categoryPanelTypes.Add("Skybox", typeof(SettingsSkinsDefaultPanel));
+            //_categoryPanelTypes.Add("Forest", typeof(SettingsSkinsForestPanel));
+            //_categoryPanelTypes.Add("City", typeof(SettingsSkinsCityPanel));
             _settings.Add("Human", SettingsManager.CustomSkinSettings.Human);
             // _settings.Add("Titan", SettingsManager.CustomSkinSettings.Titan);
             _settings.Add("Shifter", SettingsManager.CustomSkinSettings.Shifter);
-            // _settings.Add("Skybox", SettingsManager.CustomSkinSettings.Skybox);
+            _settings.Add("Skybox", SettingsManager.CustomSkinSettings.Skybox);
+            //_settings.Add("Forest", SettingsManager.CustomSkinSettings.Forest);
+            //_settings.Add("City", SettingsManager.CustomSkinSettings.City);
         }
     }
 }

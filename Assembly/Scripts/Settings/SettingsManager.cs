@@ -23,6 +23,7 @@ namespace Settings
         public static HumanCustomSettings HumanCustomSettings;
         public static InGameCharacterSettings InGameCharacterSettings;
         public static MapEditorSettings MapEditorSettings;
+        public static SoundSettings SoundSettings;
 
         public static void Init()
         {
@@ -41,6 +42,7 @@ namespace Settings
             HumanCustomSettings = new HumanCustomSettings();
             InGameCharacterSettings = new InGameCharacterSettings();
             MapEditorSettings = new MapEditorSettings();
+            SoundSettings = new SoundSettings();
         }
     }
 }

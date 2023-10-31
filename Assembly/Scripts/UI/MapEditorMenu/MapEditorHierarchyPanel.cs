@@ -15,13 +15,13 @@ namespace UI
 {
     class MapEditorHierarchyPanel: HeadedPanel
     {
-        protected override float Width => 250f;
-        protected override float Height => 1000f;
+        protected override float Width => 260f;
+        protected override float Height => 995f;
         protected override float TopBarHeight => 0f;
         protected override float BottomBarHeight => 0f;
         protected override float VerticalSpacing => 10f;
-        protected override int HorizontalPadding => 10;
-        protected override int VerticalPadding => 0;
+        protected override int HorizontalPadding => 20;
+        protected override int VerticalPadding => 10;
         private List<GameObject> _items = new List<GameObject>();
         private Dictionary<int, GameObject> _idToItem = new Dictionary<int, GameObject>();
         private Dictionary<int, int> _idToIndex = new Dictionary<int, int>();
@@ -76,7 +76,7 @@ namespace UI
             string search = _searchSetting.Value.ToLower();
             foreach (MapObject obj in MapLoader.IdToMapObject.Values)
             {
-                if (search == "" || obj.ScriptObject.Name.ToLower().Contains(search))
+                if (search == "" || obj.ScriptObject.Name.ToLower().Contains(search) || obj.ScriptObject.Id.ToString() == search)
                     objs.Add(obj);
             }
             int objectCount = objs.Count;

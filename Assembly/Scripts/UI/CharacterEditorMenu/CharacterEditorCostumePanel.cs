@@ -18,8 +18,8 @@ namespace UI
         protected override float Width => 380f;
         protected override float Height => 950f;
         protected override float VerticalSpacing => 20f;
-        protected override int HorizontalPadding => 20;
-        protected override int VerticalPadding => 20;
+        protected override int HorizontalPadding => 25;
+        protected override int VerticalPadding => 25;
         private CharacterEditorMenu _menu;
 
         public override void Setup(BasePanel parent = null)
@@ -30,8 +30,8 @@ namespace UI
             HumanCustomSettings settings = SettingsManager.HumanCustomSettings;
             string cat = "CharacterEditor";
             string sub = "Costume";
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("LoadPreset"), onClick: () => OnButtonClick("LoadPreset"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocale(cat, sub, "SaveQuit"), onClick: () => OnButtonClick("SaveQuit"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("LoadPreset"), onClick: () => OnButtonClick("LoadPreset"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocale(cat, sub, "SaveQuit"), onClick: () => OnButtonClick("SaveQuit"));
             HumanCustomSet set = (HumanCustomSet)settings.CustomSets.GetSelectedSet();
             float dropdownWidth = 170f;
             ElementFactory.CreateDropdownSetting(SinglePanel, style, settings.CustomSets.GetSelectedSetIndex(),

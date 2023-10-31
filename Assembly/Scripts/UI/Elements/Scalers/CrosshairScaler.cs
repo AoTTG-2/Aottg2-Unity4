@@ -18,7 +18,7 @@ namespace UI
             float textScale = SettingsManager.UISettings.CrosshairTextScale.Value;
             if (textScale > 1f)
             {
-                fontSize = (int)(16 * textScale);
+                // fontSize = (int)(16 * textScale);
             }
             textScale = textScale / mainScale;
             transform.Find("DefaultLabel").GetComponent<Text>().fontSize = fontSize;

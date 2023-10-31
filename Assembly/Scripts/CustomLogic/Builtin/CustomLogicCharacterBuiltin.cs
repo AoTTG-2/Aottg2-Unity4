@@ -36,14 +36,28 @@ namespace CustomLogic
             else if (name == "PlayAnimation")
             {
                 string anim = (string)parameters[0];
+                float fade = 0.1f;
+                if (parameters.Count > 1)
+                    fade = (float)parameters[1];
                 if (Character.IsMine() && !Character.Dead)
-                    Character.CrossFadeIfNotPlaying(anim, 0.1f);
+                    Character.CrossFadeIfNotPlaying(anim, fade);
+            }
+            else if (name == "GetAnimationLength")
+            {
+                string anim = (string)parameters[0];
+                return Character.Cache.Animation[anim].length;
             }
             else if (name == "PlaySound")
             {
                 string sound = (string)parameters[0];
-                if (Character.IsMine() && !Character.Dead)
+                if (Character.IsMine() && !Character.Dead && !Character.IsPlayingSound(sound))
                     Character.PlaySound(sound);
+            }
+            else if (name == "StopSound")
+            {
+                string sound = (string)parameters[0];
+                if (Character.IsMine() && !Character.Dead && Character.IsPlayingSound(sound))
+                    Character.StopSound(sound);
             }
             else if (name == "LookAt")
             {

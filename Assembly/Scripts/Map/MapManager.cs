@@ -36,7 +36,7 @@ namespace Map
             return defaultPosition;
         }
 
-        public static List<Vector3> GetRandomTagPositions(string tag, Vector3 defaultPosition, int count)
+        public static List<Vector3> GetRandomTagPositions(string tag, Vector3 avoidPosition, float avoidRadius, Vector3 defaultPosition, int count)
         {
             List<Vector3> allPositions = new List<Vector3>();
             List<Vector3> finalPositions = new List<Vector3>();
@@ -48,12 +48,20 @@ namespace Map
             else
                 allPositions.Add(defaultPosition);
             List<Vector3> currentPositions = new List<Vector3>(allPositions);
+            int avoids = 0;
             for (int i = 0; i < count; i++)
             {
                 if (currentPositions.Count <= 0)
                     currentPositions = new List<Vector3>(allPositions);
                 int index = Random.Range(0, currentPositions.Count);
-                finalPositions.Add(currentPositions[index]);
+                var position = currentPositions[index];
+                if (avoidRadius <= 0f || Vector3.Distance(position, avoidPosition) > avoidRadius || avoids > 100)
+                    finalPositions.Add(currentPositions[index]);
+                else
+                {
+                    i--;
+                    avoids++;
+                }
                 currentPositions.RemoveAt(index);
             }
             return finalPositions;

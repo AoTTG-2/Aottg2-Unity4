@@ -26,8 +26,8 @@ namespace UI
             float elementWidth = 200f;
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle labelStyle = new ElementStyle(fontSize: 20, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
             ElementFactory.CreateDefaultLabel(SinglePanel, labelStyle, string.Empty);
             ElementFactory.CreateInputSetting(SinglePanel, labelStyle, _enteredPassword, string.Empty,
                 elementWidth: elementWidth);

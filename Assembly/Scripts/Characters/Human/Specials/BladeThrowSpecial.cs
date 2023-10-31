@@ -1,4 +1,5 @@
 ﻿using Projectiles;
+using Settings;
 using System.Collections;
 using UnityEngine;
 
@@ -28,7 +29,10 @@ namespace Characters
             if (_needActivate && _activeTimeLeft < 0.4f)
             {
                 _needActivate = false;
-                _human.PlaySound(HumanSounds.BladeSwing);
+                if (SettingsManager.SoundSettings.OldBladeEffect.Value)
+                    _human.PlaySound(HumanSounds.OldBladeSwing);
+                else
+                    _human.PlaySound(HumanSounds.BladeSwing4);
                 _human.Setup._part_blade_l.SetActive(false);
                 _human.Setup._part_blade_r.SetActive(false);
                 ((BladeWeapon)_human.Weapon).CurrentDurability = 0f;

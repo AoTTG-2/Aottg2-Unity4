@@ -10,8 +10,8 @@ namespace UI
     class ColorPickPopup: PromptPopup
     {
         protected override string Title => UIManager.GetLocale("SettingsPopup", "ColorPickPopup", "Title");
-        protected override float Width => 450f;
-        protected override float Height => 450f;
+        protected override float Width => 440f;
+        protected override float Height => 440f;
         protected override float VerticalSpacing => 20f;
         protected override TextAnchor PanelAlignment => TextAnchor.UpperCenter;
         private float PreviewWidth = 90f;
@@ -30,8 +30,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             GameObject preview = ElementFactory.InstantiateAndBind(SinglePanel, "ColorPreview");
             preview.GetComponent<LayoutElement>().preferredWidth = PreviewWidth;
             preview.GetComponent<LayoutElement>().preferredHeight = PreviewHeight;

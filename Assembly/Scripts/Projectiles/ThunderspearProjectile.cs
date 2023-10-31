@@ -72,10 +72,10 @@ namespace Projectiles
                 float effectRadius = _radius * 4f;
                 if (SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value)
                     effectRadius = _radius * 2f;
-                EffectSpawner.Spawn(EffectPrefabs.ThunderspearExplode, transform.position, transform.rotation, effectRadius, true, new object[] { _color });
+                bool killedPlayer = KillPlayersInRadius(_radius);
+                bool killedTitan = KillTitansInRadius(_radius);
+                EffectSpawner.Spawn(EffectPrefabs.ThunderspearExplode, transform.position, transform.rotation, effectRadius, true, new object[] { _color, killedPlayer || killedTitan });
                 StunMyHuman();
-                KillPlayersInRadius(_radius);
-                KillTitansInRadius(_radius);
                 DestroySelf();
             }
         }
@@ -100,10 +100,11 @@ namespace Projectiles
             }
         }
 
-        void KillTitansInRadius(float radius)
+        bool KillTitansInRadius(float radius)
         {
             var position = transform.position;
             var colliders = Physics.OverlapSphere(position, radius, PhysicsLayer.GetMask(PhysicsLayer.Hurtbox));
+            bool killedTitan = false;
             foreach (var collider in colliders)
             {
                 var titan = collider.transform.root.gameObject.GetComponent<BaseTitan>();
@@ -111,7 +112,7 @@ namespace Projectiles
                 if (handler != null)
                 {
                     handler.GetHit(_owner, "Thunderspear", 100, "Thunderspear");
-                    return;
+                    continue;
                 }
                 if (titan != null && titan != _owner && !TeamInfo.SameTeam(titan, _team) && !titan.Dead)
                 {
@@ -126,15 +127,18 @@ namespace Projectiles
                             ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(titan.BaseTitanCache.Neck.position, damage);
                             titan.GetHit(_owner, damage, "Thunderspear", collider.name);
                         }
+                        killedTitan = true;
                     }
                 }
             }
+            return killedTitan;
         }
 
-        void KillPlayersInRadius(float radius)
+        bool KillPlayersInRadius(float radius)
         {
             var gameManager = (InGameManager)SceneLoader.CurrentGameManager;
             var position = transform.position;
+            bool killedHuman = false;
             foreach (Human human in gameManager.Humans)
             {
                 if (human == null || human.Dead)
@@ -150,8 +154,10 @@ namespace Projectiles
                         ((InGameMenu)UIManager.CurrentMenu).ShowKillScore(damage);
                         ((InGameCamera)SceneLoader.CurrentCamera).TakeSnapshot(human.Cache.Transform.position, damage);
                     }
+                    killedHuman = true;
                 }
             }
+            return killedHuman;
         }
 
         int CalculateDamage()

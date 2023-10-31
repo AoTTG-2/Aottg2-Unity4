@@ -4,7 +4,7 @@ class Main
     MaxTitans = 15;
     TitanSpawnEvery = 3.0;
     StartTimeLimit = 45.0;
-    TitanAddTime = 3.0;
+    TitanAddTime = 6.0;
     _CrankedTimeDangerZone = 10.0;
     _hasSpawned = false;
     _spawnTimeLeft = 0.0;

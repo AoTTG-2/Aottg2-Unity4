@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -13,6 +14,7 @@ namespace UI
         {
             base.Setup(parent);
             GameObject dim = ElementFactory.InstantiateAndBind(transform, "BackgroundDim");
+            dim.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.3f);
             dim.AddComponent<IgnoreScaler>();
             dim.transform.SetSiblingIndex(0);
             _staticTransforms.Add(dim.transform);

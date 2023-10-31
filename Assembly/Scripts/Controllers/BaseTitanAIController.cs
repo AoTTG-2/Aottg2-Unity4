@@ -16,7 +16,7 @@ namespace Controllers
         public float CloseAttackRangeMax;
         public float FarAttackRange;
         public float FocusRange;
-        public float ReactionTime;
+        public float FocusTime;
         public float AttackWaitMin;
         public float AttackWaitMax;
         public float ChaseAngleTimeMin;
@@ -37,7 +37,7 @@ namespace Controllers
         public Dictionary<string, List<Vector3>> AttackMinRanges = new Dictionary<string, List<Vector3>>();
         public Dictionary<string, List<Vector3>> AttackMaxRanges = new Dictionary<string, List<Vector3>>();
         protected float _stateTimeLeft;
-        protected float _reactionTimeLeft;
+        protected float _focusTimeLeft;
         protected float _attackRange;
         protected BaseCharacter _enemy;
         protected AICharacterDetection _detection;
@@ -86,7 +86,7 @@ namespace Controllers
             CloseAttackRangeMax = data["CloseAttackRangeMax"].AsFloat;
             FarAttackRange = data["FarAttackRange"].AsFloat;
             FocusRange = data["FocusRange"].AsFloat;
-            ReactionTime = data["ReactionTime"].AsFloat;
+            FocusTime = data["FocusTime"].AsFloat;
             AttackWaitMin = data["AttackWaitMin"].AsFloat;
             AttackWaitMax = data["AttackWaitMax"].AsFloat;
             ChaseAngleTimeMin = data["ChaseAngleTimeMin"].AsFloat;
@@ -128,13 +128,12 @@ namespace Controllers
         {
             _enemy = enemy;
             if (focusTime == 0f)
-                focusTime = ReactionTime;
-            _reactionTimeLeft = focusTime;
+                focusTime = FocusTime;
         }
 
         protected override void Update()
         {
-            _reactionTimeLeft -= Time.deltaTime;
+            _focusTimeLeft -= Time.deltaTime;
             _stateTimeLeft -= Time.deltaTime;
             if (_titan.Dead)
                 return;
@@ -152,19 +151,17 @@ namespace Controllers
                 if (_enemy.Dead)
                     _enemy = null;
             }
-            if (_reactionTimeLeft <= 0f)
+            if (_focusTimeLeft <= 0f || _enemy == null)
             {
                 var enemy = FindNearestEnemy();
                 if (enemy != null)
-                {
                     _enemy = enemy;
-                }
                 else if (_enemy != null)
                 {
                     if (Vector3.Distance(_titan.Cache.Transform.position, _enemy.Cache.Transform.position) > FocusRange)
                         _enemy = null;
                 }
-                _reactionTimeLeft = ReactionTime;
+                _focusTimeLeft = FocusTime;
             }
             _titan.TargetEnemy = _enemy;
             if (_moveToActive && _moveToIgnoreEnemies)

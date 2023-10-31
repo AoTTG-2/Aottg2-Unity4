@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    class MultiplayerMapPopup: MainMenuPopup
+    class MultiplayerMapPopup: BasePopup
     {
         protected override string ThemePanel => "MultiplayerMapPopup";
         protected override int HorizontalPadding => 0;
@@ -20,6 +20,7 @@ namespace UI
         protected override float Height => 560f;
         protected MultiplayerSettingsPopup _multiplayerSettingsPopup;
         protected MultiplayerLanPopup _lanPopup;
+        protected override bool UseSound => true;
 
         public override void Setup(BasePanel parent = null)
         {
@@ -34,11 +35,11 @@ namespace UI
             }
             string cat = "MainMenu";
             string sub = "MultiplayerMapPopup";
-            ElementFactory.CreateDefaultButton(BottomBar, style, "LAN",
+            ElementFactory.CreateTextButton(BottomBar, style, "LAN",
                 onClick: () => OnButtonClick("LAN"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocale(cat, sub, "ServerButton"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocale(cat, sub, "ServerButton"),
                 onClick: () => OnButtonClick("Server"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
                 onClick: () => OnButtonClick("Back"));
             map.GetComponent<Image>().color = UIManager.GetThemeColor(style.ThemePanel, "MainBody", "MapColor");
         }
@@ -81,6 +82,9 @@ namespace UI
                     break;
                 case "ButtonASIA":
                     settings.ConnectServer(MultiplayerRegion.ASIA);
+                    break;
+                case "ButtonCN":
+                    settings.ConnectServer(MultiplayerRegion.CN);
                     break;
             }
         }

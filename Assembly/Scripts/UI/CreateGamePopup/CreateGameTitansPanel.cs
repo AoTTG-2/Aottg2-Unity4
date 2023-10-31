@@ -22,7 +22,7 @@ namespace UI
             ElementStyle style = new ElementStyle(titleWidth: 240f, themePanel: ThemePanel);
             float inputWidth = 120f;
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, settings.TitanSpawnEnabled, UIManager.GetLocale(cat, sub, "SpawnEnabled"),
-                tooltip: "Spawn rates must add up to 100.");
+                tooltip: UIManager.GetLocale(cat, sub, "SpawnEnabledTooltip"));
             ElementFactory.CreateInputSetting(DoublePanelLeft, style, settings.TitanSpawnNormal, UIManager.GetLocale(cat, sub, "Normal"), elementWidth: inputWidth);
             ElementFactory.CreateInputSetting(DoublePanelLeft, style, settings.TitanSpawnAbnormal, UIManager.GetLocale(cat, sub, "Abnormal"), elementWidth: inputWidth);
             ElementFactory.CreateInputSetting(DoublePanelLeft, style, settings.TitanSpawnJumper, UIManager.GetLocale(cat, sub, "Jumper"), elementWidth: inputWidth);
@@ -39,6 +39,9 @@ namespace UI
             CreateHorizontalDivider(DoublePanelRight);
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.TitanArmorEnabled, UIManager.GetLocale(cat, sub, "ArmorEnabled"));
             ElementFactory.CreateInputSetting(DoublePanelRight, style, settings.TitanArmor, UIManager.GetLocale(cat, sub, "Armor"), elementWidth: inputWidth);
+            CreateHorizontalDivider(DoublePanelRight);
+            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.TitanStandardModels, UIManager.GetLocale(cat, sub, "StandardModels"),
+                tooltip: UIManager.GetLocale(cat, sub, "StandardModelsTooltip"));
         }
     }
 }

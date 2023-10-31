@@ -49,11 +49,52 @@ namespace GameManagers
         {
             MapManager.OnLoadCachedMapRPC(info);
         }
-        
+
+        [RPC]
+        public void LoadSkyboxRPC(string urls, PhotonMessageInfo info)
+        {
+            var manager = (InGameManager)SceneLoader.CurrentGameManager;
+            string[] urlArr = urls.Split(',');
+            if (info.sender == PhotonNetwork.masterClient)
+                manager.StartCoroutine(manager.OnLoadSkyboxRPC(urlArr));
+        }
+
+        [RPC]
+        public void LoadLevelSkinRPC(string indices, string urls1, string urls2, PhotonMessageInfo info)
+        {
+            var manager = (InGameManager)SceneLoader.CurrentGameManager;
+            if (info.sender == PhotonNetwork.masterClient)
+                manager.StartCoroutine(manager.OnLoadLevelSkinRPC(indices, urls1, urls2));
+        }
+
         [RPC]
         public void RestartGameRPC(PhotonMessageInfo info)
         {
             InGameManager.OnRestartGameRPC(info);
+        }
+
+        [RPC]
+        public void PreRestartGameRPC(PhotonMessageInfo info)
+        {
+            InGameManager.OnPreRestartGameRPC(info);
+        }
+
+        [RPC]
+        public void PauseGameRPC(PhotonMessageInfo info)
+        {
+            ((InGameManager)SceneLoader.CurrentGameManager).OnPauseGameRPC(info);
+        }
+
+        [RPC]
+        public void StartUnpauseGameRPC(PhotonMessageInfo info)
+        {
+            ((InGameManager)SceneLoader.CurrentGameManager).OnStartUnpauseGameRPC(info);
+        }
+
+        [RPC]
+        public void UnpauseGameRPC(PhotonMessageInfo info)
+        {
+            ((InGameManager)SceneLoader.CurrentGameManager).OnUnpauseGameRPC(info);
         }
 
         [RPC]
@@ -135,7 +176,7 @@ namespace GameManagers
         public void NotifyPlayerSpawnRPC(int viewId, PhotonMessageInfo info)
         {
             var view = PhotonView.Find(viewId);
-            if (view != null && view.owner == info.sender  && CustomLogicManager.Evaluator != null)
+            if (view != null && view.owner == info.sender && CustomLogicManager.Evaluator != null)
             {
                 var character = view.GetComponent<BaseCharacter>();
                 CustomLogicManager.Evaluator.OnPlayerSpawn(info.sender, character);

@@ -33,6 +33,8 @@ namespace Controllers
 
         protected virtual void Update()
         {
+            if (_gameManager.GlobalPause)
+                return;
             bool inMenu = InGameMenu.InMenu() || ChatManager.IsChatActive() || CustomLogicManager.Cutscene;
             UpdateMovementInput(inMenu);
             UpdateMenuInput(inMenu);

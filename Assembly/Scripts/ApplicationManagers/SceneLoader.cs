@@ -9,6 +9,8 @@ using Cameras;
 using Map;
 using Projectiles;
 using Characters;
+using Settings;
+using CustomSkins;
 
 namespace ApplicationManagers
 {
@@ -30,6 +32,8 @@ namespace ApplicationManagers
 
         public static void LoadScene(SceneName sceneName)
         {
+            SkyboxCustomSkinLoader.SkyboxMaterial = null;
+            Time.timeScale = 1f;
             EventManager.InvokePreLoadScene(sceneName);
             SceneName = sceneName;
             ClothFactory.DisposeAllObjects();

@@ -267,6 +267,10 @@
     <Compile Include="Scripts\Cameras\CharacterEditorCamera.cs" />
     <Compile Include="Scripts\Cameras\BaseCamera.cs" />
     <Compile Include="Scripts\Cameras\InGameCamera.cs" />
+    <Compile Include="Scripts\Characters\Human\Horse\HorseAnimations.cs" />
+    <Compile Include="Scripts\Characters\Human\Horse\HorseComponentCache.cs" />
+    <Compile Include="Scripts\Characters\Human\HumanMovementSync.cs" />
+    <Compile Include="Scripts\Characters\Human\Horse\HorseSounds.cs" />
     <Compile Include="Scripts\Characters\Human\HumanSpecials.cs" />
     <Compile Include="Scripts\Characters\Human\Specials\BaseAttackSpecial.cs" />
     <Compile Include="Scripts\Characters\Human\Specials\BaseEmoteSpecial.cs" />
@@ -320,6 +324,9 @@
     <Compile Include="Scripts\CustomLogic\Builtin\CustomLogicCharacterBuiltin.cs" />
     <Compile Include="Scripts\Characters\CharacterData.cs" />
     <Compile Include="Scripts\CustomLogic\Component\CustomLogicPhotonSync.cs" />
+    <Compile Include="Scripts\CustomSkins\CustomSkinLoaders\CityCustomSkinLoader.cs" />
+    <Compile Include="Scripts\CustomSkins\CustomSkinLoaders\ForestCustomSkinLoader.cs" />
+    <Compile Include="Scripts\CustomSkins\CustomSkinLoaders\LevelCustomSkinLoader.cs" />
     <Compile Include="Scripts\Effects\LineRendererEffect.cs" />
     <Compile Include="Scripts\MapEditor\Commands\AddObjectCommand.cs" />
     <Compile Include="Scripts\MapEditor\Commands\DeleteObjectCommand.cs" />
@@ -346,7 +353,7 @@
     <Compile Include="Scripts\Characters\BaseUseable\SimpleUseable.cs" />
     <Compile Include="Scripts\Characters\Human\HookUseable.cs" />
     <Compile Include="Scripts\Characters\Human\Hook.cs" />
-    <Compile Include="Scripts\Characters\Human\Horse.cs" />
+    <Compile Include="Scripts\Characters\Human\Horse\Horse.cs" />
     <Compile Include="Scripts\Characters\Human\HumanSounds.cs" />
     <Compile Include="Scripts\Characters\Human\HumanAnimations.cs" />
     <Compile Include="Scripts\Characters\Human\HumanDummy.cs" />
@@ -381,6 +388,9 @@
     <Compile Include="Scripts\Projectiles\FlareProjectile.cs" />
     <Compile Include="Scripts\Projectiles\CannonBallProjectile.cs" />
     <Compile Include="Scripts\Projectiles\ThunderspearProjectile.cs" />
+    <Compile Include="Scripts\Settings\CustomSkins\CityCustomSkinSet.cs" />
+    <Compile Include="Scripts\Settings\CustomSkins\ForestCustomSkinSet.cs" />
+    <Compile Include="Scripts\Settings\SoundSettings.cs" />
     <Compile Include="Scripts\Settings\InGame\HumanCustomSet.cs" />
     <Compile Include="Scripts\Legacy\Empty\AHSSShotGunCollider.cs" />
     <Compile Include="Scripts\Legacy\Empty\BloodSplatterScript.cs" />
@@ -499,6 +509,7 @@
     <Compile Include="Scripts\UI\BaseMenu\Vector3Popup.cs" />
     <Compile Include="Scripts\UI\BaseMenu\SimplePanel.cs" />
     <Compile Include="Scripts\UI\BaseMenu\NewImportPopup.cs" />
+    <Compile Include="Scripts\UI\Elements\Scalers\KillFeedScaler.cs" />
     <Compile Include="Scripts\UI\Elements\Scalers\MinimapScaler.cs" />
     <Compile Include="Scripts\UI\Elements\Scalers\StylebarScaler.cs" />
     <Compile Include="Scripts\UI\Elements\Scalers\HUDScaler.cs" />
@@ -507,6 +518,7 @@
     <Compile Include="Scripts\UI\Elements\SettingElements\DropdownSelectElement.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CharacterInfoPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CharacterInfoHandler.cs" />
+    <Compile Include="Scripts\UI\InGameMenu\GlobalPauseGamePopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\StylebarHandler.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CustomPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\StylebarPopup.cs" />
@@ -527,8 +539,8 @@
     <Compile Include="Scripts\UI\MainMenu\AboutChangelogPanel.cs" />
     <Compile Include="Scripts\UI\MainMenu\AboutPopup.cs" />
     <Compile Include="Scripts\UI\MainMenu\AboutHelpPanel.cs" />
-    <Compile Include="Scripts\UI\MainMenu\MainMenuPopup.cs" />
-    <Compile Include="Scripts\UI\MainMenu\MainBackgroundPanel.cs" />
+    <Compile Include="Scripts\UI\MainMenu\MainMenuBackgroundPanel.cs" />
+    <Compile Include="Scripts\UI\LoadingMenu\LoadingBackgroundPanel.cs" />
     <Compile Include="Scripts\UI\MainMenu\ProfileIconPickPopup.cs" />
     <Compile Include="Scripts\UI\MainMenu\TipPanel.cs" />
     <Compile Include="Scripts\UI\MainMenu\MainBackgroundMenu.cs" />
@@ -554,6 +566,10 @@
     <Compile Include="Scripts\UI\MapEditorMenu\MapEditorSelectComponentMenu.cs" />
     <Compile Include="Scripts\UI\GalleryMenu\GalleryMainPanel.cs" />
     <Compile Include="Scripts\UI\GalleryMenu\GalleryMenu.cs" />
+    <Compile Include="Scripts\UI\SettingsPopup\SettingsSkinsForestPanel.cs" />
+    <Compile Include="Scripts\UI\SettingsPopup\SettingsSkinsCityPanel.cs" />
+    <Compile Include="Scripts\UI\SettingsPopup\SettingsSoundPanel.cs" />
+    <Compile Include="Scripts\UI\LoadingMenu\LoadingMenu.cs" />
     <Compile Include="Scripts\UI\SnapshotViewerMenu\SnapshotViewerMainPanel.cs" />
     <Compile Include="Scripts\UI\SnapshotViewerMenu\SnapshotViewerMenu.cs" />
     <Compile Include="Scripts\Utility\FolderPaths.cs" />
@@ -670,7 +686,7 @@
     <Compile Include="Scripts\UI\InGameMenu\EmoteEmojiPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\EmoteTextPopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\InGameMenu.cs" />
-    <Compile Include="Scripts\UI\InGameMenu\LoadingProgressPanel.cs" />
+    <Compile Include="Scripts\UI\LoadingMenu\LoadingProgressPanel.cs" />
     <Compile Include="Scripts\UI\InGameMenu\PausePopup.cs" />
     <Compile Include="Scripts\UI\InGameMenu\CrosshairHandler.cs" />
     <Compile Include="Scripts\UI\InGameMenu\WheelPopup.cs" />

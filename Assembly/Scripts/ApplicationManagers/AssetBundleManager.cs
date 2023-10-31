@@ -14,6 +14,7 @@ namespace ApplicationManagers
     public class AssetBundleManager : MonoBehaviour
     {
         public static AssetBundle MainAssetBundle;
+        public static AssetBundle MusicAssetBundle;
         public static AssetBundleStatus Status = AssetBundleStatus.Loading;
         public static bool CloseFailureBox = false;
         private static AssetBundleManager _instance;
@@ -21,7 +22,8 @@ namespace ApplicationManagers
 
         // consts
         private static readonly string RootDataPath = Application.dataPath;
-        private static readonly string AssetBundlePath = RootDataPath + "/MainAssets.unity3d";
+        private static readonly string MainAssetBundlePath = RootDataPath + "/MainAssets.unity3d";
+        private static readonly string MusicAssetBundlePath = RootDataPath + "/MusicAssets.unity3d";
 
         public static void Init()
         {
@@ -47,6 +49,17 @@ namespace ApplicationManagers
                 return _cache[name];
             }
             return MainAssetBundle.Load(name);
+        }
+
+        public static Object LoadMusic(string name, bool cached = false)
+        {
+            if (cached)
+            {
+                if (!_cache.ContainsKey(name))
+                    _cache.Add(name, MusicAssetBundle.Load(name));
+                return _cache[name];
+            }
+            return MusicAssetBundle.Load(name);
         }
 
         public static Object TryLoadAsset(string name, bool cached = false)
@@ -95,19 +108,24 @@ namespace ApplicationManagers
             Status = AssetBundleStatus.Loading;
             while (!Caching.ready)
                 yield return null;
-            MainAssetBundle = AssetBundle.CreateFromFile(AssetBundlePath);
-            if (MainAssetBundle == null)
+            MainAssetBundle = AssetBundle.CreateFromFile(MainAssetBundlePath);
+            if (MainAssetBundle != null)
+                MusicAssetBundle = AssetBundle.CreateFromFile(MusicAssetBundlePath);
+            if (MainAssetBundle == null  || MusicAssetBundle == null)
             {
                 Debug.Log("Failed to load asset bundle using CreateFromFile, trying CreateFromMemory");
-                var request = TryCreateRequest();
-                if (request == null)
+                var request1 = TryCreateRequest(MainAssetBundlePath);
+                var request2 = TryCreateRequest(MusicAssetBundlePath);
+                if (request1 == null || request2 == null)
                 {
                     Status = AssetBundleStatus.Failed;
                     yield break;
                 }
-                yield return request;
-                MainAssetBundle = request.assetBundle;
-                if (MainAssetBundle == null)
+                yield return request1;
+                yield return request2;
+                MainAssetBundle = request1.assetBundle;
+                MusicAssetBundle = request2.assetBundle;
+                if (MainAssetBundle == null || MusicAssetBundle == null)
                 {
                     Debug.Log("Failed to load asset bundle using CreateFromMemory");
                     Status = AssetBundleStatus.Failed;
@@ -119,11 +137,11 @@ namespace ApplicationManagers
                 Status = AssetBundleStatus.Ready;
         }
 
-        private AssetBundleCreateRequest TryCreateRequest()
+        private AssetBundleCreateRequest TryCreateRequest(string path)
         {
             try
             {
-                return AssetBundle.CreateFromMemory(File.ReadAllBytes(AssetBundlePath));
+                return AssetBundle.CreateFromMemory(File.ReadAllBytes(path));
             }
             catch (System.Exception e)
             {

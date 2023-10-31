@@ -14,8 +14,7 @@ namespace CustomSkins
 
         public override IEnumerator LoadSkinsFromRPC(object[] data)
         {
-            SkyboxMaterial = new Material(Shader.Find("RenderFX/Skybox"));
-            SkyboxMaterial.CopyPropertiesFromMaterial(SceneLoader.CurrentCamera.Skybox.material);
+            SkyboxMaterial = AssetBundleManager.InstantiateAsset<Material>("EmptySkybox", true);
             foreach (int partId in GetCustomSkinPartIds(typeof(SkyboxCustomSkinPartId)))
             {
                 BaseCustomSkinPart part = GetCustomSkinPart(partId);

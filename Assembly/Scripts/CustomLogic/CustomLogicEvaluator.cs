@@ -169,6 +169,13 @@ namespace CustomLogic
                 EvaluateMethod(instance, "OnPlayerSpawn", new List<object>() { playerBuiltin, characterBuiltin });
         }
 
+        public void OnCharacterSpawn(BaseCharacter character)
+        {
+            var builtin = GetCharacterBuiltin(character);
+            foreach (var instance in _callback)
+                EvaluateMethod(instance, "OnCharacterSpawn", new List<object>() { builtin });
+        }
+
         public void OnCharacterDie(BaseCharacter victim, BaseCharacter killer, string killerName)
         {
             var victimBuiltin = GetCharacterBuiltin(victim);

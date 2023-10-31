@@ -53,6 +53,8 @@ namespace UI
             }
             string total = ((int)_points).ToString();
             string hits = _hits.ToString() + ((_hits <= 1) ? "Hit" : "Hits") + "\n";
+            if (_chainKillRank > 0)
+                hits += "x" + Multipliers[_chainKillRank].ToString() + "!";
             _styleBarPopup.SetScore(total, hits);
             UpdateLabels();
             _styleBarPopup.Show();

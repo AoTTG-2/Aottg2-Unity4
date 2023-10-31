@@ -34,7 +34,7 @@ namespace UI
             base.Setup();
             RebuildPanels();
             _topPanel = ElementFactory.CreateHeadedPanel<MapEditorTopPanel>(transform, true);
-            ElementFactory.SetAnchor(_topPanel.gameObject, TextAnchor.UpperCenter, TextAnchor.UpperCenter, new Vector2(0f, 0f));
+            ElementFactory.SetAnchor(_topPanel.gameObject, TextAnchor.UpperCenter, TextAnchor.UpperCenter, new Vector2(-5f, 5f));
             DragImage = ElementFactory.InstantiateAndBind(transform, "MapEditorDragImage").GetComponent<Image>();
             ElementFactory.SetAnchor(DragImage.gameObject, TextAnchor.LowerLeft, TextAnchor.LowerLeft, Vector2.zero);
             DragImage.gameObject.SetActive(false);
@@ -86,7 +86,7 @@ namespace UI
         {
             HideInspector();
             InspectPanel = ElementFactory.CreateHeadedPanel<MapEditorInspectPanel>(transform);
-            ElementFactory.SetAnchor(InspectPanel.gameObject, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(-10f, -70f));
+            ElementFactory.SetAnchor(InspectPanel.gameObject, TextAnchor.UpperRight, TextAnchor.UpperRight, new Vector2(-5f, -65f));
             InspectPanel.Show(obj);
         }
 
@@ -107,7 +107,7 @@ namespace UI
             if (HierarchyPanel != null)
                 Destroy(HierarchyPanel.gameObject);
             HierarchyPanel = ElementFactory.CreateHeadedPanel<MapEditorHierarchyPanel>(transform);
-            ElementFactory.SetAnchor(HierarchyPanel.gameObject, TextAnchor.UpperLeft, TextAnchor.UpperLeft, new Vector2(10f, -70f));
+            ElementFactory.SetAnchor(HierarchyPanel.gameObject, TextAnchor.UpperLeft, TextAnchor.UpperLeft, new Vector2(5f, -65f));
             HierarchyPanel.Show();
         }
 

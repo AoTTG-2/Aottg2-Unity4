@@ -14,7 +14,7 @@ namespace UI
     class SettingsPopup: BasePopup
     {
         protected override string Title => string.Empty;
-        protected override float Width => 1010f;
+        protected override float Width => 1000f;
         protected override float Height => 630f;
         protected override bool CategoryPanel => true;
         protected override bool CategoryButtons => true;
@@ -22,6 +22,7 @@ namespace UI
         public string LocaleCategory = "SettingsPopup";
         private List<BaseSettingsContainer> _ignoreDefaultButtonSettings = new List<BaseSettingsContainer>();
         private List<SaveableSettingsContainer> _saveableSettings = new List<SaveableSettingsContainer>();
+        protected override bool UseSound => true;
 
         public override void Setup(BasePanel parent = null)
         {
@@ -33,7 +34,7 @@ namespace UI
         protected override void SetupTopButtons()
         {
             ElementStyle style = new ElementStyle(fontSize: 28, themePanel: ThemePanel);
-            foreach (string buttonName in new string[] { "General", "Graphics", "UI", "Keybinds", "Skins", "Ability" })
+            foreach (string buttonName in new string[] { "General", "Sound", "Graphics", "UI", "Keybinds", "Skins", "Ability" })
             {
                 GameObject obj = ElementFactory.CreateCategoryButton(TopBar, style, UIManager.GetLocale(LocaleCategory, "Top", buttonName + "Button"),
                     onClick: () => SetCategoryPanel(buttonName));
@@ -45,6 +46,7 @@ namespace UI
         protected override void RegisterCategoryPanels()
         {
             _categoryPanelTypes.Add("General", typeof(SettingsGeneralPanel));
+            _categoryPanelTypes.Add("Sound", typeof(SettingsSoundPanel));
             _categoryPanelTypes.Add("Graphics", typeof(SettingsGraphicsPanel));
             _categoryPanelTypes.Add("UI", typeof(SettingsUIPanel));
             _categoryPanelTypes.Add("Keybinds", typeof(SettingsKeybindsPanel));
@@ -55,6 +57,7 @@ namespace UI
         private void SetupSettingsList()
         {
             _saveableSettings.Add(SettingsManager.GeneralSettings);
+            _saveableSettings.Add(SettingsManager.SoundSettings);
             _saveableSettings.Add(SettingsManager.GraphicsSettings);
             _saveableSettings.Add(SettingsManager.UISettings);
             _saveableSettings.Add(SettingsManager.InputSettings);
@@ -68,7 +71,7 @@ namespace UI
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             foreach (string buttonName in new string[] { "Default", "Load", "Save", "Back" })
             {
-                GameObject obj = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
+                GameObject obj = ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
                     onClick: () => OnBottomBarButtonClick(buttonName));
             }
         }
@@ -126,8 +129,6 @@ namespace UI
                     setting.Apply();
                 
             }
-            if (IsActive && SceneLoader.SceneName == SceneName.MainMenu)
-                ((MainMenu)UIManager.CurrentMenu).PlaySound("Back");
             base.Hide();
         }
     }

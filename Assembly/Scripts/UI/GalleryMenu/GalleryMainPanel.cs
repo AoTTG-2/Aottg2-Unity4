@@ -21,8 +21,8 @@ namespace UI
         protected override float TopBarHeight => 0f;
         protected override float BottomBarHeight => 0f;
         protected override float VerticalSpacing => 0f;
-        protected override int HorizontalPadding => 35;
-        protected override int VerticalPadding => 0;
+        protected override int HorizontalPadding => 40;
+        protected override int VerticalPadding => 10;
         private GalleryMenu _menu;
         private Text _indexLabel;
         private int _index;

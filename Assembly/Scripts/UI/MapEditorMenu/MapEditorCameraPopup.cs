@@ -11,7 +11,7 @@ namespace UI
     {
         protected override string Title => "Camera";
         protected override float Width => 645f;
-        protected override float Height => 320f;
+        protected override float Height => 310f;
         protected override int VerticalPadding => 20;
         protected override float VerticalSpacing => 20f;
         protected override bool DoublePanel => true;
@@ -28,8 +28,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 100f, fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             _inputs.Add(ElementFactory.CreateInputSetting(DoublePanelLeft, style, _positionX, "Position X", elementWidth: 120f).GetComponent<InputSettingElement>());
             _inputs.Add(ElementFactory.CreateInputSetting(DoublePanelLeft, style, _positionY, "Position Y", elementWidth: 120f).GetComponent<InputSettingElement>());
             _inputs.Add(ElementFactory.CreateInputSetting(DoublePanelLeft, style, _positionZ, "Position Z", elementWidth: 120f).GetComponent<InputSettingElement>());

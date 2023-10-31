@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UI
 {
-    class SocialPopup: MainMenuPopup
+    class SocialPopup: BasePopup
     {
         protected override string Title => UIManager.GetLocaleCommon("Social");
         protected override float Width => 630f;
@@ -19,13 +19,14 @@ namespace UI
         protected override int HorizontalPadding => 35;
 
         protected override TextAnchor PanelAlignment => TextAnchor.MiddleLeft;
+        protected override bool UseSound => true;
 
 
         public override void Setup(BasePanel parent = null)
         {
             base.Setup(parent);
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
             ElementStyle mainStyle = new ElementStyle(themePanel: ThemePanel);
             if (MiscInfo.Social != null)
             {
@@ -41,7 +42,7 @@ namespace UI
             Transform group = ElementFactory.CreateHorizontalGroup(SinglePanel, 5f).transform;
             ElementFactory.CreateTooltipIcon(group, style, about, 30f, 30f);
             ElementFactory.CreateDefaultLabel(group, style, " " + title + ":");
-            ElementFactory.CreateTextButton(group, style, link,
+            ElementFactory.CreateLinkButton(group, style, link,
                 onClick: () => UIManager.CurrentMenu.ExternalLinkPopup.Show(link));
         }
 

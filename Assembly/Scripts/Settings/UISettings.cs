@@ -19,6 +19,8 @@ namespace Settings
         public FloatSetting HUDScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
         public FloatSetting MinimapScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
         public FloatSetting StylebarScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
+        public FloatSetting KillScoreScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
+        public FloatSetting KillFeedScale = new FloatSetting(1f, minValue: 0f, maxValue: 2f);
         public BoolSetting ShowCrosshairDistance = new BoolSetting(true);
         public IntSetting CrosshairStyle = new IntSetting(0);
         public IntSetting Speedometer = new IntSetting((int)SpeedometerType.Off);

@@ -22,8 +22,8 @@ namespace UI
             float elementWidth = 200f;
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle inputStyle = new ElementStyle(titleWidth: 120f, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocale(cat, sub, "Connect"), onClick: () => OnButtonClick("Connect"));
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocale(cat, sub, "Connect"), onClick: () => OnButtonClick("Connect"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
             ElementFactory.CreateInputSetting(SinglePanel, inputStyle, settings.LanIP, "IP", elementWidth: elementWidth);
             ElementFactory.CreateInputSetting(SinglePanel, inputStyle, settings.LanPort, "Port", elementWidth: elementWidth);
             ElementFactory.CreateInputSetting(SinglePanel, inputStyle, settings.LanPassword, "Password (optional)", elementWidth: elementWidth);
@@ -31,6 +31,7 @@ namespace UI
 
         protected void OnButtonClick(string name)
         {
+            SettingsManager.MultiplayerSettings.Save();
             if (name == "Connect")
                 SettingsManager.MultiplayerSettings.ConnectLAN();
             else if (name == "Back")

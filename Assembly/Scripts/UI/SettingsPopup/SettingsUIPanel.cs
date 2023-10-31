@@ -23,6 +23,8 @@ namespace UI
             ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.HUDScale, UIManager.GetLocale(cat, sub, "HUDScale"), elementWidth: 135f);
             ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.MinimapScale, UIManager.GetLocale(cat, sub, "MinimapScale"), elementWidth: 135f);
             ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.StylebarScale, UIManager.GetLocale(cat, sub, "StylebarScale"), elementWidth: 135f);
+            ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.KillScoreScale, UIManager.GetLocale(cat, sub, "KillScoreScale"), elementWidth: 135f);
+            ElementFactory.CreateSliderSetting(DoublePanelLeft, style, SettingsManager.UISettings.KillFeedScale, UIManager.GetLocale(cat, sub, "KillFeedScale"), elementWidth: 135f);
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.ShowStylebar, UIManager.GetLocale(cat, sub, "ShowStylebar"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.GameFeed, UIManager.GetLocale(cat, sub, "GameFeed"), tooltip: UIManager.GetLocale(cat, sub, "GameFeedTooltip"));
             ElementFactory.CreateToggleSetting(DoublePanelLeft, style, SettingsManager.UISettings.FeedConsole, UIManager.GetLocale(cat, sub, "FeedConsole"), tooltip: UIManager.GetLocale(cat, sub, "FeedConsoleTooltip"));

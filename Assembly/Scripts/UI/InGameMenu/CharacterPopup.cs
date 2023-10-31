@@ -12,8 +12,8 @@ namespace UI
     class CharacterPopup : BasePopup
     {
         protected override string Title => string.Empty;
-        protected override float Width => 1010f;
-        protected override float Height => 400f;
+        protected override float Width => 1000f;
+        protected override float Height => 380f;
         protected override bool CategoryPanel => true;
         protected override bool CategoryButtons => true;
         protected override string DefaultCategoryPanel => "";
@@ -65,9 +65,9 @@ namespace UI
         private void SetupBottomButtons()
         {
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocale(LocaleCategory, "Bottom", "SpectateButton"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocale(LocaleCategory, "Bottom", "SpectateButton"),
                     onClick: () => OnBottomBarButtonClick("Spectate"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Join"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Join"),
                     onClick: () => OnBottomBarButtonClick("Join"));
         }
 

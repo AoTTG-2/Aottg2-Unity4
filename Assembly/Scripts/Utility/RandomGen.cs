@@ -29,5 +29,11 @@ namespace Utility
                 v.y = 0f;
             return v.normalized;
         }
+
+        public static T ChooseRandom<T>(List<T> items)
+        {
+            int choose = Random.Range(0, items.Count);
+            return items[choose];
+        }
     }
 }

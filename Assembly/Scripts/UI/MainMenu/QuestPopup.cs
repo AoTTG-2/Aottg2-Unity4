@@ -5,7 +5,7 @@ using Settings;
 
 namespace UI
 {
-    class QuestPopup: MainMenuPopup
+    class QuestPopup: BasePopup
     {
         protected override string Title => string.Empty;
         protected override float Width => 990f;
@@ -15,6 +15,7 @@ namespace UI
         protected override string DefaultCategoryPanel => "Daily";
         public StringSetting TierSelection = new StringSetting("Bronze");
         public StringSetting CompletedSelection = new StringSetting("In Progress");
+        protected override bool UseSound => true;
 
         public override void Setup(BasePanel parent = null)
         {
@@ -64,7 +65,7 @@ namespace UI
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             foreach (string buttonName in new string[] { "Back" })
             {
-                GameObject obj = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
+                GameObject obj = ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 
                     onClick: () => OnBottomBarButtonClick(buttonName));
             }
         }

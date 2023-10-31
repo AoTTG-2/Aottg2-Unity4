@@ -45,7 +45,7 @@ namespace UI
             else
                 _backgroundLabel.color = Color.white;
             IsActive = false;
-            TimeLeft = 8f;
+            TimeLeft = 8f + AnimationTime;
             base.Show();
         }
     }

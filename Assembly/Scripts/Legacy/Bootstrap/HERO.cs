@@ -13,12 +13,12 @@ using Characters;
 
 public class HERO : Photon.MonoBehaviour
 {
-    public GameObject hookRefL1;
-    public GameObject hookRefL2;
-    public GameObject hookRefR1;
-    public GameObject hookRefR2;
-    public GameObject checkBoxLeft;
-    public GameObject checkBoxRight;
+    //public GameObject hookRefL1;
+    //public GameObject hookRefL2;
+    //public GameObject hookRefR1;
+    //public GameObject hookRefR2;
+    //public GameObject checkBoxLeft;
+    //public GameObject checkBoxRight;
 
     public void Awake()
     {

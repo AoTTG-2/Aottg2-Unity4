@@ -187,15 +187,17 @@ namespace CustomLogic
                 if (field == null)
                     return null;
                 effectName = (string)field.GetValue(null);
-                string projectileName = "RCAsset/" + (string)parameters[0];
                 Vector3 position = ((CustomLogicVector3Builtin)parameters[1]).Value;
                 Vector3 rotation = ((CustomLogicVector3Builtin)parameters[2]).Value;
                 float scale = (float)parameters[3];
                 object[] settings = null;
-                if (projectileName == EffectPrefabs.ThunderspearExplode)
+                if (effectName == EffectPrefabs.ThunderspearExplode)
                 {
                     Color color = ((CustomLogicColorBuiltin)parameters[4]).Value.ToColor();
-                    settings = new object[] { color };
+                    bool kill = false;
+                    if (parameters.Count > 5)
+                        kill = (bool)(parameters[5]);
+                    settings = new object[] { color, kill };
                 }
                 EffectSpawner.Spawn(effectName, position, Quaternion.Euler(rotation), scale, true, settings);
             }

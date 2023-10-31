@@ -34,6 +34,7 @@ namespace UI
         protected StringSetting _currentCategoryPanelName = new StringSetting(string.Empty);
         protected Dictionary<string, Type> _categoryPanelTypes = new Dictionary<string, Type>();
         protected virtual string DefaultCategoryPanel => string.Empty;
+        protected RawImage MaskBackground;
         public BasePanel Parent;
 
         protected void OnEnable()
@@ -48,6 +49,12 @@ namespace UI
         {
             Parent = parent;
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(GetWidth(), GetHeight());
+            if (transform.Find("Background") != null)
+            {
+                MaskBackground = transform.Find("Background").GetComponent<RawImage>();
+                MaskBackground.texture = UIManager.GetThemeTexture(ThemePanel, "MainBody", "BackgroundTexture");
+                MaskBackground.color = new Color(0f, 0f, 0f, 0.05f);
+            }
             if (!CategoryPanel && !HasPremadeContent)
             {
                 if (DoublePanel)
@@ -139,6 +146,8 @@ namespace UI
             _currentCategoryPanelName.Value = name;
             _currentCategoryPanel = ElementFactory.CreateEmptyPanel(transform, t, enabled: true);
             _currentCategoryPanel.SetActive(false);
+            if (MaskBackground != null)
+                MaskBackground.color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BackgroundColor");
             StartCoroutine(WaitAndEnableCategoryPanel());
             UIManager.SetLastCategory(GetType(), name);
         }
@@ -146,6 +155,8 @@ namespace UI
         private IEnumerator WaitAndEnableCategoryPanel()
         {
             yield return new WaitForEndOfFrame();
+            if (MaskBackground != null)
+                MaskBackground.color = new Color(0f, 0f, 0f, 0.05f);
             _currentCategoryPanel.SetActive(true);
         }
 
@@ -213,6 +224,7 @@ namespace UI
             if (divider)
             {
                 Transform line = panel.transform.Find("ScrollView/VerticalLine");
+                line.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "LineColor");
                 line.gameObject.AddComponent<VerticalLineScaler>();
             }
             else
@@ -236,8 +248,8 @@ namespace UI
             scrollbar.value = 1f;
             if (!scrollBar)
                 scrollbar.gameObject.SetActive(false);
-            // panel.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BackgroundColor");
-            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.05f);
+            panel.GetComponent<RawImage>().texture = UIManager.GetThemeTexture(ThemePanel, "MainBody", "BackgroundTexture");
+            panel.GetComponent<RawImage>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "BackgroundColor");
             scrollbar.colors = UIManager.GetThemeColorBlock(ThemePanel, "MainBody", "Scrollbar");
             scrollbar.GetComponent<Image>().color = UIManager.GetThemeColor(ThemePanel, "MainBody", "ScrollbarBackgroundColor");
         }
@@ -251,12 +263,12 @@ namespace UI
 
         public virtual float GetPanelWidth()
         {
-            return GetWidth() - BorderHorizontalPadding * 2f;
+            return GetWidth();
         }
 
         public virtual float GetPanelHeight()
         {
-            return GetHeight() - BorderVerticalPadding * 2f;
+            return GetHeight();
         }
 
         protected virtual float GetWidth()

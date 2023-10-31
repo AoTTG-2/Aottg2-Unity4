@@ -12,6 +12,7 @@
 output_log.txt
 Assembly-CSharp.dll
 MainAssets.unity3d
+MusicAssets.unity3d
 *.zip
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored

@@ -23,8 +23,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocale("SettingsPopup", "KeybindPopup", "Unbind"), onClick: () => OnButtonClick("Unbind"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocale("SettingsPopup", "KeybindPopup", "Unbind"), onClick: () => OnButtonClick("Unbind"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             ElementFactory.CreateDefaultLabel(SinglePanel, style, UIManager.GetLocale("SettingsPopup", "KeybindPopup", "CurrentKey") + ":").GetComponent<Text>();
             _displayLabel = ElementFactory.CreateDefaultLabel(SinglePanel, style, string.Empty).GetComponent<Text>();
             _buffer = new InputKey();

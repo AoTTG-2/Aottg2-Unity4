@@ -27,7 +27,7 @@ namespace UI
             string sub = "MutePopup";
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle style = new ElementStyle(titleWidth: 240f, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Confirm"), onClick: () => OnButtonClick("Confirm"));
             ElementFactory.CreateToggleSetting(SinglePanel, style, _muteEmote, UIManager.GetLocale(cat, sub, "MuteEmote"));
             ElementFactory.CreateToggleSetting(SinglePanel, style, _muteText, UIManager.GetLocale(cat, sub, "MuteText"));
         }

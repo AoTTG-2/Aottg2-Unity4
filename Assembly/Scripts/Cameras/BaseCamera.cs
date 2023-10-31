@@ -22,7 +22,7 @@ namespace Cameras
             Camera = gameObject.GetComponent<Camera>();
             Skybox = gameObject.AddComponent<Skybox>();
             Cache = new BaseComponentCache(gameObject);
-            AudioListener.volume = SettingsManager.GeneralSettings.Volume.Value;
+            AudioListener.volume = SettingsManager.SoundSettings.Volume.Value;
             Camera.fieldOfView = 50f;
             Camera.cullingMask &= ~(1 << PhysicsLayer.MinimapIcon);
         }

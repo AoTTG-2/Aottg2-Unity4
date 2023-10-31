@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Settings;
+using System.Collections;
 using UnityEngine;
 
 namespace Characters
@@ -26,7 +27,10 @@ namespace Characters
             {
                 _needActivate = false;
                 _human.ActivateBlades();
-                _human.PlaySound(HumanSounds.BladeSwing);
+                if (SettingsManager.SoundSettings.OldBladeEffect.Value)
+                    _human.PlaySound(HumanSounds.OldBladeSwing);
+                else
+                    _human.PlaySound(HumanSounds.BladeSwing4);
                 _human.Cache.Rigidbody.AddForce(Vector3.down * 30f, ForceMode.VelocityChange);
             }
         }

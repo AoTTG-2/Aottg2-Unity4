@@ -17,54 +17,58 @@ namespace Characters
         public string GetHandMesh(bool left)
         {
             string mesh = left ? "character_hand_l" : "character_hand_r";
-            if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
-                mesh += "_ah";
+            if (_setup.Weapon == HumanWeapon.Blade)
+                mesh += "_0";
+            else if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
+                mesh += "_ah_0";
+            else if (_setup.Weapon == HumanWeapon.Thunderspear)
+                mesh += "_ts";
             return mesh;
         }
 
         public string GetArmMesh(bool left)
         {
-            string mesh = "character_arm";
+            string mesh = "player";
             if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
             {
-                return mesh + (left ? "_casual_l_ah" : "_casual_r_ah");
+                return mesh + (left ? "_casual_arm_AH_L" : "_casual_arm_AH_R");
             }
             else if (_setup.CurrentCostume["Type"].Value.StartsWith("Uniform"))
                 mesh += "_uniform";
             else
                 mesh += "_casual";
-            return mesh + (left ? "_l" : "_r");
+            return mesh + (left ? "_arm_L" : "_arm_R");
         }
 
         public string Get3dmgMesh()
         {
-            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? "character_3dmg_2" : "character_3dmg";
+            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? "3dmg_2" : "3dmg";
         }
 
         public string GetBeltMesh()
         {
-            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? string.Empty : "character_3dmg_belt";
+            return (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG) ? string.Empty : "3dmg_belt";
         }
 
         public string GetGasMesh(bool left)
         {
             if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
-                return left ? "character_gun_mag_l" : "character_gun_mag_r";
-            return left ? "character_3dmg_gas_l" : "character_3dmg_gas_r";
+                return left ? "char_gun_mag_l" : "char_gun_mag_r";
+            return left ? "scabbard_L" : "scabbard_R";
         }
 
         public string GetWeaponMesh(bool left)
         {
             if (_setup.Weapon == HumanWeapon.AHSS || _setup.Weapon == HumanWeapon.APG)
-                return left ? "character_gun_l" : "character_gun_r";
+                return left ? "character_gun_l_0" : "character_gun_r_0";
             else if (_setup.Weapon == HumanWeapon.Thunderspear)
-                return string.Empty;
-            return left ? "character_blade_l" : "character_blade_r";
+                return left ? "thunderspear_l" : "thunderspear_r";
+            return left ? "blade_L" : "blade_R";
         }
 
         public string GetBodyMesh()
         {
-            string mesh = "character_body";
+            string mesh = "player";
             string type = _setup.CurrentCostume["Type"].Value;
             mesh += type.StartsWith("Uniform") ? "_uniform" : "_casual";
             mesh += _setup.CustomSet.Sex.Value == (int)HumanSex.Male ? "_M" : "_F";
@@ -78,30 +82,30 @@ namespace Characters
             if (type.StartsWith("Uniform"))
             {
                 if (brand == 1)
-                    return "character_brand_arm_l";
+                    return "character_brand_arm_l_0";
                 else if (brand == 2)
-                    return "character_brand_arm_r";
+                    return "character_brand_arm_r_0";
                 else if (brand == 3)
-                    return _setup.CustomSet.Sex.Value == (int)HumanSex.Male ? "character_brand_chest_m" : "character_brand_chest_f";
+                    return _setup.CustomSet.Sex.Value == (int)HumanSex.Male ? "character_brand_chest_m_0" : "character_brand_chest_f_0";
                 else if (brand == 4)
-                    return _setup.CustomSet.Sex.Value == (int)HumanSex.Male ? "character_brand_back_m" : "character_brand_back_f";
+                    return _setup.CustomSet.Sex.Value == (int)HumanSex.Male ? "character_brand_back_m_0" : "character_brand_back_f_0";
             }
             return string.Empty;
         }
 
         public string GetEyeMesh()
         {
-            return "character_eye";
+            return "char_eyes";
         }
 
         public string GetFaceMesh()
         {
-            return "character_face";
+            return "char_face";
         }
 
         public string GetGlassMesh()
         {
-            return "glass";
+            return "char_glasses";
         }
 
         public string GetHairMesh()
@@ -120,7 +124,7 @@ namespace Characters
         {
             if (_setup.CustomSet.Cape.Value == 0)
                 return string.Empty;
-            return "character_cape";
+            return "character_cape_0";
         }
 
         public string GetChestMesh(int chest)
@@ -130,8 +134,8 @@ namespace Characters
                 if (_setup.CurrentCostume.HasKey("Hoodie"))
                 {
                     if (_setup.CurrentCostume["Type"].Value.StartsWith("Uniform"))
-                        return "character_cap_uniform";
-                    return "character_cap_casual";
+                        return "char_cap_uni";
+                    return "char_cap_cas";
                 }
             }
             else if (chest == 2)
@@ -139,8 +143,8 @@ namespace Characters
                 if (_setup.CurrentCostume.HasKey("Holster"))
                 {
                     if (_setup.CustomSet.Sex.Value == (int)HumanSex.Male)
-                        return "character_body_blade_keeper_m";
-                    return "character_body_blade_keeper_f";
+                        return "body_blade_keeper_m_0";
+                    return "body_blade_keeper_f_0";
                 }
             }
             else if (chest == 3)
@@ -148,8 +152,8 @@ namespace Characters
                 if (_setup.CurrentCostume.HasKey("Scarf"))
                 {
                     if (_setup.CurrentCostume["Type"].Value.StartsWith("Uniform"))
-                        return "mikasa_asset_uni";
-                    return "mikasa_asset_cas";
+                        return "mikasa_asset_uni_0";
+                    return "mikasa_asset_cas_0";
                 }
             }
             return string.Empty;

@@ -16,13 +16,13 @@ namespace UI
     class MapEditorTopPanel: HeadedPanel
     {
         protected override float Width => 1960f;
-        protected override float Height => 60f;
+        protected override float Height => 57f;
 
         protected override float TopBarHeight => 0f;
         protected override float BottomBarHeight => 0f;
         protected override float VerticalSpacing => 0f;
-        protected override int HorizontalPadding => 25;
-        protected override int VerticalPadding => 0;
+        protected override int HorizontalPadding => 30;
+        protected override int VerticalPadding => 10;
 
         private IntSetting _dropdownSelection = new IntSetting(0);
         private MapEditorMenu _menu;

@@ -18,7 +18,7 @@ namespace UI
         protected override bool ScrollBar => true;
         protected const int Columns = 7;
         protected override float VerticalSpacing => 10f;
-        protected override int HorizontalPadding => 10;
+        protected override int HorizontalPadding => 15;
         protected override int VerticalPadding => 10;
 
         public override void Setup(BasePanel parent = null)

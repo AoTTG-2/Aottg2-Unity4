@@ -65,7 +65,7 @@ namespace UI
         private void SetupBottomButtons()
         {
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"),
                     onClick: () => OnBottomBarButtonClick("Back"));
         }
 

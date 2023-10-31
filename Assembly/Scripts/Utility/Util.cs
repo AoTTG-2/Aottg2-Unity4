@@ -13,10 +13,15 @@ namespace Utility
 {
     static class Util
     {
-        public static void DontDestroyOnLoad(GameObject obj)
+        public static void DontDestroyOnLoad(GameObject obj, bool children = false)
         {
             UnityEngine.Object.DontDestroyOnLoad(obj);
             obj.AddComponent<DontDestroyOnLoadTag>();
+            if (children)
+            {
+                foreach (Transform child in obj.transform)
+                    DontDestroyOnLoad(child.gameObject, children);
+            }
         }
 
         public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)

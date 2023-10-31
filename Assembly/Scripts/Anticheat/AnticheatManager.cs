@@ -43,23 +43,16 @@ namespace Anticheat
         {
             if (!PhotonNetwork.isMasterClient)
                 return;
-            if (SettingsManager.MultiplayerSettings.CurrentMultiplayerServerType == MultiplayerServerType.LAN)
+            if (PhotonNetwork.isMasterClient && player == PhotonNetwork.player && reason != string.Empty)
             {
-                ServerCloseConnection(player, ban, player.GetStringProperty(PlayerProperty.Name));
+                DebugConsole.Log("Attempting to ban myself for: " + reason + ", please report this to the devs.", true);
+                return;
             }
-            else
+            PhotonNetwork.DestroyPlayerObjects(player);
+            PhotonNetwork.CloseConnection(player);
+            if (reason != string.Empty)
             {
-                if (PhotonNetwork.isMasterClient && player == PhotonNetwork.player && reason != string.Empty)
-                {
-                    DebugConsole.Log("Attempting to ban myself for: " + reason + ", please report this to the devs.", true);
-                    return;
-                }
-                PhotonNetwork.DestroyPlayerObjects(player);
-                PhotonNetwork.CloseConnection(player);
-                if (reason != string.Empty)
-                {
-                    DebugConsole.Log("Player " + player.ID.ToString() + " was autobanned. Reason:" + reason, true);
-                }
+                DebugConsole.Log("Player " + player.ID.ToString() + " was autobanned. Reason:" + reason, true);
             }
         }
 

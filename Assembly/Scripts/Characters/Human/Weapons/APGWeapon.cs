@@ -40,16 +40,16 @@ namespace Characters
             if (human.Grounded)
             {
                 if (left)
-                    anim = "AHSS_shoot_l";
+                    anim = HumanAnimations.AHSSShootL;
                 else
-                    anim = "AHSS_shoot_r";
+                    anim = HumanAnimations.AHSSShootR;
             }
             else
             {
                 if (left)
-                    anim = "AHSS_shoot_l_air";
+                    anim = HumanAnimations.AHSSShootLAir;
                 else
-                    anim = "AHSS_shoot_r_air";
+                    anim = HumanAnimations.AHSSShootRAir;
             }
             human.State = HumanState.Attack;
             human.AttackAnimation = anim;
@@ -62,6 +62,7 @@ namespace Characters
             Vector3 start = human.Cache.Transform.position + human.Cache.Transform.up * 0.8f;
             direction = (target - start).normalized;
             EffectSpawner.Spawn(EffectPrefabs.GunExplode, start, Quaternion.LookRotation(direction), 0.2f);
+            human.PlaySound(HumanSounds.GunExplodeSound);
             human.HumanCache.APGHit.transform.position = start;
             human.HumanCache.APGHit.transform.rotation = Quaternion.LookRotation(direction);
             var gunInfo = CharacterData.HumanWeaponInfo["APG"];

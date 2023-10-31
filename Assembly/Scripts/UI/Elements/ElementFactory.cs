@@ -121,7 +121,22 @@ namespace UI
             return obj;
         }
 
-        public static GameObject CreateTextButton(Transform parent, ElementStyle style, string title, UnityAction onClick = null)
+        public static GameObject CreateTextButton(Transform parent, ElementStyle style, string title, float width = 0f, UnityAction onClick = null)
+        {
+            GameObject button = InstantiateAndBind(parent, "TextButton");
+            Text text = button.GetComponent<Text>();
+            text.text = title;
+            text.fontSize = style.FontSize;
+            text.fontStyle = FontStyle.Bold;
+            if (width != 0f)
+                text.GetComponent<LayoutElement>().preferredWidth = width;
+            if (onClick != null)
+                button.GetComponent<Button>().onClick.AddListener(onClick);
+            button.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(style.ThemePanel, "TextButton", "");
+            return button;
+        }
+
+        public static GameObject CreateLinkButton(Transform parent, ElementStyle style, string title, UnityAction onClick = null)
         {
             GameObject button = InstantiateAndBind(parent, "TextButton");
             Text text = button.GetComponent<Text>();
@@ -129,7 +144,7 @@ namespace UI
             text.fontSize = style.FontSize;
             if (onClick != null)
                 button.GetComponent<Button>().onClick.AddListener(onClick);
-            button.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(style.ThemePanel, "TextButton", "");
+            button.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(style.ThemePanel, "LinkButton", "");
             return button;
         }
 
@@ -308,7 +323,7 @@ namespace UI
             GameObject line = InstantiateAndBind(parent, "HorizontalLine");
             line.transform.Find("LineImage").GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             line.transform.Find("LineImage").gameObject.AddComponent<HorizontalLineScaler>();
-            line.transform.Find("LineImage").GetComponent<Image>().color = UIManager.GetThemeColor(style.ThemePanel, "MainBody", "HorizontalLineColor");
+            line.transform.Find("LineImage").GetComponent<Image>().color = UIManager.GetThemeColor(style.ThemePanel, "MainBody", "LineColor");
             return line;
         }
 

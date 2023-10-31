@@ -46,13 +46,6 @@ namespace CustomLogic
                     Vector3 rotationOffset = ((CustomLogicVector3Builtin)parameters[2]).Value;
                     Human.Mount(((CustomLogicTransformBuiltin)parameters[0]).Value, positionOffset, rotationOffset);
                 }
-                else if (methodName == "MountTransformWithRigidbody")
-                {
-                    Vector3 positionOffset = ((CustomLogicVector3Builtin)parameters[1]).Value;
-                    Vector3 rotationOffset = ((CustomLogicVector3Builtin)parameters[2]).Value;
-                    var rigidbody = ((CustomLogicComponentInstance)parameters[3]).MapObject.Value.GameObject.GetComponent<Rigidbody>();
-                    Human.Mount(((CustomLogicTransformBuiltin)parameters[0]).Value, positionOffset, rotationOffset, rigidbody);
-                }
                 else if (methodName == "Unmount")
                     Human.Unmount(true);
             }

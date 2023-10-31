@@ -34,6 +34,7 @@ namespace Characters
         public List<BaseUseable> Items = new List<BaseUseable>();
         protected InGameManager _inGameManager;
         protected BaseMovementSync _movementSync;
+        protected bool _cameraFPS = false;
 
         // movement
         public bool Grounded;
@@ -237,6 +238,11 @@ namespace Characters
             Cache.PhotonView.RPC("PlaySoundRPC", PhotonTargets.All, new object[] { sound });
         }
 
+        public bool IsPlayingSound(string sound)
+        {
+            return Cache.AudioSources[sound].isPlaying;
+        }
+
         protected IEnumerator WaitAndPlaySound(string sound, float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -423,6 +429,14 @@ namespace Characters
         protected virtual void Start()
         {
             MinimapHandler.CreateMinimapIcon(this);
+            StartCoroutine(WaitAndNotifyCharacterSpawn());
+        }
+
+        protected IEnumerator WaitAndNotifyCharacterSpawn()
+        {
+            yield return new WaitForEndOfFrame();
+            if (CustomLogicManager.Evaluator != null)
+                CustomLogicManager.Evaluator.OnCharacterSpawn(this);
         }
 
         public string GetCurrentAnimation()
@@ -499,6 +513,7 @@ namespace Characters
         protected virtual void LateUpdate()
         {
             LateUpdateFootstep();
+            LateUpdateFPS();
         }
 
         protected virtual void LateUpdateFootstep()
@@ -513,6 +528,43 @@ namespace Characters
             }
         }
 
+        protected virtual void LateUpdateFPS()
+        {
+            if (!IsMine())
+                return;
+            var camera = ((InGameCamera)SceneLoader.CurrentCamera);
+            if (camera._follow == this && camera._cameraDistance == 0f)
+            {
+                if (!_cameraFPS)
+                {
+                    _cameraFPS = true;
+                    foreach (var renderer in GetFPSDisabledSkinnedRenderers())
+                    {
+                        var localbounds = renderer.localBounds;
+                        localbounds.center = Vector3.up * 100000f;
+                        renderer.localBounds = localbounds;
+                    }
+                    foreach (var renderer in GetFPSDisabledRenderers())
+                        renderer.enabled = false;
+                }
+            }
+            else if (_cameraFPS)
+            {
+                _cameraFPS = false;
+                if (!Dead || !(this is Human))
+                {
+                    foreach (var renderer in GetFPSDisabledSkinnedRenderers())
+                    {
+                        var localbounds = renderer.localBounds;
+                        localbounds.center = Vector3.zero;
+                        renderer.localBounds = localbounds;
+                    }
+                    foreach (var renderer in GetFPSDisabledRenderers())
+                        renderer.enabled = true;
+                }
+            }
+        }
+
         protected virtual int GetFootstepPhase()
         {
             return 0;
@@ -521,6 +573,32 @@ namespace Characters
         protected virtual string GetFootstepAudio(int phase)
         {
             return "";
+        }
+
+        protected virtual List<SkinnedMeshRenderer> GetFPSDisabledSkinnedRenderers()
+        {
+            return new List<SkinnedMeshRenderer>();
+        }
+
+        protected virtual List<Renderer> GetFPSDisabledRenderers()
+        {
+            return new List<Renderer>();
+        }
+
+        protected void AddRendererIfExists(List<Renderer> renderers, GameObject go)
+        {
+            if (go != null && go.renderer != null)
+                renderers.Add(go.renderer);
+        }
+
+        protected void AddSkinnedRendererIfExists(List<SkinnedMeshRenderer> renderers, GameObject go)
+        {
+            if (go != null)
+            {
+                var renderer = go.GetComponent<SkinnedMeshRenderer>();
+                if (renderer != null)
+                    renderers.Add(renderer);
+            }
         }
     }
 }

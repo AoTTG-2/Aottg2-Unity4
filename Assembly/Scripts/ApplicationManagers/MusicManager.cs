@@ -20,6 +20,9 @@ namespace ApplicationManagers
         private bool _isFading;
         private const float FadeTime = 1.5f;
         private int _currentSong;
+        public float _deathSongTimeLeft;
+        private List<string> _customPlaylist = new List<string>();
+        private string _currentSongName;
 
         public static void Init()
         {
@@ -40,10 +43,23 @@ namespace ApplicationManagers
                 SetPlaylist(MusicPlaylist.Menu);
         }
 
-        public static void ApplyGeneralSettings()
+        public static void ApplySoundSettings()
         {
-            if (_instance != null && !_instance._isFading)
+            if (_instance == null)
+                return;
+            if (!_instance._isFading)
                 _instance._audio.volume = _instance._songVolume * GetMusicVolume();
+            if (SettingsManager.SoundSettings.ForcePlaylist.Value != "Default")
+                SetPlaylist(SettingsManager.SoundSettings.ForcePlaylist.Value);
+        }
+
+        public static void PlayDeathSong()
+        {
+            if (!SettingsManager.SoundSettings.TitanGrabMusic.Value)
+                return;
+            var songInfo = _musicInfo["Death"][0];
+            SetSong(songInfo);
+            _instance._deathSongTimeLeft = 15f;
         }
 
         public static void StopPlaylist()
@@ -58,6 +74,11 @@ namespace ApplicationManagers
 
         public static void SetPlaylist(string playlist, bool forceNext = false)
         {
+            if (SettingsManager.SoundSettings.ForcePlaylist.Value != "Default")
+            {
+                playlist = SettingsManager.SoundSettings.ForcePlaylist.Value;
+                _instance._customPlaylist = new List<string>(SettingsManager.SoundSettings.CustomPlaylist.Value.Split(','));
+            }
             bool change = _instance._currentPlaylist != playlist;
             _instance._currentPlaylist = playlist;
             if (forceNext || change)
@@ -78,19 +99,22 @@ namespace ApplicationManagers
             _instance._autoPlay = false;
             AudioClip clip = null;
             float volume = 0f;
+            _instance._currentSongName = "";
             if (songInfo != null)
             {
                 if (songInfo.HasKey("Name"))
                 {
-                    clip = (AudioClip)AssetBundleManager.LoadAsset(songInfo["Name"]);
+                    clip = (AudioClip)AssetBundleManager.LoadMusic(songInfo["Name"]);
                     volume = songInfo["Volume"];
+                    _instance._currentSongName = songInfo["Name"];
                 }
                else
                 {
                     var playlist = _musicInfo[(string)songInfo["Playlist"]];
                     songInfo = playlist[Random.Range(0, playlist.Count)];
-                    clip = (AudioClip)AssetBundleManager.LoadAsset(songInfo["Name"]);
+                    clip = (AudioClip)AssetBundleManager.LoadMusic(songInfo["Name"]);
                     volume = songInfo["Volume"];
+                    _instance._currentSongName = songInfo["Name"];
                 }
             }
             _instance.StopAllCoroutines();
@@ -101,18 +125,30 @@ namespace ApplicationManagers
         {
             if (_instance._currentPlaylist == string.Empty)
                 return;
-            JSONNode playlist = _musicInfo[_instance._currentPlaylist];
-            JSONNode songInfo;
-            if (_instance._currentPlaylist.EndsWith("Ordered"))
+            if (_instance._currentPlaylist == "Custom")
             {
-                songInfo = playlist[_instance._currentSong];
-                _instance._currentSong += 1;
-                if (_instance._currentSong >= playlist.Count)
+                if (_instance._customPlaylist.Count == 0)
+                    return;
+                _instance._currentSong++;
+                if (_instance._currentSong >= _instance._customPlaylist.Count)
                     _instance._currentSong = 0;
+                SetSong(FindSong(_instance._customPlaylist[_instance._currentSong]));
             }
             else
-                songInfo = playlist[Random.Range(0, playlist.Count)];
-            SetSong(songInfo);
+            {
+                JSONNode playlist = _musicInfo[_instance._currentPlaylist];
+                JSONNode songInfo;
+                if (_instance._currentPlaylist.EndsWith("Ordered"))
+                {
+                    songInfo = playlist[_instance._currentSong];
+                    _instance._currentSong += 1;
+                    if (_instance._currentSong >= playlist.Count)
+                        _instance._currentSong = 0;
+                }
+                else
+                    songInfo = playlist[Random.Range(0, playlist.Count)];
+                SetSong(songInfo);
+            }
         }
 
         private static JSONNode FindSong(string name)
@@ -123,7 +159,7 @@ namespace ApplicationManagers
             {
                 foreach (JSONNode song in playlist)
                 {
-                    if (song["Name"] == name)
+                    if (song.HasKey("Name") && song["Name"] == name)
                         return song;
                 }
             }
@@ -178,13 +214,35 @@ namespace ApplicationManagers
         private void Update()
         {
             _songTimeLeft -= Time.deltaTime;
-            if (_songTimeLeft <= 0f && _autoPlay)
+            _deathSongTimeLeft -= Time.deltaTime;
+            if (_songTimeLeft <= 0f && _autoPlay && _deathSongTimeLeft <= 0f)
                 NextSong();
         }
 
         private static float GetMusicVolume()
         {
-            return SettingsManager.GeneralSettings.Music.Value * 0.5f;
+            return SettingsManager.SoundSettings.Music.Value * 0.5f;
+        }
+
+        public static string GetCurrentSong()
+        {
+            if (_instance._currentSongName == "")
+                return "None";
+            return _instance._currentSongName;
+        }
+
+        public static List<string> GetAllSongs()
+        {
+            HashSet<string> songs = new HashSet<string>();
+            foreach (JSONNode playlist in _musicInfo.Values)
+            {
+                foreach (JSONNode song in playlist)
+                {
+                    if (song.HasKey("Name"))
+                        songs.Add(song["Name"]);
+                }
+            }
+            return new List<string>(songs);
         }
     }
 

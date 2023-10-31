@@ -25,6 +25,7 @@ namespace Settings
         public BoolSetting WeaponTrailEnabled = new BoolSetting(true);
         public BoolSetting WindEffectEnabled = new BoolSetting(true);
         public BoolSetting BloodSplatterEnabled = new BoolSetting(true);
+        public BoolSetting NapeBloodEnabled = new BoolSetting(true);
         public BoolSetting MipmapEnabled = new BoolSetting(true);
 
         public override void Save()

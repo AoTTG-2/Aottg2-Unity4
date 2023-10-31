@@ -12,7 +12,7 @@ namespace UI
     {
         protected override string Title => "Map Info";
         protected override float Width => 500f;
-        protected override float Height => 430f;
+        protected override float Height => 420f;
         protected override int VerticalPadding => 20;
         private StringSetting _description = new StringSetting(string.Empty);
         private InputSettingElement _inputDescription;
@@ -22,8 +22,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(titleWidth: 130f, fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             _inputDescription = ElementFactory.CreateInputSetting(SinglePanel, style, _description, "Description", elementWidth: 300f, elementHeight: 270f, multiLine: true)
                 .GetComponent<InputSettingElement>();
         }

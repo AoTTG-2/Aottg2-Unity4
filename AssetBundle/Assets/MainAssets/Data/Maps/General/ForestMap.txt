@@ -2,7 +2,7 @@
 EditorVersion:1.0|Description:Classic forest, originally created by Feng and recreated by Sadico.
 /// Objects
 Scene,None,2,0,1,1,1,0,Daylight,0,0,0,50.3,121.9,1.399998,1,1,1,Physical,Entities,Default,Default|255/255/255/255,Daylight|;
-Scene,Geometry/Cuboid,3,0,1,1,1,0,Cuboid,0,-4.5,0,0,0,0,135,1,135,Physical,Entities,Default,Basic|255/255/255/255|Nature/Grass5|20/20|0/0,;
+Scene,Geometry/Cuboid,3,0,1,1,1,0,Cuboid,0,-24.5,0,0,0,0,135,5,135,Physical,Entities,Default,Basic|255/255/255/255|Nature/Grass5|20/20|0/0,;
 Scene,Nature/Tree2,4,0,1,1,1,0,Tree2,-398.377,62.874,228.728,0,100.3009,0,0.91,0.91,0.91,Physical,Entities,Default,Default|255/255/255/255,;
 Scene,Nature/Tree2,5,0,1,1,1,0,Tree2,-242.961,70.809,95.795,0,0,0,1.026,1.026,1.026,Physical,Entities,Default,Default|255/255/255/255,;
 Scene,Nature/Tree2,6,0,1,1,1,0,Tree2,-203.985,48.647,-528.594,0,246.0141,0,0.702,0.702,0.702,Physical,Entities,Default,Default|255/255/255/255,;
@@ -212,5 +212,7 @@ Scene,Geometry/Cuboid,209,0,1,1,0,0,Barrier,-700,745.8,0.01,0,0,0,10,160,160,Phy
 Scene,Geometry/Cuboid,210,0,1,1,0,0,Barrier,0,745.8,-700,0,0,0,160,160,10,Physical,Characters,Default,Default|255/255/255/255,;
 Scene,Geometry/Cuboid,211,0,1,1,0,0,Barrier,0,745.8,700,0,0,0,160,160,10,Physical,Characters,Default,Default|255/255/255/255,;
 Scene,Geometry/Cuboid,212,0,1,1,0,0,Barrier,700,745.8,0.01,0,0,0,10,160,160,Physical,Characters,Default,Default|255/255/255/255,;
-Scene,Geometry/Cuboid,213,0,1,1,0,0,Barrier,-2.23,1253.07,17.889,0,0,0,160,10,160,Physical,Characters,Default,Default|255/255/255/255,
+Scene,Geometry/Cuboid,213,0,1,1,0,0,Barrier,-2.23,1253.07,17.889,0,0,0,160,10,160,Physical,Characters,Default,Default|255/255/255/255,;
+Scene,Nature/Tree2,214,0,1,1,1,0,Tree2,278.9854,70.04503,225.331,0,62.2872,0,1.025666,1.025666,1.025666,Physical,Entities,Default,Default|255/255/255/255,;
+Scene,Nature/Tree2,215,0,1,1,1,0,Tree2,118.3175,77.83098,211.7733,0,0,0,1.135478,1.135478,1.135478,Physical,Entities,Default,Default|255/255/255/255,
 /// Logic

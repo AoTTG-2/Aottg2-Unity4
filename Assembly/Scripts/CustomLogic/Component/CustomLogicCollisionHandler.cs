@@ -9,6 +9,7 @@ namespace CustomLogic
     class CustomLogicCollisionHandler : MonoBehaviour
     {
         List<CustomLogicComponentInstance> _classInstances = new List<CustomLogicComponentInstance>();
+        private float _lastEnterTime;
 
         public void RegisterInstance(CustomLogicComponentInstance classInstance)
         {
@@ -62,8 +63,11 @@ namespace CustomLogic
                 classInstance.OnCollisionExit(builtin);
         }
 
-        protected void OnTriggerEnter(Collider other)
+        public void OnTriggerEnter(Collider other)
         {
+            if (Time.fixedTime == _lastEnterTime)
+                return;
+            _lastEnterTime = Time.fixedTime;
             var builtin = GetBuiltin(other);
             if (builtin == null)
                 return;

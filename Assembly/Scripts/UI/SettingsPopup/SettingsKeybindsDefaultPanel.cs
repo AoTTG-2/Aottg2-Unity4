@@ -25,6 +25,8 @@ namespace UI
             {
                 ElementFactory.CreateToggleSetting(DoublePanelRight, style, SettingsManager.InputSettings.Human.DashDoubleTap,
                 UIManager.GetLocale(cat, "Keybinds.Human", "DashDoubleTap"));
+                ElementFactory.CreateToggleSetting(DoublePanelRight, style, SettingsManager.InputSettings.Human.SwapTSAttackSpecial,
+                UIManager.GetLocale(cat, "Keybinds.Human", "SwapTSAttackSpecial"), tooltip: UIManager.GetLocale(cat, "Keybinds.Human", "SwapTSAttackSpecialTooltip"));
                 ElementFactory.CreateSliderSetting(DoublePanelRight, style, SettingsManager.InputSettings.Human.ReelOutScrollSmoothing,
                     UIManager.GetLocale(cat, "Keybinds.Human", "ReelOutScrollSmoothing"), elementWidth: 130f,
                     tooltip: UIManager.GetLocale(cat, "Keybinds.Human", "ReelOutScrollSmoothingTooltip"));

@@ -12,7 +12,7 @@ namespace UI
     {
         protected override string Title => UIManager.GetLocaleCommon("Import");
         protected override float Width => 500f;
-        protected override float Height => 600f;
+        protected override float Height => 585f;
         protected override int VerticalPadding => 20;
         protected override int HorizontalPadding => 20;
         protected override float VerticalSpacing => 10f;
@@ -29,8 +29,8 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Save"), onClick: () => OnButtonClick("Save"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Cancel"), onClick: () => OnButtonClick("Cancel"));
             _topText = ElementFactory.CreateDefaultLabel(SinglePanel, style, "").GetComponent<Text>();
             _element = ElementFactory.CreateInputSetting(SinglePanel, style, ImportSetting, string.Empty, elementWidth: 460f, 
                 elementHeight: DefaultInputHeight, multiLine: true).

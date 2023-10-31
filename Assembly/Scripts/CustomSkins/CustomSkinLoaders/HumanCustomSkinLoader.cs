@@ -119,12 +119,12 @@ namespace CustomSkins
                     trails.Add(human.Setup.RightTrail2);
                     return new WeaponTrailCustomSkinPart(this, trails, GetRendererId(partId), MaxSizeSmall);
                 case HumanCustomSkinPartId.ThunderspearL:
-                    if (human.Setup.ThunderspearLModel != null)
-                        AddRendererIfExists(renderers, human.Setup.ThunderspearLModel);
+                    if (human.Setup._part_blade_l != null)
+                        AddRendererIfExists(renderers, human.Setup._part_blade_l);
                     return new BaseCustomSkinPart(this, renderers, GetRendererId(partId), MaxSizeMedium);
                 case HumanCustomSkinPartId.ThunderspearR:
-                    if (human.Setup.ThunderspearRModel != null)
-                        AddRendererIfExists(renderers, human.Setup.ThunderspearRModel);
+                    if (human.Setup._part_blade_r != null)
+                        AddRendererIfExists(renderers, human.Setup._part_blade_r);
                     return new BaseCustomSkinPart(this, renderers, GetRendererId(partId), MaxSizeMedium);
                 case HumanCustomSkinPartId.HookL:
                     return new HookCustomSkinPart(this, human.HookLeft.GetRenderers(), GetRendererId(partId), MaxSizeSmall, _hookLTiling);

@@ -3,24 +3,24 @@
     class EffectPrefabs
     {
         public static string ThunderspearExplode = "RCAsset/ThunderspearExplodeEffect";
-        public static string GasBurst = "FX/boost_smoke";
+        public static string GasBurst = "RCAsset/GasBurstEffect";
         public static string GroundShatter = "RCAsset/GroundShatterEffect";
-        public static string Blood1 = "hitMeat";
-        public static string Blood2 = "hitMeat2";
-        public static string PunchHit = "hitMeatBIG";
-        public static string GunExplode = "FX/shotGun";
-        public static string CriticalHit = "redCross";
-        public static string TitanSpawn = "FX/FXtitanSpawn";
-        public static string TitanDie1 = "FX/FXtitanDie1";
-        public static string TitanDie2 = "FX/FXtitanDie";
-        public static string Boom1 = "FX/boom1";
-        public static string Boom2 = "FX/boom2";
-        public static string Boom3 = "FX/boom3";
-        public static string Boom4 = "FX/boom4";
-        public static string Boom5 = "FX/boom5";
-        public static string Boom6 = "FX/boom2_eren";
-        public static string TitanBite = "FX/bite";
-        public static string ShifterThunder = "FX/Thunder";
+        public static string Blood1 = "RCAsset/Blood1Effect";
+        public static string Blood2 = "RCAsset/Blood2Effect";
+        public static string PunchHit = "RCAsset/PunchHitEffect";
+        public static string GunExplode = "RCAsset/GunExplodeEffect";
+        public static string CriticalHit = "RCAsset/CriticalHitEffect";
+        public static string TitanSpawn = "RCAsset/TitanSpawnEffect";
+        public static string TitanDie1 = "RCAsset/TitanDie1Effect";
+        public static string TitanDie2 = "RCAsset/TitanDie2Effect";
+        public static string Boom1 = "RCAsset/Boom1Effect";
+        public static string Boom2 = "RCAsset/Boom2Effect";
+        public static string Boom3 = "RCAsset/Boom3Effect";
+        public static string Boom4 = "RCAsset/Boom4Effect";
+        public static string Boom5 = "RCAsset/Boom5Effect";
+        public static string Boom6 = "RCAsset/Boom6Effect";
+        public static string TitanBite = "RCAsset/BiteEffect";
+        public static string ShifterThunder = "RCAsset/ShifterThunderEffect";
         public static string BladeThrowHit = "RCAsset/BladeThrowHitEffect";
         public static string APGTrail = "RCAsset/APGTrailEffect";
     }

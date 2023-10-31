@@ -13,12 +13,16 @@ using Effects;
 using Map;
 using System.Collections;
 using GameProgress;
+using Cameras;
+using System;
 
 namespace GameManagers
 {
     class InGameManager : BaseGameManager
     {
         private SkyboxCustomSkinLoader _skyboxCustomSkinLoader;
+        //private ForestCustomSkinLoader _forestCustomSkinLoader;
+        //private CityCustomSkinLoader _cityCustomSkinLoader;
         private GeneralInputSettings _generalInputSettings;
         private InGameMenu _inGameMenu;
         public HashSet<Human> Humans = new HashSet<Human>();
@@ -35,6 +39,9 @@ namespace GameManagers
         public static PlayerInfo MyPlayerInfo = new PlayerInfo();
         private static bool _needSendPlayerInfo;
         public bool HasSpawned = false;
+        public bool GlobalPause = false;
+        public bool Restarting = false;
+        public float PauseTimeLeft = -1f;
 
         public HashSet<BaseCharacter> GetAllCharacters()
         {
@@ -57,10 +64,79 @@ namespace GameManagers
             return characters;
         }
 
+        public void PauseGame()
+        {
+            if (!PhotonNetwork.isMasterClient || GlobalPause)
+                return;
+            RPCManager.PhotonView.RPC("PauseGameRPC", PhotonTargets.All, new object[0]);
+        }
+
+        public void OnPauseGameRPC(PhotonMessageInfo info)
+        {
+            if (!info.sender.isMasterClient)
+                return;
+            GlobalPause = true;
+            PauseTimeLeft = -1f;
+            Time.timeScale = 0f;
+        }
+
+        public void UnpauseGame()
+        {
+            if (!PhotonNetwork.isMasterClient || !GlobalPause)
+                return;
+            RPCManager.PhotonView.RPC("UnpauseGameRPC", PhotonTargets.All, new object[0]);
+        }
+
+        public void OnUnpauseGameRPC(PhotonMessageInfo info)
+        {
+            if (!info.sender.isMasterClient)
+                return;
+            GlobalPause = false;
+            PauseTimeLeft = -1f;
+            Time.timeScale = 1f;
+        }
+
+        public void StartUnpauseGame()
+        {
+            if (!PhotonNetwork.isMasterClient || !GlobalPause)
+                return;
+            RPCManager.PhotonView.RPC("StartUnpauseGameRPC", PhotonTargets.All, new object[0]);
+        }
+
+        public void OnStartUnpauseGameRPC(PhotonMessageInfo info)
+        {
+            if (!info.sender.isMasterClient)
+                return;
+            GlobalPause = true;
+            PauseTimeLeft = 5f;
+            StartCoroutine(WaitAndUnpauseGame());
+        }
+
+        private IEnumerator WaitAndUnpauseGame()
+        {
+            float endTime = Time.realtimeSinceStartup + PauseTimeLeft;
+            while (PauseTimeLeft > 0f)
+            {
+                PauseTimeLeft = Mathf.Max(endTime - Time.realtimeSinceStartup, 0f);
+                yield return null;
+            }
+            if (PhotonNetwork.isMasterClient)
+                UnpauseGame();
+        }
+
         public static void RestartGame()
         {
             if (!PhotonNetwork.isMasterClient)
                 return;
+            var manager = (InGameManager)SceneLoader.CurrentGameManager;
+            RPCManager.PhotonView.RPC("PreRestartGameRPC", PhotonTargets.All, new object[0]);
+            Time.timeScale = 1f;
+            manager.StartCoroutine(manager.FinishRestartGame());
+        }
+
+        private IEnumerator FinishRestartGame()
+        {
+            yield return new WaitForSeconds(0.2f);
             PhotonNetwork.DestroyAll();
             RPCManager.PhotonView.RPC("RestartGameRPC", PhotonTargets.All, new object[0]);
         }
@@ -73,6 +149,15 @@ namespace GameManagers
             if (!PhotonNetwork.offlineMode)
                 ChatManager.AddLine("Master client has restarted the game.", ChatTextColor.System);
             SceneLoader.LoadScene(SceneName.InGame);
+        }
+
+        public static void OnPreRestartGameRPC(PhotonMessageInfo info)
+        {
+            if (!info.sender.isMasterClient)
+                return;
+            ((InGameManager)SceneLoader.CurrentGameManager).Restarting = true;
+            UIManager.CurrentMenu.gameObject.SetActive(false);
+            UIManager.LoadingMenu.Show();
         }
 
         public static void LeaveRoom()
@@ -189,6 +274,8 @@ namespace GameManagers
             if (PhotonNetwork.isMasterClient)
             {
                 RPCManager.PhotonView.RPC("GameSettingsRPC", player, new object[] { StringCompression.Compress(SettingsManager.InGameCurrent.SerializeToJsonString()) });
+                if (GlobalPause)
+                    RPCManager.PhotonView.RPC("PauseGameRPC", player, new object[0]);
             }
         }
 
@@ -241,6 +328,8 @@ namespace GameManagers
 
         public void SpawnPlayer(bool force)
         {
+            if (!IsFinishedLoading())
+                return;
             var settings = SettingsManager.InGameCharacterSettings;
             var character = settings.CharacterType.Value;
             Vector3 position = Vector3.zero;
@@ -271,6 +360,8 @@ namespace GameManagers
 
         public void SpawnPlayerAt(bool force, Vector3 position)
         {
+            if (!IsFinishedLoading())
+                return;
             var settings = SettingsManager.InGameCharacterSettings;
             var character = settings.CharacterType.Value;
             var miscSettings = SettingsManager.InGameCurrent.Misc;
@@ -392,7 +483,7 @@ namespace GameManagers
 
         public List<BasicTitan> SpawnAITitans(string type, int count)
         {
-            List<Vector3> positions = MapManager.GetRandomTagPositions(MapTags.TitanSpawnPoint, Vector3.zero, count);
+            var positions = GetTitanSpawnPositions(count);
             List<BasicTitan> titans = new List<BasicTitan>();
             for (int i = 0; i < count; i++)
                 titans.Add(SpawnAITitanAt(type, positions[i]));
@@ -401,7 +492,7 @@ namespace GameManagers
 
         public void SpawnAITitansAsync(string type, int count)
         {
-            List<Vector3> randomPositions = MapManager.GetRandomTagPositions(MapTags.TitanSpawnPoint, Vector3.zero, count);
+            var randomPositions = GetTitanSpawnPositions(count);
             if (count <= 0)
                 return;
             SpawnAITitanAt(type, randomPositions[0]);
@@ -423,13 +514,23 @@ namespace GameManagers
             StartCoroutine(SpawnAITitansCoroutine(type, count - 1, positions));
         }
 
+        private List<Vector3> GetTitanSpawnPositions(int count)
+        {
+            if (CurrentCharacter != null && CurrentCharacter is Human && Humans.Count == 1)
+                return MapManager.GetRandomTagPositions(MapTags.TitanSpawnPoint, CurrentCharacter.Cache.Transform.position, 100f,
+                    Vector3.zero, count);
+            else
+                return MapManager.GetRandomTagPositions(MapTags.TitanSpawnPoint, Vector3.zero, 0f, Vector3.zero, count);
+        }
+
         private IEnumerator SpawnAITitansCoroutine(string type, int count, List<Vector3> positions)
         {
             for (int i = 0; i < count; i++)
             {
                 var position = positions[i];
                 SpawnAITitanAt(type, position);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
             }
         }
 
@@ -440,7 +541,7 @@ namespace GameManagers
                 var settings = SettingsManager.InGameCurrent.Titan;
                 if (settings.TitanSpawnEnabled.Value)
                 {
-                    float roll = Random.Range(0f, 1f);
+                    float roll = UnityEngine.Random.Range(0f, 1f);
                     float normal = settings.TitanSpawnNormal.Value / 100f;
                     float abnormal = normal + settings.TitanSpawnAbnormal.Value / 100f;
                     float jumper = abnormal + settings.TitanSpawnJumper.Value / 100f;
@@ -472,24 +573,37 @@ namespace GameManagers
             var settings = SettingsManager.InGameCurrent.Titan;
             if (settings.TitanSizeEnabled.Value)
             {
-                float size = Random.Range(settings.TitanSizeMin.Value, settings.TitanSizeMax.Value);
+                float size = UnityEngine.Random.Range(settings.TitanSizeMin.Value, settings.TitanSizeMax.Value);
                 titan.SetSize(size);
             }
             else
             {
-                float size = Random.Range(1f, 3f);
+                float size = UnityEngine.Random.Range(1f, 3f);
                 titan.SetSize(size);
             }
             if (settings.TitanHealthMode.Value > 0)
             {
                 if (settings.TitanHealthMode.Value == 1)
                 {
-                    int health = Random.Range(settings.TitanHealthMin.Value, settings.TitanHealthMax.Value);
+                    int health = UnityEngine.Random.Range(settings.TitanHealthMin.Value, settings.TitanHealthMax.Value);
                     titan.SetHealth(health);
                 }
                 else if (settings.TitanHealthMode.Value == 2)
                 {
-                    float scale = Mathf.Clamp((titan.Size - 1f) / 2f, 0f, 1f);
+                    float minSize = 1f;
+                    float maxSize = 3f;
+                    if (settings.TitanSizeEnabled.Value)
+                    {
+                        minSize = settings.TitanSizeMin.Value;
+                        maxSize = settings.TitanSizeMax.Value;
+                        maxSize = Mathf.Max(minSize, maxSize);
+                    }
+                    float size = Mathf.Clamp(titan.Size, minSize, maxSize);
+                    float range = maxSize - minSize;
+                    float scale = 0f;
+                    if (range > 0f)
+                        scale = (titan.Size - minSize) / range;
+                    scale = Mathf.Clamp(scale, 0f, 1f);
                     int health = (int)(scale * (settings.TitanHealthMax.Value - settings.TitanHealthMin.Value) + settings.TitanHealthMin.Value);
                     health = Mathf.Max(health, 1);
                     titan.SetHealth(health);
@@ -655,6 +769,8 @@ namespace GameManagers
         protected override void Awake()
         {
             _skyboxCustomSkinLoader = gameObject.AddComponent<SkyboxCustomSkinLoader>();
+            //_forestCustomSkinLoader = gameObject.AddComponent<ForestCustomSkinLoader>();
+            //_cityCustomSkinLoader = gameObject.AddComponent<CityCustomSkinLoader>();
             _generalInputSettings = SettingsManager.InputSettings.General;
             ResetRoundPlayerProperties();
             if (PhotonNetwork.isMasterClient)
@@ -684,6 +800,7 @@ namespace GameManagers
                     { RoomProperty.Password, PhotonNetwork.room.GetStringProperty(RoomProperty.Password) }
                 };
                 PhotonNetwork.room.SetCustomProperties(properties);
+                LoadSkin();
             }
             base.Start();
         }
@@ -714,7 +831,7 @@ namespace GameManagers
                     RPCManager.PhotonView.RPC("NotifyPlayerJoinedRPC", PhotonTargets.Others, new object[0]);
                 _needSendPlayerInfo = false;
             }
-            ((InGameMenu)UIManager.CurrentMenu).UpdateLoading(1f, true);
+            UIManager.LoadingMenu.UpdateLoading(1f, true);
             if (State == GameState.Loading)
                 State = GameState.Playing;
             if (SettingsManager.InGameCharacterSettings.ChooseStatus.Value == (int)ChooseCharacterStatus.Choosing)
@@ -765,6 +882,66 @@ namespace GameManagers
             Shifters = Util.RemoveNullOrDeadShifters(Shifters);
         }
 
+        protected void LoadSkin()
+        {
+            /*
+            if (PhotonNetwork.isMasterClient)
+            {
+                if (SettingsManager.CustomSkinSettings.Skybox.SkinsEnabled.Value)
+                {
+                    var set = (SkyboxCustomSkinSet)SettingsManager.CustomSkinSettings.Skybox.GetSelectedSet();
+                    string urls = string.Join(",", new string[] {set.Front.Value, set.Back.Value , set.Left.Value , set.Right.Value ,
+                                              set.Up.Value, set.Down.Value});
+                    RPCManager.PhotonView.RPC("LoadSkyboxRPC", PhotonTargets.AllBuffered, new object[] { urls });
+                }
+                string indices = string.Empty;
+                string urls1 = string.Empty;
+                string urls2 = string.Empty;
+                bool send = false;
+                var settings = SettingsManager.InGameCurrent.General;
+                if (settings.MapCategory.Value == "General" && settings.MapName.Value == "City" && SettingsManager.CustomSkinSettings.City.SkinsEnabled.Value)
+                {
+                    CityCustomSkinSet set = (CityCustomSkinSet)SettingsManager.CustomSkinSettings.City.GetSelectedSet();
+                    List<string> houses = new List<string>();
+                    foreach (StringSetting house in set.Houses.GetItems())
+                        houses.Add(house.Value);
+                    urls1 = string.Join(",", houses.ToArray());
+                    for (int i = 0; i < 300; i++)
+                        indices = indices + Convert.ToString((int)UnityEngine.Random.Range(0f, 8f));
+                    urls2 = string.Join(",", new string[] { set.Ground.Value, set.Wall.Value, set.Gate.Value });
+                    if (urls1.Replace(",", "").Trim() != "" || urls2.Replace(",", "").Trim() != "")
+                        send = true;
+                }
+                else if (settings.MapCategory.Value == "General" && settings.MapName.Value == "Forest" && SettingsManager.CustomSkinSettings.Forest.SkinsEnabled.Value)
+                {
+                    ForestCustomSkinSet set = (ForestCustomSkinSet)SettingsManager.CustomSkinSettings.Forest.GetSelectedSet();
+                    List<string> trees = new List<string>();
+                    foreach (StringSetting tree in set.TreeTrunks.GetItems())
+                        trees.Add(tree.Value);
+                    urls1 = string.Join(",", trees.ToArray());
+                    List<string> leafs = new List<string>();
+                    foreach (StringSetting leaf in set.TreeLeafs.GetItems())
+                        leafs.Add(leaf.Value);
+                    leafs.Add(set.Ground.Value);
+                    urls2 = string.Join(",", leafs.ToArray());
+                    for (int i = 0; i < 150; i++)
+                    {
+                        string str = Convert.ToString((int)UnityEngine.Random.Range((float)0f, (float)8f));
+                        indices = indices + str;
+                        if (!set.RandomizedPairs.Value)
+                            indices = indices + str;
+                        else
+                            indices = indices + Convert.ToString((int)UnityEngine.Random.Range((float)0f, (float)8f));
+                    }
+                    if (urls1.Replace(",", "").Trim() != "" || urls2.Replace(",", "").Trim() != "")
+                        send = true;
+                }
+                if (send)
+                    RPCManager.PhotonView.RPC("LoadLevelSkinRPC", PhotonTargets.AllBuffered, new object[] { indices, urls1, urls2 });
+            }
+            */
+        }
+
         private IEnumerator RespawnForever(float delay)
         {
             while (true)
@@ -773,13 +950,65 @@ namespace GameManagers
                 SpawnPlayer(false);
             }
         }
+
+        public IEnumerator OnLoadSkyboxRPC(string[] urls)
+        {
+            var settings = SettingsManager.CustomSkinSettings.Skybox;
+            if (settings.SkinsEnabled.Value && (!settings.SkinsLocal.Value || PhotonNetwork.isMasterClient) && IsValidSkybox(urls))
+            {
+                yield return StartCoroutine(_skyboxCustomSkinLoader.LoadSkinsFromRPC(urls));
+                StartCoroutine(ReloadSkybox());
+            }
+        }
+
+        protected IEnumerator ReloadSkybox()
+        {
+            yield return new WaitForSeconds(0.5f);
+            var camera = (InGameCamera)SceneLoader.CurrentCamera;
+            Material skyMaterial = SkyboxCustomSkinLoader.SkyboxMaterial;
+            if (skyMaterial != null && camera.Skybox.material != skyMaterial)
+                camera.Skybox.material = skyMaterial;
+        }
+
+        public IEnumerator OnLoadLevelSkinRPC(string indices, string urls1, string urls2)
+        {
+            yield break;
+            /*
+            var mapSettings = SettingsManager.InGameCurrent.General;
+            while (!IsFinishedLoading())
+                yield return null;
+            if (mapSettings.MapCategory.Value == "General" && mapSettings.MapName.Value == "Forest")
+            {
+                BaseCustomSkinSettings<ForestCustomSkinSet> settings = SettingsManager.CustomSkinSettings.Forest;
+                if (settings.SkinsEnabled.Value && (!settings.SkinsLocal.Value || PhotonNetwork.isMasterClient))
+                    yield return StartCoroutine(_forestCustomSkinLoader.LoadSkinsFromRPC(new object[] { indices, urls1, urls2 }));
+
+            }
+            else if (mapSettings.MapCategory.Value == "General" && mapSettings.MapName.Value == "City")
+            {
+                BaseCustomSkinSettings<CityCustomSkinSet> settings = SettingsManager.CustomSkinSettings.City;
+                if (settings.SkinsEnabled.Value && (!settings.SkinsLocal.Value || PhotonNetwork.isMasterClient))
+                    yield return StartCoroutine(_cityCustomSkinLoader.LoadSkinsFromRPC(new object[] { indices, urls1, urls2 }));
+            }
+            */
+        }
+
+        private bool IsValidSkybox(string[] urls)
+        {
+            if (urls.Length != 6)
+                return false;
+            foreach (string url in urls)
+            {
+                if (TextureDownloader.ValidTextureURL(url))
+                    return true;
+            }
+            return false;
+        }
     }
 
     public enum GameState
     {
         Loading,
-        Playing,
-        Paused,
-        Unpausing
+        Playing
     }
 }

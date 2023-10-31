@@ -65,7 +65,7 @@ namespace UI
                 if (UIManager.CurrentMenu == null || !(UIManager.CurrentMenu is InGameMenu))
                     return;
                 var manager = (InGameManager)SceneLoader.CurrentGameManager;
-                if (InGameMenu.InMenu() || !manager.IsFinishedLoading())
+                if (InGameMenu.InMenu() || !manager.IsFinishedLoading() || manager.GlobalPause || manager.Restarting)
                     SetPointer();
                 else if (manager.CurrentCharacter != null && manager.CurrentCharacter is Human && !manager.CurrentCharacter.Dead && !CustomLogicManager.Cutscene)
                 {
@@ -246,7 +246,9 @@ namespace UI
                         }
                     }
                     else
+                    {
                         crosshairTransform.position = mousePosition;
+                    }
                 }
                 _instance._forceNextCrosshairUpdate = false;
             }

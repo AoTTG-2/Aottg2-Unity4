@@ -61,7 +61,7 @@ namespace Projectiles
         {
             if (photonView.isMine && !Disabled)
             {
-                var character = collision.collider.gameObject.transform.root.GetComponent<BaseCharacter>();
+                var character = collision.collider.transform.root.GetComponent<BaseCharacter>();
                 if (character == null)
                 {
                     EffectSpawner.Spawn(EffectPrefabs.BladeThrowHit, transform.position, Quaternion.LookRotation(_velocity));
@@ -74,15 +74,18 @@ namespace Projectiles
                     }
                 }
                 transform.Find("BladeHit").GetComponent<AudioSource>().Play();
-                CheckHurtboxes();
+                CheckHurtboxes(collision.collider);
                 DestroySelf();
             }
         }
 
-        void CheckHurtboxes()
+        void CheckHurtboxes(Collider firstCollider)
         {
-            var radius = GetComponent<SphereCollider>().radius * transform.lossyScale.x * 1.25f;
-            var colliders = Physics.OverlapSphere(transform.position, radius, PhysicsLayer.GetMask(PhysicsLayer.Hurtbox, PhysicsLayer.Human));
+            var radius = GetComponent<SphereCollider>().radius * transform.lossyScale.x * 1.3f;
+            var overlap = Physics.OverlapSphere(transform.position, radius, PhysicsLayer.GetMask(PhysicsLayer.Hurtbox, PhysicsLayer.Human));
+            List<Collider> colliders = new List<Collider>(overlap);
+            if (!colliders.Contains(firstCollider))
+                colliders.Add(firstCollider);
             foreach (var collider in colliders)
             {
                 var character = collider.transform.root.gameObject.GetComponent<BaseCharacter>();

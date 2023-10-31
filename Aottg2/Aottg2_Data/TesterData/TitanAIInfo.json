@@ -6,8 +6,8 @@
 		"Hard": {"Normal": 0.55, "Abnormal": 0.2, "Jumper": 0.1, "Crawler": 0.05, "Punk": 0.1}
 	},
 	"AttackRanges": {
-		"AttackPunchCombo": {"Ranges": [{"X": [-6, 6], "Y": [-3, 15], "Z": [0, 16]}], "HumanOnly": false},
-		"AttackPunch": {"Ranges": [{"X": [-6, 6], "Y": [-3, 15], "Z": [0, 16]}], "HumanOnly": false},
+		"AttackPunchCombo": {"Ranges": [{"X": [-5, 5], "Y": [-3, 15], "Z": [0, 16]}], "HumanOnly": false},
+		"AttackPunch": {"Ranges": [{"X": [-5, 5], "Y": [-3, 15], "Z": [0, 16]}], "HumanOnly": false},
 		"AttackSlam": {"Ranges": [{"X": [-5, 5], "Y": [-3, 7], "Z": [0, 14]}], "HumanOnly": true},
 		"AttackBellyFlop": {"Ranges": [{"X": [-5, 5], "Y": [-3, 7], "Z": [0, 14]}], "HumanOnly": true},
 		"AttackSlap": {"Ranges": [{"X": [-5, 5], "Y": [4, 20], "Z": [1, 16]}], "HumanOnly": false},
@@ -28,12 +28,12 @@
 		"Name": "Titan",
 		"Health": 1,
 		"IsCrawler": false,
-		"DetectRange": 200,
+		"DetectRange": 100,
 		"FocusRange": 1000,
-		"ReactionTime": 3,
+		"FocusTime": 1.0,
 		"TurnAngle": 45,
-		"TurnSpeed": 1.5,
-		"TurnPause": 0.5,
+		"TurnSpeed": 1.3,
+		"TurnPause": 0.8,
 		"CloseAttackRangeMin": 12,
 		"CloseAttackRangeMax": 12,
 		"FarAttackRange": 0,
@@ -51,8 +51,8 @@
 		"RunSpeed": 10,
 		"JumpForce": 150,
 		"RotateSpeed": 0.8,
-		"HandHitboxRadius": 0.2,
-		"FootHitboxRadius": 0.13,
+		"HandHitboxRadius": 0.18,
+		"FootHitboxRadius": 0.12,
 		"BodyHeadCombos": [
 			{"Body": 0, "Head": 0, "Chance": 0.1},
 			{"Body": 0, "Head": 1, "Chance": 0.1},
@@ -80,7 +80,6 @@
 	"Dummy": {
 		"Default": {
 			"Name": "Dummy",
-			"ReactionTime": 1000,
 			"DetectRange": 0,
 			"FocusRange": 0
 		}
@@ -99,9 +98,22 @@
 				"AttackSlapBack": 0.1
 			}
 		},
+		"Easy": {
+			"TurnPause": 1.0,
+			"AttackWaitMin": 1.0,
+			"AttackWaitMax": 1.2,
+			"AttackPause": 1.0,
+			"ActionPause": 1.0
+		},
 		"Normal": {
 		},
 		"Hard": {
+			"TurnPause": 0.2,
+			"AttackWaitMin": 0.1,
+			"AttackWaitMax": 0.3,
+			"AttackPause": 0.4,
+			"ActionPause": 0.4,
+			"RotateSpeed": 1.0
 		}
 	},
 	"Abnormal": {
@@ -120,6 +132,23 @@
 				"AttackSlapBack": 0.1,
 				"AttackBellyFlop": 0.5
 			}
+		},
+		"Easy": {
+			"TurnPause": 1.0,
+			"AttackWaitMin": 1.0,
+			"AttackWaitMax": 1.2,
+			"AttackPause": 1.0,
+			"ActionPause": 1.0
+		},
+		"Normal": {
+		},
+		"Hard": {
+			"TurnPause": 0.2,
+			"AttackWaitMin": 0.3,
+			"AttackWaitMax": 0.4,
+			"AttackPause": 0.2,
+			"ActionPause": 0.2,
+			"RotateSpeed": 1.0
 		}
 	},
 	"Jumper": {
@@ -135,6 +164,23 @@
 				"AttackPunchCombo": 0.1,
 				"AttackJump": 0.5
 			}
+		},
+		"Easy": {
+			"TurnPause": 1.0,
+			"AttackWaitMin": 1.0,
+			"AttackWaitMax": 1.2,
+			"AttackPause": 1.0,
+			"ActionPause": 1.0
+		},
+		"Normal": {
+		},
+		"Hard": {
+			"TurnPause": 0.2,
+			"AttackWaitMin": 0.3,
+			"AttackWaitMax": 0.4,
+			"AttackPause": 0.2,
+			"ActionPause": 0.2,
+			"RotateSpeed": 1.0
 		}
 	},
 	"Crawler": {
@@ -153,13 +199,28 @@
 			"Attacks": {
 				"AttackCrawlerJump": 0.1
 			}
+		},
+		"Easy": {
+			"TurnPause": 1.5,
+			"AttackPause": 1.5,
+			"ActionPause": 1.5,
+			"RunSpeed": 6
+		},
+		"Normal": {
+		},
+		"Hard": {
+			"TurnPause": 0.5,
+			"AttackPause": 0.5,
+			"ActionPause": 0.5,
+			"RotateSpeed": 1.0,
+			"RunSpeed": 15
 		}
 	},
 	"Punk": {
 		"Default": {
 			"Name": "Punk",
 			"IsRun": true,
-			"ReactionTime": 1,
+			"FocusTime": 0.5,
 			"TurnPause": 0.2,
 			"TurnSpeed": 2.5,
 			"TurnAngle": 110,
@@ -172,6 +233,19 @@
 				"AttackSlap": 0.1,
 				"AttackBrush": 0.1
 			}
+		},
+		"Easy": {
+			"TurnPause": 0.5,
+			"AttackPause": 1.0,
+			"ActionPause": 1.0
+		},
+		"Normal": {
+		},
+		"Hard": {
+			"TurnPause": 0.2,
+			"AttackPause": 0.2,
+			"ActionPause": 0.2,
+			"RotateSpeed": 1.0
 		}
 	}
 }

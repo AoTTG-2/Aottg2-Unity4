@@ -310,6 +310,7 @@ component Dummy
             if (self._state == "Alive")
             {
                 self.MapObject.Transform.PlayAnimation("Armature|dummy_fall");
+                self.MapObject.GetTransform("FallSound").PlaySound();
             }
             self._currentResetTime = self.ResetDelay;
             self._state = "Dead";
@@ -326,6 +327,7 @@ component Dummy
                 self.ResetCount = self.ResetCount - 1;
                 self._state = "Rise";
                 self.MapObject.Transform.PlayAnimation("Armature|dummy_rise");
+                self.MapObject.GetTransform("RiseSound").PlaySound();
                 self._currentResetTime = 1.0;
             }
         }
@@ -390,7 +392,7 @@ component Wagon
             human = Network.MyPlayer.Character;
             if (human != null && human.Type == "Human")
             {
-                human.MountTransformWithRigidbody(self._horse, Vector3(0, 1.68, 0), Vector3.Zero, self._rigidbody);
+                human.MountTransform(self._horse, Vector3(0, 1.95, 0), Vector3.Zero);
                 self._human = human;
             }
         }
@@ -442,14 +444,49 @@ component Wagon
 
     function OnFrame()
     {
-        if (self._inUse && self.NetworkView.Owner == Network.MyPlayer)
+        if (self.NetworkView.Owner == Network.MyPlayer)
         {
-            if (self._human.HasTargetDirection)
+            if (self._inUse)
             {
-                self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, self._human.TargetDirection, self.RotateSpeed * Time.FrameTime);
-                self._rigidbody.AddForce(self.MapObject.Forward * self.MoveForce);
-                velocity = self._rigidbody.GetVelocity();
-                self._rigidbody.SetVelocity(velocity.Normalized * Math.Min(velocity.Magnitude, self.MaxMoveSpeed));
+                if (self._human.HasTargetDirection)
+                {
+                    self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, self._human.TargetDirection, self.RotateSpeed * Time.FrameTime);
+                    self._rigidbody.AddForce(self.MapObject.Forward * self.MoveForce);
+                    velocity = self._rigidbody.GetVelocity();
+                    self._rigidbody.SetVelocity(velocity.Normalized * Math.Min(velocity.Magnitude, self.MaxMoveSpeed));
+                }
+                else
+                {
+                    velocity = self._rigidbody.GetVelocity();
+                    if (velocity.Magnitude < 1)
+                    {
+                        self._rigidbody.SetVelocity(Vector3.Up * velocity.Y);
+                    }
+                    else
+                    {
+                        self._rigidbody.AddForce(-0.5 * velocity.Normalized * velocity.Magnitude);
+                    }
+                }
+                if (self._rigidbody.GetVelocity().Magnitude > 1)
+                {
+                    self._human.PlayAnimation("Armature|horse_run");
+                }
+                else
+                {
+                    self._human.PlayAnimation("Armature|horse_idle");
+                }
+                if (Input.GetKeyDown("Interaction/Interact"))
+                {
+                    self._human.Unmount();
+                    self.NetworkView.Transfer(Network.MasterClient);
+                    self._inUse = false;
+                }
+                if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._horse)
+                {
+                    self.NetworkView.Transfer(Network.MasterClient);
+                    self._inUse = false;
+                    return;
+                }
             }
             else
             {
@@ -462,29 +499,6 @@ component Wagon
                 {
                     self._rigidbody.AddForce(-0.5 * velocity.Normalized * velocity.Magnitude);
                 }
-            }
-            if (self._rigidbody.GetVelocity().Magnitude > 1)
-            {
-                self._human.PlayAnimation("horse_run");
-            }
-            else
-            {
-                self._human.PlayAnimation("horse_idle");
-            }
-            if (Input.GetKeyDown("Interaction/Interact"))
-            {
-                self._human.Unmount();
-                self.NetworkView.Transfer(Network.MasterClient);
-                self._inUse = false;
-            }
-        }
-        if (self.NetworkView.Owner == Network.MyPlayer && self._inUse)
-        {
-            if (self.NetworkView.Owner.Character == null || self.NetworkView.Owner.Character.Type != "Human" || self.NetworkView.Owner.Character.MountedTransform != self._horse)
-            {
-                self.NetworkView.Transfer(Network.MasterClient);
-                self._inUse = false;
-                return;
             }
         }
         if (self._riding)
@@ -501,7 +515,7 @@ component Wagon
             }
             else
             {
-                self._human.PlayAnimation("horse_idle");
+                self._human.PlayAnimation("Armature|horse_idle");
             }
         }
         if (self._collidingHuman != null)
@@ -513,7 +527,7 @@ component Wagon
                     if (self.NetworkView.Owner == Network.MyPlayer) 
                     {
                         self._inUse = true;
-                        self._collidingHuman.MountTransformWithRigidbody(self._horse, Vector3(0, 1.68, 0), Vector3.Zero, self._rigidbody);
+                        self._collidingHuman.MountTransform(self._horse, Vector3(0, 1.95, 0), Vector3.Zero);
                         self._human = self._collidingHuman;
                     }
                     else
@@ -529,8 +543,8 @@ component Wagon
                 {
                     self._riding = true;
                     self._human = self._collidingHuman;
-                    posA = Vector3(-1.0, 1.5, -3.5);
-                    posB = Vector3(1.0, 1.5, 1.0);
+                    posA = Vector3(-1.0, 1.78, -3.5);
+                    posB = Vector3(1.0, 1.78, 1.0);
                     self._human.MountMapObject(self.MapObject, Random.RandomVector3(posA, posB), Vector3(0, 0, 0));
                 }
             }
@@ -543,11 +557,13 @@ component Wagon
         if (self._rigidbody.GetVelocity().Magnitude > 1)
         {
             self._horse.PlayAnimation("horse_Run");
+            self.MapObject.GetTransform("RunSound").PlaySound();
             self.MapObject.GetTransform("Dust").ToggleParticle(true);
         }
         else
         {
             self._horse.PlayAnimation("horse_idle0");
+            self.MapObject.GetTransform("RunSound").StopSound();
             self.MapObject.GetTransform("Dust").ToggleParticle(false);
         }
     }
@@ -732,6 +748,147 @@ component Cannon
             Game.SpawnEffect("Boom2", self._barrelEnd.Position, self._barrelEnd.Rotation, 0.5);
             Game.SpawnProjectileWithOwner("CannonBall", self._barrelEnd.Position, Vector3.Zero, self._barrel.Up.Normalized * -1.0 * self._ballSpeed, 
             Vector3(0, -20, 0), 2.0, self._human);
+        }
+    }
+}
+
+class Animal
+{
+    Wanders = true;
+    WanderRadius = 50.0;
+    WanderSpeed = 5.0;
+    WalkAnimation = "";
+    IdleAnimations = "";
+    ActionAnimations = "";
+    ActionSounds = "";
+    _stateTimeLeft = 0.0;
+    _idleAnimations = List();
+    _actionAnimations = List();
+    _actionSounds = List();
+    _transform = null;
+    _originalPosition = null;
+    _state = "Idle";
+    _targetRotation = null;
+    _hasAction = false;
+
+    function Init()
+    {
+        for (anim in String.Split(self.IdleAnimations, "/"))
+        {
+            if (anim != "")
+            {
+                self._idleAnimations.Add(anim);
+            }
+        }
+        for (anim in String.Split(self.ActionAnimations, "/"))
+        {
+            if (anim != "")
+            {
+                self._actionAnimations.Add(anim);
+            }
+        }
+        for (anim in String.Split(self.ActionSounds, "/"))
+        {
+            if (anim != "")
+            {
+                self._actionSounds.Add(anim);
+            }
+        }
+        self._transform = self.MapObject.Transform;
+        self._originalPosition = self._transform.Position;
+        self._hasAction = self._actionAnimations.Count > 0;
+        self._rigidbody = self.MapObject.GetComponent("Rigidbody");
+        self.Idle();
+    }
+
+    function OnFrame()
+    {  
+        self._stateTimeLeft = self._stateTimeLeft - Time.FrameTime;
+        if (self._state == "Wander")
+        {
+            if (Vector3.Distance(self._originalPosition, self._transform.Position) > self.WanderRadius)
+            {
+                self.Idle();            
+            }
+            else
+            {
+                self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, self._targetRotation, 5.0 * Time.FrameTime);
+                self._rigidbody.SetVelocity(self.MapObject.Forward * self.WanderSpeed);
+            }
+        }
+        elif (self._state == "Returning")
+        {
+            self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, self._targetRotation, 5.0 * Time.FrameTime);
+            self._rigidbody.SetVelocity(self.MapObject.Forward * self.WanderSpeed);
+        }
+        else
+        {
+            targetRotation = self.MapObject.Rotation;
+            targetRotation.x = 0.0;
+            targetRotation.z = 0.0;
+            self.MapObject.Forward = Vector3.Lerp(self.MapObject.Forward, targetRotation, 5.0 * Time.FrameTime);
+            self._rigidbody.SetVelocity(Vector3.Up * self._rigidbody.GetVelocity().Y);
+        }
+        if (self._stateTimeLeft <= 0.0)
+        {
+            if (self._state == "Idle")
+            {
+                if (self._hasAction && Random.RandomFloat(0.0, 1.0) < 0.7)
+                {
+                    self.Action();
+                }
+                else
+                {
+                    self.Wander();
+                }
+            }
+            else
+            {
+                self.Idle();
+            }
+        }
+    }
+
+    function Idle()
+    {
+        self._state = "Idle";
+        anim = self._idleAnimations.Get(Random.RandomInt(0, self._idleAnimations.Count));
+        self._transform.PlayAnimation(anim, 0.2);
+        self._stateTimeLeft = Random.RandomFloat(4.0, 8.0);
+    }
+
+    function Action()
+    {
+        self._state = "Action";
+        index = Random.RandomInt(0, self._actionAnimations.Count);
+        anim = self._actionAnimations.Get(index);
+        self._transform.PlayAnimation(anim, 0.2);
+        self._stateTimeLeft = self._transform.GetAnimationLength(anim) + 0.2;
+        if (self._actionSounds.Count > index)
+        {
+            sound = self._actionSounds.Get(index);
+            if (sound != "None")
+            {
+                self._transform.GetTransform(sound).PlaySound();
+            }
+        }
+    }
+
+    function Wander()
+    {
+        self._state = "Wander";
+        self._transform.PlayAnimation(self.WalkAnimation, 0.2);
+        self._stateTimeLeft = Random.RandomFloat(3.0, 6.0);
+        if (Vector3.Distance(self._transform.Position, self._originalPosition) > self.WanderRadius * 0.7)
+        {
+            x = self._originalPosition.X - self._transform.Position.X;
+            z = self._originalPosition.Z - self._transform.Position.Z;
+            self._targetRotation = Vector3(x, 0, z).Normalized;
+            self._state = "Returning";
+        }
+        else
+        {
+            self._targetRotation = Vector3(Random.RandomFloat(-1.0, 1.0), 0, Random.RandomFloat(-1.0, 1.0)).Normalized;
         }
     }
 }

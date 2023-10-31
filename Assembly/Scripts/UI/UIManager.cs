@@ -23,9 +23,11 @@ namespace UI
         private static string _currentUITheme;
         private static UIManager _instance;
         public static BaseMenu CurrentMenu;
+        public static LoadingMenu LoadingMenu;
         public static float CurrentCanvasScale = 1f;
         public static List<string> AvailableProfileIcons = new List<string>();
         public static float LastFrameTime = 0.0f;
+        private static Dictionary<string, AudioSource> _sounds = new Dictionary<string, AudioSource>();
 
         public static void Init()
         {
@@ -40,11 +42,27 @@ namespace UI
         {
             LoadEmojis();
             LoadProfileIcons();
+            LoadingMenu = ElementFactory.CreateMenu<LoadingMenu>("BackgroundMenu");
+            LoadingMenu.Setup();
+            Util.DontDestroyOnLoad(LoadingMenu.gameObject, true);
         }
 
         public static void OnLoadScene(SceneName sceneName)
         {
             SetMenu(sceneName);
+            if (sceneName == SceneName.Startup)
+                return;
+            LoadSounds();
+            if (sceneName == SceneName.InGame)
+                LoadingMenu.Show(true);
+            else
+                LoadingMenu.Hide();
+        }
+
+        public static void PlaySound(UISound sound)
+        {
+            var source = _sounds[sound.ToString()];
+            source.Play();
         }
 
         public static void SetLastCategory(Type t, string category)
@@ -73,6 +91,14 @@ namespace UI
             var node = JSON.Parse(AssetBundleManager.LoadText("ProfileIconInfo"));
             foreach (var profileIcon in node["Icons"])
                 AvailableProfileIcons.Add(profileIcon.Value);
+        }
+
+        private static void LoadSounds()
+        {
+            _sounds = new Dictionary<string, AudioSource>();
+            var go = AssetBundleManager.InstantiateAsset<GameObject>("MainMenuSounds");
+            foreach (var source in go.GetComponentsInChildren<AudioSource>())
+                _sounds.Add(source.name, source);
         }
 
         public static void SetMenu(SceneName sceneName)
@@ -223,6 +249,29 @@ namespace UI
             }
         }
 
+        public static Texture2D GetThemeTexture(string panel, string category, string item, string fallbackPanel = "DefaultPanel")
+        {
+            JSONObject theme = null;
+            if (_uiThemes.ContainsKey(_currentUITheme))
+                theme = _uiThemes[_currentUITheme];
+            if (theme == null || theme[panel] == null || theme[panel][category] == null || theme[panel][category][item] == null)
+            {
+                if (panel != fallbackPanel)
+                    return GetThemeTexture(fallbackPanel, category, item, fallbackPanel);
+                Debug.Log(string.Format("{0} {1} {2} theme error.", panel, category, item));
+                return null;
+            }
+            try
+            {
+                return (Texture2D)AssetBundleManager.LoadAsset("MenuBackground" + theme[panel][category][item].Value, true);
+            }
+            catch
+            {
+                Debug.Log(string.Format("{0} {1} {2} theme error.", panel, category, item));
+                return null;
+            }
+        }
+
         public static ColorBlock GetThemeColorBlock(string panel, string category, string item, string fallbackPanel = "DefaultPanel")
         {
             Color normal = GetThemeColor(panel, category, item + "NormalColor", fallbackPanel);
@@ -293,5 +342,12 @@ namespace UI
                 return 0;
             return (int)Math.Round(1.0f / LastFrameTime);
         }
+    }
+
+    public enum UISound
+    {
+        Forward,
+        Back,
+        Hover
     }
 }

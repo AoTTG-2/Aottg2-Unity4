@@ -1,6 +1,7 @@
 ﻿using ApplicationManagers;
 using CustomLogic;
 using Map;
+using Settings;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -89,6 +90,13 @@ namespace Characters
                 return;
             State = (HookState)state;
             _currentLiveTime = 0f;
+            if ((State == HookState.DisablingHooked || State == HookState.DisablingHooking) && SettingsManager.SoundSettings.HookRetractEffect.Value)
+            {
+                if (_left)
+                    _owner.PlaySoundRPC(HumanSounds.HookRetractLeft, null);
+                else
+                    _owner.PlaySoundRPC(HumanSounds.HookRetractRight, null);
+            }
         }
 
         public void OnSetHooking(Vector3 baseVelocity, Vector3 relativeVelocity, PhotonMessageInfo info)
@@ -105,7 +113,10 @@ namespace Characters
             _currentLiveTime = 0f;
             _nodes.Add(_hookPosition);
             _renderer.SetWidth(0.1f, 0.1f);
-            _owner.PlaySoundRPC(HumanSounds.HookLaunch, null);
+            if (SettingsManager.SoundSettings.OldHookEffect.Value)
+                _owner.PlaySoundRPC(HumanSounds.OldHookLaunch, null);
+            else
+                _owner.PlaySoundRPC(HumanSounds.HookLaunch, null);
             _particles.transform.position = GetHookPosition();
             _particles.Stop();
             _particles.Play();
@@ -140,6 +151,8 @@ namespace Characters
             }
             _currentLiveTime = 0f;
             _renderer.SetWidth(0.1f, 0.1f);
+            if (SettingsManager.SoundSettings.HookImpactEffect.Value)
+                _owner.PlaySoundRPC(HumanSounds.HookImpact);
         }
 
         public void SetHookState(HookState state)
@@ -326,8 +339,11 @@ namespace Characters
                 _particles.transform.position = GetHookPosition();
             if (State == HookState.Hooked)
             {
-                if (_hasHookParent && HookParent == null)
-                    SetHookState(HookState.DisablingHooked);
+                if (_hasHookParent)
+                {
+                    if (HookParent == null || (HookCharacter != null && HookCharacter.Dead && HookCharacter is Human))
+                        SetHookState(HookState.DisablingHooked);
+                }
             }
         }
 

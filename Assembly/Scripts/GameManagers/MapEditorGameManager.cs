@@ -154,13 +154,14 @@ namespace GameManagers
                                 SelectObject(mapObject);
                         }
                     }
-                    else
+                    else if (!multi)
                         DeselectAll();
                 }
             }
             else
             {
-                DeselectAll();
+                if (!multi)
+                    DeselectAll();
                 foreach (var gameObject in MapLoader.GoToMapObject.Keys)
                 {
                     var mapObject = MapLoader.GoToMapObject[gameObject];
@@ -172,7 +173,7 @@ namespace GameManagers
                         if (Vector3.Distance(center, camera.Cache.Transform.position) < camera.Camera.farClipPlane && Util.IsVectorBetween(screenPosition, (Vector2)_dragStart, (Vector2)Input.mousePosition))
                         {
                             if (!SelectedObjects.Contains(mapObject))
-                                SelectedObjects.Add(mapObject);
+                                SelectObject(mapObject);
                         }
                     }
                 }

@@ -18,8 +18,6 @@ namespace UI
             ElementFactory.CreateColorSetting(DoublePanelRight, style, settings.BombColor, UIManager.GetLocale(cat, sub, "BombColor"), UIManager.CurrentMenu.ColorPickPopup);
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.ShowBombColors, UIManager.GetLocale(cat, sub, "ShowBombColors"));
             ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.UseOldEffect, UIManager.GetLocale(cat, sub, "UseOldEffect"));
-            ElementFactory.CreateToggleSetting(DoublePanelRight, style, settings.SwapAttackSpecial, UIManager.GetLocale(cat, sub, "SwapAttackSpecial"), tooltip:
-                UIManager.GetLocale(cat, sub, "SwapAttackSpecialTooltip"));
             _pointsLeftLabel = ElementFactory.CreateDefaultLabel(DoublePanelLeft, style, UIManager.GetLocale(cat, sub, "PointsLeft")).GetComponent<Text>();
             ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRadius, UIManager.GetLocale(cat, sub, "BombRadius") + " (0-10)", onValueChanged: () => OnStatChanged(settings.BombRadius));
             ElementFactory.CreateIncrementSetting(DoublePanelLeft, style, settings.BombRange, UIManager.GetLocale(cat, sub, "BombRange") + " (0-3)", onValueChanged: () => OnStatChanged(settings.BombRange));

@@ -14,24 +14,10 @@ namespace UI
     class InGameBackgroundMenu : BaseMenu
     {
         private BloodBackgroundPanel _bloodBackgroundPanel;
-        private MainBackgroundPanel _mainBackgroundPanel;
 
         public override void Setup()
         {
-            SetupMainBackground();
-        }
-
-        private void SetupMainBackground()
-        {
-            _mainBackgroundPanel = ElementFactory.CreateDefaultPopup<MainBackgroundPanel>(transform);
             _bloodBackgroundPanel = ElementFactory.CreateDefaultPopup<BloodBackgroundPanel>(transform);
-            _mainBackgroundPanel.SetRandomBackground(loading: true);
-            _mainBackgroundPanel.Show();
-        }
-
-        public void HideMainBackground()
-        {
-            _mainBackgroundPanel.Hide();
         }
 
         public void ShowBlood()

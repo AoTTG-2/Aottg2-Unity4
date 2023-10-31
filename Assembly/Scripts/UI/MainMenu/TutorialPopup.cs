@@ -6,25 +6,25 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    class TutorialPopup: MainMenuPopup
+    class TutorialPopup: BasePopup
     {
         protected override string Title => UIManager.GetLocale("MainMenu", "TutorialPopup", "Title");
         protected override float Width => 280f;
-        protected override float Height => 300f;
+        protected override float Height => 270f;
         protected override float VerticalSpacing => 20f;
         protected override int VerticalPadding => 20;
+        protected override bool UseSound => true;
+
         public override void Setup(BasePanel parent = null)
         {
             base.Setup(parent);
             string cat = "MainMenu";
             string sub = "TutorialPopup";
-            float elementWidth = 210f;
+            float width = 220f;
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
-            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "BasicButton"), onClick: () => OnButtonClick("Basic"), 
-                elementWidth: elementWidth);
-            ElementFactory.CreateDefaultButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "AdvancedButton"), onClick: () => OnButtonClick("Advanced"),
-                elementWidth: elementWidth);
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateTextButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "BasicButton"), width, onClick: () => OnButtonClick("Basic"));
+            ElementFactory.CreateTextButton(SinglePanel, style, UIManager.GetLocale(cat, sub, "AdvancedButton"), width, onClick: () => OnButtonClick("Advanced"));
         }
 
         protected void OnButtonClick(string name)

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using SimpleJSONFixed;
 using System.Collections;
 using System.IO;
+using Settings;
 
 namespace Characters
 {
@@ -26,6 +27,12 @@ namespace Characters
         public static int[] GetRandomBodyHeadCombo(JSONNode node = null)
         {
             int[] result = new int[2];
+            if (SettingsManager.InGameCurrent.Titan.TitanStandardModels.Value)
+            {
+                result[0] = 0;
+                result[1] = 0;
+                return result;
+            }
             if (node == null)
                 node = CharacterData.TitanAIInfo["Default"];
             var combos = node["BodyHeadCombos"];

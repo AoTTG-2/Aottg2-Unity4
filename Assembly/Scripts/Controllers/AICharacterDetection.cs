@@ -11,6 +11,7 @@ namespace Characters
         public HashSet<BaseCharacter> Enemies = new HashSet<BaseCharacter>();
         public BaseCharacter Owner;
         protected SphereCollider _collider;
+        private Vector3 _lastOwnerScale;
 
         public static AICharacterDetection Create(BaseCharacter owner, float radius)
         {
@@ -23,6 +24,7 @@ namespace Characters
             detection._collider.isTrigger = true;
             detection._collider.radius = radius;
             detection.Owner = owner;
+            detection.SetScale(owner.Cache.Transform.localScale);
             return detection;
         }
 
@@ -50,6 +52,15 @@ namespace Characters
         protected void Update()
         {
             Enemies = Util.RemoveNullOrDead(Enemies);
+            var scale = Owner.Cache.Transform.localScale;
+            if (scale != _lastOwnerScale)
+                SetScale(scale);
+        }
+
+        public void SetScale(Vector3 scale)
+        {
+            _lastOwnerScale = scale;
+            transform.localScale = Util.DivideVectors(Vector3.one, scale);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace UI
             float inputWidth = 180f;
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
             ElementStyle style = new ElementStyle(titleWidth: 160f, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"), onClick: () => OnSaveButtonClick());
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Save"), onClick: () => OnSaveButtonClick());
             ElementFactory.CreateToggleGroupSetting(SinglePanel, style, settings.LobbyMode, UIManager.GetLocale(cat, sub, "Lobby"),
                UIManager.GetLocaleArray(cat, sub, "LobbyOptions"), tooltip: UIManager.GetLocale(cat, sub, "LobbyTooltip"));
             ElementFactory.CreateInputSetting(SinglePanel, style, settings.CustomLobby, UIManager.GetLocale(cat, sub, "LobbyCustom"), elementWidth: inputWidth);

@@ -33,20 +33,31 @@ namespace Characters
             Vector3 direction = (target - human.Cache.Transform.position).normalized;
             float cross = Vector3.Cross(human.Cache.Transform.forward, direction).y;
             Vector3 spawnPosition;
-            if (cross < 0f && human.State != HumanState.Land)
+            bool hasLeft = IsModelActive(human, true);
+            bool hasRight = IsModelActive(human, false);
+            bool twoShot = IsTwoShotMode();
+            if ((hasLeft && cross < 0f && human.State != HumanState.Land) || !hasRight)
             {
-                spawnPosition = human.Setup.ThunderspearL.transform.position;
+                spawnPosition = human.Setup._part_blade_l.transform.position;
                 human.PlaySound(HumanSounds.ThunderspearLaunch);
-                human.SetThunderspears(false, true);
-                human.AttackAnimation = "AHSS_shoot_l";
+                human.SetThunderspears(false, hasRight || !twoShot);
+                if (human.Grounded)
+                    human.AttackAnimation = HumanAnimations.TSShootL;
+                else
+                    human.AttackAnimation = HumanAnimations.TSShootLAir;
             }
             else
             {
-                spawnPosition = human.Setup.ThunderspearR.transform.position;
+                spawnPosition = human.Setup._part_blade_r.transform.position;
                 human.PlaySound(HumanSounds.ThunderspearLaunch);
-                human.SetThunderspears(true, false);
-                human.AttackAnimation = "AHSS_shoot_r";
+                human.SetThunderspears(hasLeft || !twoShot, false);
+                if (human.Grounded)
+                    human.AttackAnimation = HumanAnimations.TSShootR;
+                else
+                    human.AttackAnimation = HumanAnimations.TSShootRAir;
             }
+            if (human.Grounded)
+                spawnPosition = human.Setup._part_head.transform.position + Vector3.up * 1f;
             Vector3 spawnDirection = (target - spawnPosition).normalized;
             if (human.Grounded)
                 spawnPosition += spawnDirection * 1f;
@@ -103,14 +114,30 @@ namespace Characters
             {
                 if (CanUse())
                 {
-                    if (human.State != HumanState.Reload && (!human.Setup.ThunderspearLModel.activeSelf || !human.Setup.ThunderspearRModel.activeSelf))
-                        human.SetThunderspears(true, true);
+                    if (human.State != HumanState.Reload && (!human.Setup._part_blade_l.activeSelf || !human.Setup._part_blade_r.activeSelf))
+                    {
+                        if (!IsTwoShotMode() || RoundLeft >= 2)
+                            human.SetThunderspears(true, true);
+                    }
                 }
                 if (Current != null && !Current.Disabled)
                 {
                     _delayTimeLeft -= Time.fixedDeltaTime;
                 }
             }
+        }
+
+        private bool IsModelActive(Human human, bool left)
+        {
+            if (left)
+                return human.Setup._part_blade_l.activeSelf;
+            else
+                return human.Setup._part_blade_r.activeSelf;
+        }
+
+        private bool IsTwoShotMode()
+        {
+            return !SettingsManager.InGameCurrent.Misc.ThunderspearPVP.Value && MaxRound == 2;
         }
     }
 }

@@ -18,8 +18,8 @@ namespace UI
         protected override float Width => 280f;
         protected override float Height => 270f;
         protected override float VerticalSpacing => 20f;
-        protected override int HorizontalPadding => 20;
-        protected override int VerticalPadding => 20;
+        protected override int HorizontalPadding => 25;
+        protected override int VerticalPadding => 25;
         private SnapshotViewerMenu _menu;
         private Text _indexLabel;
         private int _index;
@@ -29,7 +29,7 @@ namespace UI
             base.Setup(parent);
             _menu = (SnapshotViewerMenu)UIManager.CurrentMenu;
             ElementStyle style = new ElementStyle(titleWidth: 95f, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Back"), onClick: () => OnButtonClick("Back"));
             _indexLabel = ElementFactory.CreateDefaultLabel(SinglePanel, style, "").GetComponent<Text>();
             UpdateIndexLabel();
             Transform group = ElementFactory.CreateHorizontalGroup(SinglePanel, 10f, TextAnchor.MiddleCenter).transform;

@@ -13,8 +13,8 @@ namespace UI
 {
     class MainBackgroundMenu : BaseMenu
     {
-        public MainBackgroundPanel _mainBackgroundPanelBack;
-        public MainBackgroundPanel _mainBackgroundPanelFront;
+        public MainMenuBackgroundPanel _mainBackgroundPanelBack;
+        public MainMenuBackgroundPanel _mainBackgroundPanelFront;
 
         public override void Setup()
         {
@@ -23,10 +23,10 @@ namespace UI
 
         private void SetupMainBackground()
         {
-            _mainBackgroundPanelBack = ElementFactory.CreateDefaultPopup<MainBackgroundPanel>(transform);
-            _mainBackgroundPanelFront = ElementFactory.CreateDefaultPopup<MainBackgroundPanel>(transform);
+            _mainBackgroundPanelBack = ElementFactory.CreateDefaultPopup<MainMenuBackgroundPanel>(transform);
+            _mainBackgroundPanelFront = ElementFactory.CreateDefaultPopup<MainMenuBackgroundPanel>(transform);
             _mainBackgroundPanelBack.SetRandomBackground(loading: false);
-            _mainBackgroundPanelBack.Show();
+            _mainBackgroundPanelBack.ShowImmediate();
             _mainBackgroundPanelFront.BackgroundIndex = _mainBackgroundPanelBack.BackgroundIndex;
         }
 

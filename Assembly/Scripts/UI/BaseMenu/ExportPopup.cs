@@ -11,7 +11,7 @@ namespace UI
     {
         protected override string Title => UIManager.GetLocaleCommon("Export");
         protected override float Width => 500f;
-        protected override float Height => 600f;
+        protected override float Height => 590f;
         protected override int VerticalPadding => 20;
         protected override int HorizontalPadding => 20;
         private InputSettingElement _element;
@@ -21,7 +21,7 @@ namespace UI
         {
             base.Setup(parent);
             ElementStyle style = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon("Done"), onClick: () => OnButtonClick("Done"));
+            ElementFactory.CreateTextButton(BottomBar, style, UIManager.GetLocaleCommon("Done"), onClick: () => OnButtonClick("Done"));
             _element = ElementFactory.CreateInputSetting(SinglePanel, style, ExportSetting, string.Empty, elementWidth: 460f, elementHeight: 440f, multiLine: true).
                 GetComponent<InputSettingElement>();
         }

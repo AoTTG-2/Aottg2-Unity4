@@ -157,7 +157,7 @@ namespace Map
                 LoadObject(obj, editor);
                 if (count % 100 == 0 && SceneLoader.SceneName == SceneName.InGame)
                 {
-                    ((InGameMenu)UIManager.CurrentMenu).UpdateLoading(0.9f + 0.1f * ((float)count / (float)objects.Count));
+                    UIManager.LoadingMenu.UpdateLoading(0.9f + 0.1f * ((float)count / (float)objects.Count));
                     yield return new WaitForEndOfFrame();
                 }
                 count++;
@@ -498,5 +498,11 @@ namespace Map
         public static string Entities = "Entities";
         public static string Hitboxes = "Hitboxes";
         public static string MapEditor = "MapEditor";
+    }
+
+    static class MapObjectPhysicsMaterial
+    {
+        public static string Default = "Default";
+        public static string Ice = "IceMaterial";
     }
 }

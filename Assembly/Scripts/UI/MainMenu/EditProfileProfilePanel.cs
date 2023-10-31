@@ -13,7 +13,7 @@ namespace UI
             ElementStyle style = new ElementStyle(titleWidth: 100f, themePanel: ThemePanel);
             var group = ElementFactory.CreateHorizontalGroup(SinglePanel, 60f, UnityEngine.TextAnchor.MiddleLeft).transform;
             ElementFactory.CreateButtonSetting(group, style, settings.ProfileIcon, UIManager.GetLocaleCommon("Icon"),
-                elementWidth: 200f, elementHeight: 40f, onClick: () => OnButtonClick("Icon"));
+                elementWidth: 180f, elementHeight: 40f, onClick: () => OnButtonClick("Icon"));
             ElementFactory.CreateRawImage(group, style, UIManager.GetProfileIcon(settings.ProfileIcon.Value), 256, 256);
             CreateHorizontalDivider(SinglePanel);
             ElementFactory.CreateInputSetting(SinglePanel, style, settings.Name, UIManager.GetLocaleCommon("Name"), elementWidth: 260f);

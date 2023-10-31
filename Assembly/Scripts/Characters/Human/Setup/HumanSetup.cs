@@ -14,10 +14,6 @@ namespace Characters
         public static JSONNode CostumeInfo;
         public static JSONNode HairInfo;
         public static Material WeaponTrailMaterial;
-        public GameObject ThunderspearL;
-        public GameObject ThunderspearR;
-        public GameObject ThunderspearLModel;
-        public GameObject ThunderspearRModel;
         public GameObject _mount_chest;
         public GameObject _mount_3dmg;
         public GameObject _mount_gas_l;
@@ -26,14 +22,14 @@ namespace Characters
         public GameObject _mount_gun_mag_r;
         public GameObject _mount_weapon_l;
         public GameObject _mount_weapon_r;
+        public GameObject _mount_ts_l;
+        public GameObject _mount_ts_r;
         public GameObject _part_3dmg;
         public GameObject _part_belt;
         public GameObject _part_gas_l;
         public GameObject _part_gas_r;
         public GameObject _part_arm_l;
         public GameObject _part_arm_r;
-        public GameObject _part_asset_1;
-        public GameObject _part_asset_2;
         public GameObject _part_blade_l;
         public GameObject _part_blade_r;
         public GameObject _part_brand_1;
@@ -50,7 +46,6 @@ namespace Characters
         public GameObject _part_glass;
         public GameObject _part_hair;
         public GameObject _part_hair_1;
-        public GameObject _part_hair_2;
         public GameObject _part_hand_l;
         public GameObject _part_hand_r;
         public GameObject _part_head;
@@ -92,10 +87,9 @@ namespace Characters
         {
             _meshes = new HumanSetupMeshes(this);
             _textures = new HumanSetupTextures(this);
-            _part_head = transform.Find("character_head_f").gameObject;
+            _part_head = transform.Find("Armature/Core/Controller_Body/hip/spine/chest/neck/head/char_head").gameObject;
             _part_leg = transform.Find("character_leg").gameObject;
             _part_chest = transform.Find("character_chest").gameObject;
-            _part_head.transform.parent = transform.Find("Amarture/Controller_Body/hip/spine/chest/neck/head").transform;
             _mount_chest = CreateMount("spine/chest");
             _mount_3dmg = CreateMount("spine/chest");
             _mount_gas_l = CreateMount("spine");
@@ -104,6 +98,8 @@ namespace Characters
             _mount_gun_mag_r = CreateMount("thigh_R");
             _mount_weapon_l = CreateMount("spine/chest/shoulder_L/upper_arm_L/forearm_L/hand_L");
             _mount_weapon_r = CreateMount("spine/chest/shoulder_R/upper_arm_R/forearm_R/hand_R");
+            _mount_ts_l = CreateMount("spine/chest/shoulder_L/upper_arm_L/forearm_L");
+            _mount_ts_r = CreateMount("spine/chest/shoulder_R/upper_arm_R/forearm_R");
             _mount_cloth = _part_leg;
         }
 
@@ -207,7 +203,6 @@ namespace Characters
             if (!IsDeadBody)
             {
                 ClothFactory.DisposeObject(_part_hair_1);
-                ClothFactory.DisposeObject(_part_hair_2);
                 ClothFactory.DisposeObject(_part_cape);
                 ClothFactory.DisposeObject(_part_chest_3);
             }
@@ -230,8 +225,6 @@ namespace Characters
             DestroyIfExists(_part_gas_r);
             DestroyIfExists(_part_blade_l);
             DestroyIfExists(_part_blade_r);
-            DestroyIfExists(ThunderspearL);
-            DestroyIfExists(ThunderspearR);
         }
 
         public void Create3dmg()
@@ -241,22 +234,23 @@ namespace Characters
             DestroyIfExists(_part_gas_l);
             DestroyIfExists(_part_gas_r);
             Material material = HumanSetupMaterials.Materials[_textures.Get3dmgTexture()];
-            _part_3dmg = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.Get3dmgMesh(), cached: true);
+            _part_3dmg = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.Get3dmgMesh(), cached: true);
             AttachToMount(_part_3dmg, _mount_3dmg);
             _part_3dmg.renderer.material = material;
             string beltMesh = _meshes.GetBeltMesh();
             if (beltMesh != string.Empty)
             {
-                _part_belt = this.GenerateCloth("Character/" + beltMesh);
+                _part_belt = AssetBundleManager.InstantiateAsset<GameObject>(beltMesh, cached: true);
                 _part_belt.renderer.material = material;
+                AttachToMount(_part_belt, _mount_3dmg);
             }
-            _part_gas_l = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetGasMesh(left: true), cached: true);
+            _part_gas_l = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.GetGasMesh(left: true), cached: true);
             _part_gas_l.renderer.material = material;
             if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.APG)
                 AttachToMount(_part_gas_l, _mount_gun_mag_l);
             else
                 AttachToMount(_part_gas_l, _mount_gas_l);
-            _part_gas_r = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetGasMesh(left: false), cached: true);
+            _part_gas_r = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.GetGasMesh(left: false), cached: true);
             _part_gas_r.renderer.material = material;
             if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.APG)
                 AttachToMount(_part_gas_r, _mount_gun_mag_r);
@@ -268,58 +262,51 @@ namespace Characters
         {
             DestroyIfExists(_part_blade_l);
             DestroyIfExists(_part_blade_r);
-            DestroyIfExists(ThunderspearL);
-            DestroyIfExists(ThunderspearR);
-            if (Weapon == HumanWeapon.AHSS || Weapon == HumanWeapon.Blade || Weapon == HumanWeapon.APG)
+            Material material = HumanSetupMaterials.Materials[_textures.Get3dmgTexture()];
+            string weaponLMesh = _meshes.GetWeaponMesh(left: true);
+            if (weaponLMesh != string.Empty)
             {
-                Material material = HumanSetupMaterials.Materials[_textures.Get3dmgTexture()];
-                string weaponLMesh = _meshes.GetWeaponMesh(left: true);
-                if (weaponLMesh != string.Empty)
+                if (weaponLMesh == "blade_L")
+                    _part_blade_l = ResourceManager.InstantiateAsset<GameObject>("Character/character_blade_l");
+                else
+                    _part_blade_l = AssetBundleManager.InstantiateAsset<GameObject>(weaponLMesh, cached: true);
+                if (weaponLMesh.StartsWith("thunderspear"))
+                    AttachToMount(_part_blade_l, _mount_ts_l);
+                else
                 {
-                    _part_blade_l = ResourceManager.InstantiateAsset<GameObject>("Character/" + weaponLMesh, cached: true);
                     AttachToMount(_part_blade_l, _mount_weapon_l);
                     _part_blade_l.renderer.material = material;
-                    if (_part_blade_l.transform.Find("X-WeaponTrailA") != null)
-                    {
-                        LeftTrail1 = _part_blade_l.transform.Find("X-WeaponTrailA").GetComponent<XWeaponTrail>();
-                        LeftTrail2 = _part_blade_l.transform.Find("X-WeaponTrailB").GetComponent<XWeaponTrail>();
-                        LeftTrail1.Deactivate();
-                        LeftTrail2.Deactivate();
-                    }
                 }
-                string weaponRMesh = _meshes.GetWeaponMesh(left: false);
-                if (weaponRMesh != string.Empty)
+                if (_part_blade_l.transform.Find("X-WeaponTrailA") != null)
                 {
-                    _part_blade_r = ResourceManager.InstantiateAsset<GameObject>("Character/" + weaponRMesh, cached: true);
+                    LeftTrail1 = _part_blade_l.transform.Find("X-WeaponTrailA").GetComponent<XWeaponTrail>();
+                    LeftTrail2 = _part_blade_l.transform.Find("X-WeaponTrailB").GetComponent<XWeaponTrail>();
+                    LeftTrail1.Deactivate();
+                    LeftTrail2.Deactivate();
+                }
+            }
+            string weaponRMesh = _meshes.GetWeaponMesh(left: false);
+            if (weaponRMesh != string.Empty)
+            {
+                if (weaponRMesh == "blade_R")
+                    _part_blade_r = ResourceManager.InstantiateAsset<GameObject>("Character/character_blade_r");
+                else
+                    _part_blade_r = AssetBundleManager.InstantiateAsset<GameObject>(weaponRMesh, cached: true);
+                if (weaponRMesh.StartsWith("thunderspear"))
+                    AttachToMount(_part_blade_r, _mount_ts_r);
+                else
+                {
                     AttachToMount(_part_blade_r, _mount_weapon_r);
                     _part_blade_r.renderer.material = material;
-                    if (_part_blade_r.transform.Find("X-WeaponTrailA") != null)
-                    {
-                        RightTrail1 = _part_blade_l.transform.Find("X-WeaponTrailA").GetComponent<XWeaponTrail>();
-                        RightTrail2 = _part_blade_l.transform.Find("X-WeaponTrailB").GetComponent<XWeaponTrail>();
-                        RightTrail1.Deactivate();
-                        RightTrail2.Deactivate();
-                    }
+                }
+                if (_part_blade_r.transform.Find("X-WeaponTrailA") != null)
+                {
+                    RightTrail1 = _part_blade_r.transform.Find("X-WeaponTrailA").GetComponent<XWeaponTrail>();
+                    RightTrail2 = _part_blade_r.transform.Find("X-WeaponTrailB").GetComponent<XWeaponTrail>();
+                    RightTrail1.Deactivate();
+                    RightTrail2.Deactivate();
                 }
             }
-            else if (Weapon == HumanWeapon.Thunderspear)
-            {
-                ThunderspearL = AssetBundleManager.InstantiateAsset<GameObject>("ThunderspearProp");
-                ThunderspearR = AssetBundleManager.InstantiateAsset<GameObject>("ThunderspearProp");
-                ThunderspearLModel = ThunderspearL.transform.Find("ThunderspearModel").gameObject;
-                ThunderspearRModel = ThunderspearR.transform.Find("ThunderspearModel").gameObject;
-                AttachThunderspear(ThunderspearL, _mount_weapon_l.transform.parent, true);
-                AttachThunderspear(ThunderspearR, _mount_weapon_r.transform.parent, false);
-            }
-        }
-
-        private void AttachThunderspear(GameObject thunderSpear, Transform mount, bool left)
-        {
-            thunderSpear.transform.parent = mount.parent;
-            Vector3 localPosition = left ? new Vector3(-0.001649f, 0.000775f, -0.000227f) : new Vector3(-0.001649f, -0.000775f, -0.000227f);
-            Quaternion localRotation = left ? Quaternion.Euler(5f, -85f, 10f) : Quaternion.Euler(-5f, -85f, -10f);
-            thunderSpear.transform.localPosition = localPosition;
-            thunderSpear.transform.localRotation = localRotation;
         }
 
         public void CreateCape()
@@ -330,7 +317,7 @@ namespace Characters
                 string capeMesh = _meshes.GetCapeMesh();
                 if (capeMesh != string.Empty)
                 {
-                    _part_cape = ClothFactory.GetCape(_mount_cloth, "Character/" + capeMesh, HumanSetupMaterials.Materials[_textures.GetBrandTexture()]);
+                    _part_cape = ClothFactory.GetCape(_mount_cloth, capeMesh, HumanSetupMaterials.Materials[_textures.GetBrandTexture()]);
                 }
             }
         }
@@ -343,7 +330,7 @@ namespace Characters
             string hairMesh = _meshes.GetHairMesh();
             if (hairMesh != string.Empty)
             {
-                _part_hair = ResourceManager.InstantiateAsset<GameObject>("Character/" + hairMesh, cached: true);
+                _part_hair = AssetBundleManager.InstantiateAsset<GameObject>(hairMesh, cached: true);
                 AttachToMount(_part_hair, _part_head);
                 _part_hair.renderer.material = HumanSetupMaterials.Materials[_textures.GetHairTexture()];
                 _part_hair.renderer.material.color = CustomSet.HairColor.Value.ToColor();
@@ -352,39 +339,39 @@ namespace Characters
             if (hairClothMesh != string.Empty && !IsDeadBody)
             {
                 Material material = HumanSetupMaterials.Materials[_textures.GetHairTexture()];
-                _part_hair_1 = ClothFactory.GetHair(_mount_cloth, "Character/" + hairClothMesh, material, CustomSet.HairColor.Value.ToColor());
+                _part_hair_1 = ClothFactory.GetHair(_mount_cloth, hairClothMesh, material, CustomSet.HairColor.Value.ToColor());
             }
         }
 
         public void CreateEye()
         {
             DestroyIfExists(_part_eye);
-            _part_eye = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetEyeMesh(), cached: true);
+            _part_eye = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.GetEyeMesh(), cached: true);
             AttachToMount(_part_eye, _part_head);
-            SetFacialTexture(_part_eye, CustomSet.Eye.Value);
+            SetFacialTexture(_part_eye, CustomSet.Eye.Value, true);
         }
 
         public void CreateFace()
         {
             DestroyIfExists(_part_face);
-            _part_face = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetFaceMesh(), cached: true);
+            _part_face = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.GetFaceMesh(), cached: true);
             AttachToMount(_part_face, _part_head);
             string face = CustomSet.Face.Value.Substring(4);
             if (face != "None")
-                SetFacialTexture(_part_face, int.Parse(face) + 32);
+                SetFacialTexture(_part_face, int.Parse(face), false);
             else
-                SetFacialTexture(_part_face, -1);
+                SetFacialTexture(_part_face, -1, false);
         }
 
         public void CreateGlass()
         {
-            _part_glass = ResourceManager.InstantiateAsset<GameObject>("Character/" + _meshes.GetGlassMesh(), cached: true);
+            _part_glass = AssetBundleManager.InstantiateAsset<GameObject>(_meshes.GetGlassMesh(), cached: true);
             AttachToMount(_part_glass, _part_head);
             string glass = CustomSet.Glass.Value.Substring(5);
             if (glass != "None")
-                SetFacialTexture(_part_glass, int.Parse(glass) + 48);
+                SetFacialTexture(_part_glass, int.Parse(glass), false);
             else
-                SetFacialTexture(_part_glass, -1);
+                SetFacialTexture(_part_glass, -1, false);
         }
 
         public void CreateHead()
@@ -403,19 +390,24 @@ namespace Characters
             DestroyIfExists(_part_hand_r);
             Material bodyMaterial = HumanSetupMaterials.Materials[_textures.GetBodyTexture()];
             Material skinMaterial = HumanSetupMaterials.Materials[_textures.GetSkinTexture()];
-            _part_arm_l = GenerateCloth("Character/" + _meshes.GetArmMesh(left: true));
-            _part_arm_l.renderer.material = bodyMaterial;
-            _part_hand_l = GenerateCloth("Character/" + _meshes.GetHandMesh(left: true));
+            _part_arm_l = GenerateCloth(_meshes.GetArmMesh(left: true));
+            SetMaterial(_part_arm_l.renderer, bodyMaterial);
+            _part_hand_l = GenerateCloth(_meshes.GetHandMesh(left: true));
             _part_hand_l.renderer.material = skinMaterial;
-            _part_arm_r = GenerateCloth("Character/" + _meshes.GetArmMesh(left: false));
-            _part_arm_r.renderer.material = bodyMaterial;
-            _part_hand_r = GenerateCloth("Character/" + _meshes.GetHandMesh(left: false));
+            _part_arm_r = GenerateCloth(_meshes.GetArmMesh(left: false));
+            SetMaterial(_part_arm_r.renderer, bodyMaterial);
+            _part_hand_r = GenerateCloth(_meshes.GetHandMesh(left: false));
             _part_hand_r.renderer.material = skinMaterial;
+        }
+
+        private void SetMaterial(Renderer renderer, Material material)
+        {
+            renderer.material = material;
         }
 
         public void CreateLowerBody()
         {
-            _part_leg.renderer.material = HumanSetupMaterials.Materials[_textures.GetBodyTexture()];
+            SetMaterial(_part_leg.GetComponent<SkinnedMeshRenderer>(), HumanSetupMaterials.Materials[_textures.GetBodyTexture()]);
         }
 
         public void CreateUpperBody()
@@ -435,7 +427,7 @@ namespace Characters
             string chest1Mesh = _meshes.GetChestMesh(1);
             if (chest1Mesh != string.Empty)
             {
-                _part_chest_1 = ResourceManager.InstantiateAsset<GameObject>("Character/" + chest1Mesh, cached: true);
+                _part_chest_1 = AssetBundleManager.InstantiateAsset<GameObject>(chest1Mesh, cached: true);
                 AttachToMount(_part_chest_1, _mount_chest);
                 _part_chest_1.renderer.material = HumanSetupMaterials.Materials[_textures.GetChestTexture(1)];
             }
@@ -443,27 +435,27 @@ namespace Characters
             string chest2Mesh = _meshes.GetChestMesh(2);
             if (chest2Mesh != string.Empty)
             {
-                _part_chest_2 = ResourceManager.InstantiateAsset<GameObject>("Character/" + chest2Mesh, cached: true);
+                _part_chest_2 = AssetBundleManager.InstantiateAsset<GameObject>(chest2Mesh, cached: true);
                 AttachToMount(_part_chest_2, _mount_chest);
                 _part_chest_2.renderer.material = bodyMaterial;
             }
             string chest3Mesh = _meshes.GetChestMesh(3);
             if (chest3Mesh != string.Empty && !IsDeadBody)
             {
-                _part_chest_3 = ClothFactory.GetCape(_mount_cloth, "Character/" + chest3Mesh, bodyMaterial);
+                _part_chest_3 = ClothFactory.GetCape(_mount_cloth, chest3Mesh, bodyMaterial);
             }
-            _part_upper_body = GenerateCloth("Character/" + _meshes.GetBodyMesh());
-            _part_upper_body.renderer.material = bodyMaterial;
+            _part_upper_body = GenerateCloth(_meshes.GetBodyMesh());
+            SetMaterial(_part_upper_body.renderer, bodyMaterial);
             Material brandMaterial = HumanSetupMaterials.Materials[_textures.GetBrandTexture()];
             if (CurrentCostume["Type"].Value.StartsWith("Uniform"))
             {
-                _part_brand_1 = GenerateCloth("Character/" + _meshes.GetBrandMesh(1));
+                _part_brand_1 = GenerateCloth(_meshes.GetBrandMesh(1));
                 _part_brand_1.renderer.material = brandMaterial;
-                _part_brand_2 = GenerateCloth("Character/" + _meshes.GetBrandMesh(2));
+                _part_brand_2 = GenerateCloth(_meshes.GetBrandMesh(2));
                 _part_brand_2.renderer.material = brandMaterial;
-                _part_brand_3 = GenerateCloth("Character/" + _meshes.GetBrandMesh(3));
+                _part_brand_3 = GenerateCloth(_meshes.GetBrandMesh(3));
                 _part_brand_3.renderer.material = brandMaterial;
-                _part_brand_4 = GenerateCloth("Character/" + _meshes.GetBrandMesh(4));
+                _part_brand_4 = GenerateCloth(_meshes.GetBrandMesh(4));
                 _part_brand_4.renderer.material = brandMaterial;
             }
             Material skinMaterial = HumanSetupMaterials.Materials[_textures.GetSkinTexture()];
@@ -471,14 +463,15 @@ namespace Characters
             _part_chest.renderer.material = skinMaterial;
         }
 
-        private void SetFacialTexture(GameObject go, int id)
+        private void SetFacialTexture(GameObject go, int id, bool eyes)
         {
             if (id >= 0)
             {
                 go.renderer.material = HumanSetupMaterials.Materials[_textures.GetFaceTexture()];
-                float num = 0.125f;
-                float x = num * ((int)(((float)id) / 8f));
-                float y = -num * (id % 8);
+                float x = (int)(id / 8f) * 0.125f;
+                float y = -0.125f * (id % 8);
+                if (eyes)
+                    y += 0.125f;
                 go.renderer.material.mainTextureOffset = new Vector2(x, y);
             }
             else
@@ -497,7 +490,7 @@ namespace Characters
         private GameObject CreateMount(string transformPath)
         {
             GameObject mount = new GameObject();
-            transformPath = "Amarture/Controller_Body/hip/" + transformPath;
+            transformPath = "Armature/Core/Controller_Body/hip/" + transformPath;
             Transform baseTransform = transform;
             mount.transform.position = baseTransform.position;
             mount.transform.rotation = Quaternion.Euler(270f, baseTransform.rotation.eulerAngles.y, 0f);
@@ -511,20 +504,22 @@ namespace Characters
             if (meshRenderer == null)
                 meshRenderer = _mount_cloth.AddComponent<SkinnedMeshRenderer>();
             Transform[] bones = meshRenderer.bones;
-            SkinnedMeshRenderer newMeshRenderer = ResourceManager.InstantiateAsset<GameObject>(cloth, cached: true).GetComponent<SkinnedMeshRenderer>();
+            SkinnedMeshRenderer newMeshRenderer;
+            newMeshRenderer = AssetBundleManager.InstantiateAsset<GameObject>(cloth, cached: true).GetComponent<SkinnedMeshRenderer>();
             newMeshRenderer.gameObject.transform.parent = meshRenderer.gameObject.transform.parent;
             newMeshRenderer.transform.localPosition = Vector3.zero;
             newMeshRenderer.transform.localScale = Vector3.one;
             newMeshRenderer.bones = bones;
             newMeshRenderer.quality = SkinQuality.Bone4;
+            newMeshRenderer.rootBone = meshRenderer.rootBone;
             return newMeshRenderer.gameObject;
         }
 
         private void AttachToMount(GameObject obj, GameObject mount)
         {
-            obj.transform.position = mount.transform.position;
-            obj.transform.rotation = mount.transform.rotation;
-            obj.transform.parent = mount.transform.parent;
+            obj.transform.SetParent(mount.transform);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
         }
 
         private void DestroyIfExists(GameObject go)

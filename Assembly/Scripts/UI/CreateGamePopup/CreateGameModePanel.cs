@@ -40,18 +40,32 @@ namespace UI
                 ElementFactory.CreateDefaultLabel(DoublePanelLeft, style, description, alignment: TextAnchor.MiddleLeft);
             int count = 0;
             CreateHorizontalDivider(DoublePanelLeft);
+            var tooltips = new Dictionary<string, string>();
+            foreach (string key in settings.Keys)
+            {
+                BaseSetting setting = settings[key];
+                if (key.EndsWith("Tooltip") && setting is StringSetting)
+                {
+                    tooltips[key.Substring(0, key.Length - 7)] = ((StringSetting)setting).Value;
+                }
+            }
             foreach (string key in settings.Keys)
             {
                 Transform panel = count < settings.Keys.Count / 2 ? DoublePanelLeft : DoublePanelRight;
                 BaseSetting setting = settings[key];
                 if (key == "Description")
                     continue;
+                if (key.EndsWith("Tooltip") && setting is StringSetting)
+                    continue;
                 string title = Util.PascalToSentence(key);
                 string translated = UIManager.GetLocale(cat, sub, key, defaultValue: title);
+                string tooltip = "";
+                if (tooltips.ContainsKey(key))
+                    tooltip = tooltips[key];
                 if (setting is BoolSetting)
-                    ElementFactory.CreateToggleSetting(panel, style, setting, translated);
+                    ElementFactory.CreateToggleSetting(panel, style, setting, translated, tooltip);
                 else if (setting is StringSetting || setting is FloatSetting || setting is IntSetting)
-                    ElementFactory.CreateInputSetting(panel, style, setting, translated, elementWidth: 180f);
+                    ElementFactory.CreateInputSetting(panel, style, setting, translated, tooltip, elementWidth: 180f);
                 count += 1;
             }
         }

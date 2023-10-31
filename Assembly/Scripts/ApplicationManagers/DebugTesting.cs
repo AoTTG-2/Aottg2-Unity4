@@ -8,6 +8,8 @@ using System.IO;
 using CustomLogic;
 using Events;
 using Map;
+using Effects;
+using GameManagers;
 
 namespace ApplicationManagers
 {
@@ -77,6 +79,9 @@ namespace ApplicationManagers
                 case "phase":
                     DebugPhase = !DebugPhase;
                     Debug.Log("Debug phase enabled: " + DebugPhase.ToString());
+                    break;
+                case "previews":
+                    ((CharacterEditorGameManager)SceneLoader.CurrentGameManager).GeneratePreviews();
                     break;
                 default:
                     Debug.Log("Invalid debug command.");

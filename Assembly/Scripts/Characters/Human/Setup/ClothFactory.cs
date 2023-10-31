@@ -3,6 +3,7 @@
 
 
 
+using ApplicationManagers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,10 +59,11 @@ public static class ClothFactory
             go.AddComponent<SkinnedMeshRenderer>();
         }
         Transform[] bones = go.GetComponent<SkinnedMeshRenderer>().bones;
-        SkinnedMeshRenderer component = ((GameObject) UnityEngine.Object.Instantiate(Resources.Load(res))).GetComponent<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer component = ((GameObject) UnityEngine.Object.Instantiate(AssetBundleManager.LoadAsset(res, true))).GetComponent<SkinnedMeshRenderer>();
         component.transform.localScale = Vector3.one;
         component.bones = bones;
         component.quality = SkinQuality.Bone4;
+        component.rootBone = go.GetComponent<SkinnedMeshRenderer>().rootBone;
         return component.gameObject;
     }
 
@@ -184,6 +186,7 @@ public static class ClothFactory
         SkinnedMeshRenderer renderer2 = clothObject.GetComponent<SkinnedMeshRenderer>();
         renderer2.bones = component.bones;
         renderer2.transform.localScale = Vector3.one;
+        renderer2.rootBone = component.rootBone;
     }
 }
 

@@ -24,9 +24,15 @@ namespace Effects {
                 particle.startSize *= SizeMultiplier;
             if (SettingsManager.AbilitySettings.ShowBombColors.Value)
             {
-                var c = (Color)settings[0];
+                var c = (Color)(settings[0]);
                 particle.startColor = new Color(c.r, c.g, c.b, Mathf.Max(c.a, 0.5f));
             }
+           
+            bool kill = (bool)(settings[1]);
+            if (kill)
+                transform.Find("KillSound").GetComponent<AudioSource>().Play();
+            else
+                transform.Find("ExplodeSound").GetComponent<AudioSource>().Play();
         }
     }
 }

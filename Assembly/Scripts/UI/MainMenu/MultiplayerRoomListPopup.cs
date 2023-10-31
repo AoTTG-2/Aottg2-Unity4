@@ -41,9 +41,9 @@ namespace UI
             string cat = "MainMenu";
             string sub = "MultiplayerRoomListPopup";
             ElementStyle buttonStyle = new ElementStyle(fontSize: ButtonFontSize, themePanel: ThemePanel);
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Create"),
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Create"),
                 onClick: () => OnButtonClick("Create"));
-            ElementFactory.CreateDefaultButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
+            ElementFactory.CreateTextButton(BottomBar, buttonStyle, UIManager.GetLocaleCommon("Back"),
                 onClick: () => OnButtonClick("Back"));
             InputSettingElement element = TopBar.Find("SearchInputSetting").gameObject.AddComponent<InputSettingElement>();
             element.Setup(_filterQuery, new ElementStyle(titleWidth: 0f), UIManager.GetLocaleCommon("Search"), string.Empty, 160f, 40f, false, null,
@@ -68,7 +68,8 @@ namespace UI
             TopBar.Find("Page/PageLabel").GetComponent<Text>().color = UIManager.GetThemeColor(buttonStyle.ThemePanel, "DefaultLabel", "TextColor");
             TopBar.Find("PlayersOnlineLabel").GetComponent<Text>().color = UIManager.GetThemeColor(buttonStyle.ThemePanel, "DefaultLabel", "TextColor");
             _noRoomsLabel.GetComponent<Text>().color = UIManager.GetThemeColor(buttonStyle.ThemePanel, "RoomButton", "TextColor");
-            _roomList.GetComponent<Image>().color = UIManager.GetThemeColor(buttonStyle.ThemePanel, "MainBody", "BackgroundColor");
+            _roomList.GetComponent<RawImage>().texture = UIManager.GetThemeTexture(buttonStyle.ThemePanel, "MainBody", "BackgroundTexture");
+            _roomList.GetComponent<RawImage>().color = UIManager.GetThemeColor(buttonStyle.ThemePanel, "MainBody", "BackgroundColor");
         }
 
         public override void Show()

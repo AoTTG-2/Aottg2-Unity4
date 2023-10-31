@@ -95,6 +95,8 @@ namespace Characters
                     capsule.radius *= 0.5f;
                     capsule.center = new Vector3(0f, capsule.radius, 0f);
                     _originalCapsuleValue = capsule.height;
+                    var nape = (CapsuleCollider)BasicCache.NapeHurtbox;
+                    nape.radius *= 1.5f;
                 }
                 else
                     _originalCapsuleValue = capsule.radius;
@@ -359,6 +361,16 @@ namespace Characters
             _currentTurnTime = 0f;
             _maxTurnTime = Cache.Animation[animation].length * 0.71f / Cache.Animation[animation].speed;
             StateActionWithTime(TitanState.Turn, animation, _maxTurnTime, 0.1f);
+        }
+
+        [RPC]
+        public override void MarkDeadRPC(PhotonMessageInfo info)
+        {
+            if (info.sender != Cache.PhotonView.owner)
+                return;
+            Dead = true;
+            if (SettingsManager.GraphicsSettings.NapeBloodEnabled.Value)
+                BasicCache.NapeBlood.Play(true);
         }
 
         protected override IEnumerator WaitAndDie()
@@ -1051,6 +1063,7 @@ namespace Characters
                 if (firstHit)
                 {
                     EffectSpawner.Spawn(EffectPrefabs.PunchHit, hitbox.transform.position, Quaternion.identity);
+                    PlaySound(TitanSounds.HitSound);
                     if (!victimChar.Dead)
                     {
                         if (IsMainCharacter())
@@ -1099,7 +1112,8 @@ namespace Characters
             base.LateUpdate();
             if (IsMine())
             {
-                if (TargetEnemy != null && (State == TitanState.Idle || State == TitanState.Run || State == TitanState.Walk || State == TitanState.Turn))
+                if (TargetEnemy != null && !IsCrawler && Util.DistanceIgnoreY(TargetEnemy.Cache.Transform.position, BasicCache.Transform.position) < 100f &&
+                (State == TitanState.Idle || State == TitanState.Run || State == TitanState.Walk || State == TitanState.Turn))
                 {
                     TargetViewId = TargetEnemy.Cache.PhotonView.viewID;
                     LateUpdateHead(TargetEnemy);
@@ -1198,6 +1212,7 @@ namespace Characters
                 Vector3 start = position - Cache.Transform.forward * halfHeight;
                 Vector3 end = position + Cache.Transform.forward * halfHeight;
                 RaycastHit hit;
+                JustGrounded = false;
                 if (Physics.CapsuleCast(start, end, radius, Vector3.down, out hit, 1f + GroundDistance, GroundMask.value))
                 {
                     if (!Grounded)
