@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repo is meant for unity4 and is not the main project, if you need access to the main repo please reach out to the devs.
+
 # Aottg2-Unity4
 [![Discord](https://img.shields.io/discord/681641241125060652.svg)](https://discord.gg/GhbNbvU)  
 
